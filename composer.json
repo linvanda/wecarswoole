@@ -1,0 +1,43 @@
+{
+    "name": "linvanda/wecarswoole",
+    "description": "wecheche foundational web framework",
+    "type": "library",
+    "require": {
+        "php": ">=7.2",
+        "ext-swoole": ">=4.3.0",
+        "ext-redis": "*",
+        "easyswoole/easyswoole": "3.x",
+        "php-di/php-di": "^6.0",
+        "ramsey/uuid": "^3.8",
+        "linvanda/locker": "dev-master",
+        "linvanda/mysql": "dev-master",
+        "symfony/cache": "^4.2",
+        "swlib/saber": "^1.0",
+        "doctrine/annotations": "^1.6",
+        "monolog/monolog": "^1.24",
+        "swiftmailer/swiftmailer": "^6.2",
+        "ocramius/proxy-manager": "2.2.2",
+        "symfony/event-dispatcher": "^4.3",
+        "psr/event-dispatcher": "^1.0"
+    },
+    "repositories": {
+        "0": {
+            "type": "vcs",
+            "url": "https://github.com/linvanda/locker.git"
+        },
+        "1": {
+            "type": "vcs",
+            "url": "https://github.com/linvanda/mysql.git"
+        },
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.phpcomposer.com"
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "WecarSwoole\\": "src/",
+            "WecarSwoole\\Test\\": "tests/"
+        }
+    }
+}
