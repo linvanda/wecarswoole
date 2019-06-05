@@ -1,5 +1,5 @@
 {
-    "name": "linvanda/wecarswoole",
+    "name": "framework/wecarswoole",
     "description": "wecheche foundational web framework",
     "type": "library",
     "require": {
