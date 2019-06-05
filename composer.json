@@ -41,5 +41,10 @@
             "App\\": "template/app/"
         }
     },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    },
     "bin": ["bin/wecarswoole"]
 }
