@@ -1,0 +1,48 @@
+#!/usr/bin/env php
+<?php
+
+defined('WECARSWOOLE_ROOT') or define('WECARSWOOLE_ROOT', realpath(getcwd()));
+defined('TEMPLATE_ROOT') or define('TEMPLATE_ROOT', realpath(__DIR__ . '/../linvanda/wecarswoole/template'));
+
+if (!function_exists('deepCopyFile')) {
+    function deepCopyFile($fromDir, $toDir)
+    {
+        foreach (glob($fromDir . "/*") as $fileOrDir) {
+            $fileOrDir = realpath($fileOrDir);
+
+            $isDir = is_dir($fileOrDir);
+            if ($isDir) {
+                $relationDir = trim(str_replace(TEMPLATE_ROOT, '', $fileOrDir), '/');
+            } else {
+                $relationDir = trim(dirname(str_replace(TEMPLATE_ROOT, '', $fileOrDir)), '/');
+            }
+            $distDir = ($relationDir ? rtrim($toDir, '/') . '/' . $relationDir : rtrim($toDir, '/'));
+
+            if (!is_dir($distDir)) {
+                mkdir($distDir, 0711, true);
+            }
+
+            if (is_dir($fileOrDir)) {
+                deepCopyFile($fileOrDir, $toDir);
+            } else {
+                copy($fileOrDir, $distDir.'/'.basename($fileOrDir));
+            }
+        }
+    }
+}
+
+$args = $argv;
+array_shift($args);
+
+if ($args[0] === 'install') {
+    $lockFile = WECARSWOOLE_ROOT . '/install.lock';
+    if (file_exists($lockFile)) {
+        return;
+    }
+
+    // 将 template 中的文件拷贝到项目根目录
+    deepCopyFile(TEMPLATE_ROOT, WECARSWOOLE_ROOT);
+
+    // 生成锁
+    touch($lockFile);
+}

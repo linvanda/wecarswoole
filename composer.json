@@ -37,7 +37,9 @@
     "autoload": {
         "psr-4": {
             "WecarSwoole\\": "src/",
-            "WecarSwoole\\Test\\": "tests/"
+            "WecarSwoole\\Test\\": "tests/",
+            "App\\": "template/app/"
         }
-    }
+    },
+    "bin": ["bin/wecarswoole"]
 }

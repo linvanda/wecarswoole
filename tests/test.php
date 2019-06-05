@@ -16,20 +16,6 @@ if (file_exists($file)) {
     die("include composer autoload.php fail\n");
 }
 
-class TestBean extends \WecarSwoole\DbBean
-{
-    public $loverName;
+Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-    protected function setValueMapping(): array
-    {
-        return [
-                'loverName' => ['琳达' => 45]
-        ];
-    }
-}
-
-$bean = new TestBean(['lover_name' => "琳达"]);
-var_export($bean->loverName);
-
-
-
+echo File::join(EASYSWOOLE_ROOT, 'abc');
