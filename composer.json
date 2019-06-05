@@ -9,7 +9,7 @@
         "easyswoole/easyswoole": "3.x",
         "php-di/php-di": "^6.0",
         "ramsey/uuid": "^3.8",
-        "devar/locker": "dev-master",
+        "dev/locker": "dev-master",
         "devar/mysql": "dev-master",
         "symfony/cache": "^4.2",
         "swlib/saber": "^1.0",
