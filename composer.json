@@ -9,6 +9,8 @@
         "easyswoole/easyswoole": "3.x",
         "php-di/php-di": "^6.0",
         "ramsey/uuid": "^3.8",
+        "linvanda/locker": "^1.0",
+        "linvanda/mysql": "^1.0",
         "symfony/cache": "^4.2",
         "swlib/saber": "^1.0",
         "doctrine/annotations": "^1.6",
@@ -19,6 +21,14 @@
         "psr/event-dispatcher": "^1.0"
     },
     "repositories": {
+        "0": {
+            "type": "vcs",
+            "url": "https://github.com/linvanda/locker.git"
+        },
+        "1": {
+            "type": "vcs",
+            "url": "https://github.com/linvanda/mysql.git"
+        },
         "packagist": {
             "type": "composer",
             "url": "https://packagist.phpcomposer.com"
@@ -29,11 +39,6 @@
             "WecarSwoole\\": "src/",
             "WecarSwoole\\Test\\": "tests/",
             "App\\": "template/app/"
-        }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
         }
     },
     "bin": ["bin/wecarswoole"]
