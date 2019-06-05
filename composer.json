@@ -9,8 +9,8 @@
         "easyswoole/easyswoole": "3.x",
         "php-di/php-di": "^6.0",
         "ramsey/uuid": "^3.8",
-        "linvanda/locker": "^1.0",
-        "linvanda/mysql": "^1.0",
+        "devar/locker": "^1.0",
+        "devar/mysql": "^1.0",
         "symfony/cache": "^4.2",
         "swlib/saber": "^1.0",
         "doctrine/annotations": "^1.6",
@@ -41,5 +41,10 @@
             "App\\": "template/app/"
         }
     },
-    "bin": ["bin/wecarswoole"]
+    "bin": ["bin/wecarswoole"],
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0.x-dev"
+        }
+    }
 }
