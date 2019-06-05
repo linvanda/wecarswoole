@@ -102,3 +102,6 @@
 - MySQL、Redis、Email、Cache、Logger 等基础设施都有相应工厂来创建，工厂依赖于 EasySwoole（主要依赖于配置），并且将具体的基础设施扩展与 EasySwoole 框架隔离（即扩展本身不依赖于框架）。
 - 工厂返回的基础设施尽量符合 PSR 规范（如 Cache、Logger 等）
 - 虽然提供了工厂，但实际使用中不建议直接用工厂获取对象（工厂并不提供单例模式），项目中请用 IoC 注入（本项目用的是 PHP-DI，建议通过构造函数注入这些基础设施）
+
+
+貌似国内镜像 https://packagist.phpcomposer.com 没人维护了，现在用了 https://packagist.laravel-china.org

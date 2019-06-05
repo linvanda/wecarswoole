@@ -15,7 +15,7 @@ use WecarSwoole\MySQLFactory;
 class MySQLRepository implements IRepository
 {
     /**
-     * @var \Linvanda\MySQL\Query
+     * @var \Devar\MySQL\Query
      */
     protected $query;
     protected $dbName = 'user_center';
