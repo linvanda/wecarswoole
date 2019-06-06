@@ -125,13 +125,13 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 project_root
 
-​	app
+​		app
 
-​	config
+​		config
 
-​	storage
+​		storage
 
-​	vendor
+​		vendor
 
 
 
