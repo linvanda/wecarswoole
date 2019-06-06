@@ -44,7 +44,7 @@ if ($args[0] === 'install') {
     deepCopyFile(TEMPLATE_ROOT, WECARSWOOLE_ROOT);
 
     // 增加 .gitignore
-    rename(WECARSWOOLE_ROOT . '/.gitignore_sample', WECARSWOOLE_ROOT . '/.gitignore');
+    rename(WECARSWOOLE_ROOT . '/gitignore', WECARSWOOLE_ROOT . '/.gitignore');
 
     // 生成锁
     touch($lockFile);
