@@ -1,1 +1,1 @@
-[基础框架使用说明](https://github.com/linvanda/wecarswoole)
+[基础框架使用说明](https://gitlab4.weicheche.cn/framework/wecarswoole)
