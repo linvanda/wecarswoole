@@ -121,17 +121,35 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 
 
-### 目录结构：
+### 目录结构
 
-project_root
+- project_root
+  - app
+    - Cron
+    - Domain
+      - Events
+    - Exceptions
+    - Foundation
+    - Http
+    - Process
+    - Subscribers
+    - Tasks
+  - config
+    - api
+    - di
+    - env
+    - subscriber
+  - storage
+    - app
+    - cache
+    - di
+    - logs
+    - temp
+  - vendor
 
-​		app
+#### 说明
 
-​		config
-
-​		storage
-
-​		vendor
+app/ : 项目代码
 
 
 
