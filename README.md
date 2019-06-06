@@ -1,6 +1,11 @@
-用户中心
+WecarSwoole
 ----
+#### 简介
+
+WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开发框架。
+
 #### 目录结构：
+
 参照 laravel 目录结构设计
 - app 项目程序目录。该目录下的子目录和文件名都开头大写。
     - Bean  DTO（数据传输对象）放置在此。
@@ -16,10 +21,12 @@
         - Middleware 中间件
     - Cron 定时任务，需要继承 `EasySwoole\EasySwoole\Crontab\AbstractCronTask`
       [参见](http://www.easyswoole.com/Manual/3.x/Cn/_book/BaseUsage/crontab.html)
+      
         > 注意：多个定时任务的 taskName 不能重复，否则会相互覆盖
     - Tasks 异步任务，需要继承`\EasySwoole\EasySwoole\Swoole\Task\AbstractAsyncTask`
       [参见](http://www.easyswoole.com/Manual/3.x/Cn/_book/BaseUsage/async_task.html)
     - Domain 业务领域逻辑，编写具体的业务逻辑，这里面的类包含但不限于：实体、值对象、领域服务、仓储、领域事件。里面的文件按模块自由组织。
+        
         - Events 领域事件
     - Util 项目私有但辅助类/函数。注意：公共辅助类请使用 Composer 库。
     - Exceptions 异常定义类
@@ -75,8 +82,8 @@
     - 其它类（如 Service）使用构造函数注入依赖（保证可重用性和可测试性）；
     - 不要在程序中使用 $container->get(...)，造成程序对容器对依赖；
     - 推荐使用接口类型提示，在 config 中配置接口对应的实现；
-    （生产环境需要开启编译，每次发版的时候要重新编译，建议采用预编译），开发环境关闭编译
-    不会编构造函数注入的和注解注入的，如果要优化这些，需要开启 cache(需要apcu扩展)
+      （生产环境需要开启编译，每次发版的时候要重新编译，建议采用预编译），开发环境关闭编译
+      不会编构造函数注入的和注解注入的，如果要优化这些，需要开启 cache(需要apcu扩展)
 - 开发实践：
     - Controller 中保持简洁，不要在控制器中写业务代码；
     - 不要在业务逻辑中直接获取/使用 Session、Request、Response、Cookie、Header、Container、DI、Config 等全局变量和框架相关的东西，保证业务逻辑代码是框架无关的而且是可测试的；

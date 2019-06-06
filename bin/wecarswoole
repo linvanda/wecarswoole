@@ -2,7 +2,7 @@
 <?php
 
 defined('WECARSWOOLE_ROOT') or define('WECARSWOOLE_ROOT', realpath(getcwd()));
-defined('TEMPLATE_ROOT') or define('TEMPLATE_ROOT', realpath(__DIR__ . '/../linvanda/wecarswoole/template'));
+defined('TEMPLATE_ROOT') or define('TEMPLATE_ROOT', realpath(WECARSWOOLE_ROOT . '/vendor/framework/wecarswoole/template'));
 
 if (!function_exists('deepCopyFile')) {
     function deepCopyFile($fromDir, $toDir)
