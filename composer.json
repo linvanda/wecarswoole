@@ -9,8 +9,6 @@
         "easyswoole/easyswoole": "3.x",
         "php-di/php-di": "^6.0",
         "ramsey/uuid": "^3.8",
-        "dev/locker": "*",
-        "devar/mysql": "dev-master",
         "symfony/cache": "^4.2",
         "swlib/saber": "^1.0",
         "doctrine/annotations": "^1.6",
@@ -18,7 +16,9 @@
         "swiftmailer/swiftmailer": "^6.2",
         "ocramius/proxy-manager": "2.2.2",
         "symfony/event-dispatcher": "^4.3",
-        "psr/event-dispatcher": "^1.0"
+        "psr/event-dispatcher": "^1.0",
+        "dev/locker": "*",
+        "dev/mysql": "*"
     },
     "repositories": {
         "0": {
