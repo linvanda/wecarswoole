@@ -57,7 +57,9 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 3. 执行 `composer install`
 4. 执行 `php vendor/bin/wecarswoole install` 安装 WecarSwoole 框架
-5. 完成！
+5. 启动：`php easyswoole start d --env=dev` (—env : dev、test、preview、produce，d 表示后台运行)
+6. 停止：`php easyswoole stop`
+7. 其他指令参见 easyswoole 官网
 
 **注意**
 
@@ -146,10 +148,65 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
     - logs
     - temp
   - vendor
+  - tests
 
 #### 说明
 
-app/ : 项目代码
+app/ : 项目代码目录
+
+app/Cron/ : 定时任务
+
+app/Domain/ : 业务（领域）逻辑，核心目录
+
+app/Domain/Events/ : 领域事件
+
+app/Exceptions/ : 异常类定义
+
+app/Foundation/ : 基础设施（如仓储实现类等）
+
+app/Http/ : http 路由、控制器，对外暴露 http api
+
+app/Process/ : 自定义进程
+
+app/Subscribers/ : 事件订阅者
+
+app/Tasks/ : 异步任务
+
+config/ : 配置文件
+
+config/api/ : 外部 api 定义
+
+config/di/ : 依赖注入配置
+
+config/env/ : 环境相关配置（如数据库、redis 等）
+
+config/subscriber/ : 订阅者配置
+
+storage/ : 存储相关（日志、缓存、临时文件等）
+
+storage/app/ : 应用程序存储（如第三方证书等）
+
+storage/cache/ : 文件缓存
+
+storage/di/ : di 缓存
+
+storage/logs/ : 文件日志
+
+storage/temp/ : 临时文件
+
+vendor/ : 第三方库
+
+tests/ : 单元测试
+
+dev.php : 开发环境（包括开发、测试、预发布）swoole_server 配置
+
+produce.php : 生产环境 swoole_server 配置
+
+easyswoole : 服务启动/停止/重启脚本
+
+EasySwooleEvent.php : 全局事件
+
+
 
 
 
