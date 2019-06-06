@@ -59,16 +59,84 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 4. 执行 `php vendor/bin/wecarswoole install` 安装 WecarSwoole 框架
 5. 完成！
 
-##### 注意
+**注意**
 
 > 1. 由于我们目前没有私有 composer 仓库，故上面的配置文件采用 vcs 仓储模式加载组件，包括以后开发的新组建也要将 gitlab 地址加入到这里面（必须加入到项目的 composer.json 中，加入到下级组件的 composer.json 是无效的）；
 >
 > 2. 当搭建了私有 composer 仓库后，可以删掉这些 `vcs`  配置，只需将 `packagist` 项改成我们自己的私有仓库地址即可；
-> 3. 
+> 3. 由于对 EasySwoole 框架做了修改（增加依赖注入能力），故使用我们内部的克隆版；
+> 4. 当执行 composer 命令出错时（如 install、update 等），请在后面加 -vvv 查看详细信息（如 composer install -vvv）；
+> 5. 项目不要提交 vendor 目录到 git 中；
+> 6. 关于国内镜像： https://packagist.phpcomposer.com 没人维护了，现在用了 https://packagist.laravel-china.org，虽然 Laravel China 声称会长期维护，不过不可保证，可考虑搭建内部 composer 库；
 
-#### 目录结构：
 
-参照 laravel 目录结构设计
+
+### 在现有项目上开发
+
+- 根据前面步骤创建项目并提交后，其他人 clone 下来执行 `composer install` 即可。
+- 生产环境部署：部署平台（如 walle）需要增加指令：`composer install`，该指令会根据 composer.lock 文件信息安装指定版本的库。
+- **不要在生产环境执行 `composer update`！**
+- **不要每个开发人员随便在本地执行 `composer update`！**
+- 一句话：**谨慎执行 `composer update`**，因为 composer update 指令会根据 composer.json 中的版本配置信息获取符合版本约束的最新代码并更新 composer.lock 文件，如果每个开发人员都去执行 composer update，那么 composer.lock 文件会频繁变动，造成不稳定，可能会出现莫名其妙的问题。
+
+
+
+### 给项目引入新的包
+
+1. 团队中某个成员在项目根目录下执行：`composer require vendor/package_name`，如 `composer require monolog/monolog ` ；
+2. 提交到 gitlab；
+3. 其他人 `git pull --rebase` 并执行 `composer install` 安装新的包；
+4. 开发完成，发布；
+
+
+
+### 更新包文件
+
+1. 团队中某个成员在项目根目录下执行 `composer update vendor/package_name`，如 `composer update monolog/monolog`；
+2. 提交到 gitlab；
+3. 其他人 `git pull --rebase` 并执行 `composer install` 安装新的包；
+4. 开发完成，发布；
+
+> 注意：不要执行 `composer update` 一次更新所有包，要更新哪个就更新哪个。
+
+
+
+### 语义化版本控制
+
+使用 composer 做依赖管理时（包括我们自己开发 composer 包），需要遵循语义化版本控制：
+
+版本格式：**主版本号.次版本号.修订号**，版本号递增规则如下：
+
+1. **主版本号**：当你做了**不兼容**的 API 修改；
+2. **次版本号**：当你做了**向下兼容的功能性新增**；
+3. **修订号**：当你做了**向下兼容的问题修正**；
+
+更多信息请参见 [语义化版本控制](https://semver.org/lang/zh-CN/)
+
+> 即是说，我们的包向外只是发布之后，不能随便修改其内容，一旦修改，就需要同时增加新的版本号（打 tag），版本号命名需遵循以上约束。
+
+
+
+以上几点是 composer 的常见使用方式，大家记住最重要的一点：**谨慎执行任何导致 composer.lock 文件发生变化的操作指令（如update，require 等）**，因为一旦 composer.lock 发生变化并发布生产，生产环境将应用这些变化。
+
+
+
+### 目录结构：
+
+project_root
+
+​	app
+
+​	config
+
+​	storage
+
+​	vendor
+
+
+
+
+
 - app 项目程序目录。该目录下的子目录和文件名都开头大写。
     - Bean  DTO（数据传输对象）放置在此。
             数据传输对象不属于领域层对象，属于用例维度对象（即属于应用层的东西），一般可以定义Bean对象来实现用例查询优化
