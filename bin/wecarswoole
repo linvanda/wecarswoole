@@ -43,6 +43,9 @@ if ($args[0] === 'install') {
     // 将 template 中的文件拷贝到项目根目录
     deepCopyFile(TEMPLATE_ROOT, WECARSWOOLE_ROOT);
 
+    // 增加 .gitignore
+    rename(WECARSWOOLE_ROOT . '/.gitignore_sample', WECARSWOOLE_ROOT . '/.gitignore');
+
     // 生成锁
     touch($lockFile);
 }

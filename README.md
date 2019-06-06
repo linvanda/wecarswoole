@@ -1,8 +1,70 @@
 WecarSwoole
 ----
-#### 简介
+### 简介
 
 WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开发框架。
+
+[EasySwoole 使用说明](http://www.easyswoole.com)
+
+
+
+### 环境要求
+
+- PHP >= 7.2
+
+- Swoole >= 4.3.0
+
+- phpredis 扩展
+
+  > php.ini 配置文件需加入 `redis.pconnect.pooling_enabled=1` 开启 phpredis 连接池
+
+
+
+### 创建新项目
+
+1. 创建项目目录 myproject;
+
+2. cd myproject 并创建 `composer.json`，加入以下代码：
+
+   ```json
+   {
+       "name": "wechar/myproject",
+       "description": "your project description",
+       "type": "project",
+       "require": {
+           "framework/wecarswoole": "dev-master"
+       },
+       "repositories": {
+           "0": {
+               "type": "vcs",
+               "url": "https://gitlab4.weicheche.cn/framework/wecarswoole.git"
+           },
+           "1": {
+               "type": "vcs",
+               "url": "https://gitlab4.weicheche.cn/dev/locker.git"
+           },
+           "2": {
+               "type": "vcs",
+               "url": "https://gitlab4.weicheche.cn/dev/mysql.git"
+           },
+           "packagist": {
+               "type": "composer",
+               "url": "https://packagist.laravel-china.org"
+           }
+       }
+   }
+   ```
+
+3. 执行 `composer install`
+4. 执行 `php vendor/bin/wecarswoole install` 安装 WecarSwoole 框架
+5. 完成！
+
+##### 注意
+
+> 1. 由于我们目前没有私有 composer 仓库，故上面的配置文件采用 vcs 仓储模式加载组件，包括以后开发的新组建也要将 gitlab 地址加入到这里面（必须加入到项目的 composer.json 中，加入到下级组件的 composer.json 是无效的）；
+>
+> 2. 当搭建了私有 composer 仓库后，可以删掉这些 `vcs`  配置，只需将 `packagist` 项改成我们自己的私有仓库地址即可；
+> 3. 
 
 #### 目录结构：
 
@@ -26,7 +88,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
     - Tasks 异步任务，需要继承`\EasySwoole\EasySwoole\Swoole\Task\AbstractAsyncTask`
       [参见](http://www.easyswoole.com/Manual/3.x/Cn/_book/BaseUsage/async_task.html)
     - Domain 业务领域逻辑，编写具体的业务逻辑，这里面的类包含但不限于：实体、值对象、领域服务、仓储、领域事件。里面的文件按模块自由组织。
-        
+      
         - Events 领域事件
     - Util 项目私有但辅助类/函数。注意：公共辅助类请使用 Composer 库。
     - Exceptions 异常定义类
