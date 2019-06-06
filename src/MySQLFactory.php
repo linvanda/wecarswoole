@@ -4,11 +4,11 @@ namespace WecarSwoole;
 
 use WecarSwoole\Exceptions\ConfigNotFoundException;
 use EasySwoole\EasySwoole\Config;
-use Devar\MySQL\Connector\CoConnectorBuilder;
-use Devar\MySQL\Connector\DBConfig;
-use Devar\MySQL\Pool\CoPool;
-use Devar\MySQL\Query;
-use Devar\MySQL\Transaction\CoTransaction;
+use Dev\MySQL\Connector\CoConnectorBuilder;
+use Dev\MySQL\Connector\DBConfig;
+use Dev\MySQL\Pool\CoPool;
+use Dev\MySQL\Query;
+use Dev\MySQL\Transaction\CoTransaction;
 
 /**
  * MySQL 查询器工厂，组装查询器
