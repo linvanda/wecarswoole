@@ -1,6 +1,6 @@
 WecarSwoole
 ----
-### 简介
+###简介
 
 WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开发框架。
 
@@ -94,7 +94,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 ### 更新包文件
 
-1. 团队中某个成员在项目根目录下执行 `composer update vendor/package_name`，如 `composer update monolog/monolog`；
+1. 团队中某个成员在项目根目录下执行 `composer update vendor/package_name`，如 `composer update framework/wecarswoole`；
 2. 提交到 gitlab；
 3. 其他人 `git pull --rebase` 并执行 `composer install` 安装新的包；
 4. 开发完成，发布；
@@ -246,11 +246,22 @@ EasySwooleEvent.php : 全局事件
 
   [领域驱动设计分层模型](https://www.jianshu.com/p/c405aa19a049)
 
+![分层](./readme/layer.jpg)
+
 
 
 ### 框架中的分层说明
 
-- **表示层 + 应用层**：框架并没有对表示层和应用层做严格的划分。严格来说，表示层诸如 web（h5、json等）、web socket等客户端需要的数据格式以及提供的输入由表示层作转换处理，然后交由应用层，且多个表示层可以共用同一个应用层。我们的框架中路由+Controller 完成表示层+应用层的工作（不光如此，其他类型的 handle 如事件订阅者也兼顾表示层和应用层的工作）。框架处于复杂性考虑没有引入应用服务的概念，不过熟悉 DDD 的话根据实际需要可以自行引入。
+- **表示层 + 应用层**：框架并没有对表示层和应用层做严格的划分，后面提到**应用层**也是指部分表示层+应用层。严格来说，表示层诸如 web（h5、json等）、web socket等客户端需要的数据格式以及提供的输入由表示层作转换处理，然后交由应用层，且多个表示层可以共用同一个应用层。我们的框架中路由+Controller 完成表示层+应用层的工作（不光如此，其他类型的 handle 如事件订阅者也兼顾表示层和应用层的工作）。框架处于复杂性考虑没有引入应用服务的概念，不过熟悉 DDD 的话根据实际需要可以自行引入。
+
+  框架中的应用层：
+
+  - Cron/：定时任务；
+  - Http/: http api (路由、控制器)；
+  - Subscribers/: 事件订阅者；
+  - Tasks/: 异步任务；
+
+  应用层应当尽可能简单，不能写业务逻辑（业务逻辑要写在 Domain 中），主要是用来定义用例维度的**任务**（如用户注册）。
 
 - **领域层**。放在 Domain/ 目录中。这里放具体的业务逻辑代码，属于系统核心。Domain/ 底下可根据实际需要自由创建目录，自由组织代码。不过根据 DDD 通行做法，会分成以下几大概念：
 
@@ -290,11 +301,64 @@ EasySwooleEvent.php : 全局事件
 
 ### 调用关系图解
 
-[]
+![调用关系](./readme/invoke.jpg)
+
+
+
+##### 说明
+
+- 应用层的控制器/处理器调用领域层的 Service 处理任务；
+- 应用层的控制器/处理器调用仓储 Repository 直接查询数据（针对那种不需要业务逻辑处理的数据展示，我们可以在控制器中直接调用仓储，返回需要的 DTO 对象，此乃**用例查询优化**）；
+- Service 可以调用另一个 Service；
+- Service 可以调用实体 Entity 来实现功能；
+- Service 可以调用仓储获得 Entity；
+- Entity 可以调用其它 Entity；
+- Entity 可以发布事件供外围程序处理；
+
+
+
+### 使用详解
+
+----
+
+#### Http 路由
+
+- 系统对外暴露的所有接口都要进行显式的路由定义；
+- 定义文件：app/Http/Routes/ 中定义，如 User.php 定义用户相关路由；
+- 路由类需继承 `WecarSwoole\Http\Route` 抽象类并实现 map() 方法定义具体路由，使用 get、post、put、delete 定义 Restful API 接口；
+
+#### 路由中间件
+
+可以添加中间件进行路由信息拦截，如用来做鉴权。如果中间件抛出异常，则终止请求执行，返回错误给用户。
+
+- 在 app/Http/Middlewares/ 中创建中间件类，需实现 `\WecarSwoole\Middleware\IRouteMiddleware` 接口（并实现其 `handle(Request $request, Response $response)` 方法）;
+- 在路由类的构造函数中调用 `$this->setMiddleware(array $middlewareNameList)` 给路由添加中间件，参数为中间件类名。该做法会让该路由类以及继承该路由类的路由全部应用该中间件；
+- 还可以针对单独的路由添加中间件：在调用 get、post、put、delete 方法设置路由时第三个参数可以传入中间件列表，格式同上；
+
+实践：设置两个路由指向同一个控制器，这两个路由一个暴露给公司内部，一个暴露给外部第三方，两者使用不同的鉴权机制，而实现的功能相同（因而使用同一个控制器）。可以创建两个路由父类，两者使用不同的鉴权中间件，一个对内，一个对外，所有内部 api 都继承对内的那个父类，对外 api 则继承另一个。
+
+> 注意：不要在路由中间件中修改 $request 的数据结构，因为多个路由可能指向同一个控制器，如果在路由中修改请求数据结构，会导致同一个控制器从不同的路由接收到的数据结构不一致，导致潜在问题。
+
+
+
+#### 控制器
+
+严格来说叫 Http 控制器。目录：`app/Http/Controllers/$version`。
+
+控制器属于**处理器**的一种，属于应用层程序，因而控制器中不能写业务逻辑，通过调用 Domain 层实现业务处理。
+
+
+
+
+
+
+
+
 
 
 
 - app 项目程序目录。该目录下的子目录和文件名都开头大写。
+    
     - Bean  DTO（数据传输对象）放置在此。
             数据传输对象不属于领域层对象，属于用例维度对象（即属于应用层的东西），一般可以定义Bean对象来实现用例查询优化
         
@@ -332,12 +396,16 @@ EasySwooleEvent.php : 全局事件
     - AppService 应用服务
     
     - Subscribers 事件订阅者（所属层次同 Controller，属于处理程序，应用层）
+    
 - tests 单元测试目录，和 app目录结构相同。一般要重点针对 Domain 编写单元测试。
+
 - config 配置文件目录
+
 - storage   文件生成目录
     - app   项目生成或使用的文件
     - cache 本地缓存目录
     - logs  日志目录
+    
 - vendor composer 包安装目录，需加入.gitignore 中
 
 #### 有别于传统 MVC 的分层设计（DDD 推荐的划分方式）：
