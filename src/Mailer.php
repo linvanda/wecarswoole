@@ -1,6 +1,7 @@
 <?php
 
 namespace WecarSwoole;
+
 use WecarSwoole\Tasks\SendMail;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\EasySwoole\Swoole\Task\TaskManager;

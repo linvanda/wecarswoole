@@ -131,6 +131,15 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 
 
+### 系统设计要点
+
+- 可扩展性
+- 容易和第三方系统对接
+- 可测试
+- 遵循 PSR 规范
+
+
+
 ### 目录结构
 
 - project_root
@@ -273,7 +282,7 @@ EasySwooleEvent.php : 全局事件
 
 - **领域层**。放在 Domain/ 目录中。这里放具体的业务逻辑代码，属于系统核心。Domain/ 底下可根据实际需要自由创建目录，自由组织代码。不过根据 DDD 通行做法，会分成以下几大概念：
 
-  - Service（服务)。全称是**领域服务**(相对于应用服务)。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当保持简单（即自己不实现业务细节，而是通过调用、组织其他类来实现功能），而且是无状态的（即 Service 不能在属性中保存业务状态信息）。
+  - Service（服务)。全称是**领域服务**(相对于应用服务)。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当保持简单（即自己不实现业务细节，而是通过调用、组织其他类来实现功能），而且是**无状态的**（即 Service 不能在属性中保存业务状态信息）。
 
     另一个常见的 Service 是外部接口调用，如调用外部的积分系统，此时一般我们会创建一个单独的 Service 封装接口调用。
 
@@ -285,7 +294,7 @@ EasySwooleEvent.php : 全局事件
 
   - Domain Event（领域事件）。在领域对象中触发的事件。一般我们采用事件来接耦非主流业务，保持主流程的清晰简洁。
 
-  - Repository（仓储）。实现 Entity 的存取。仓储是领域模型和数据存储（基础设施）之间的桥梁，它知晓领域类的细节以及数据存储的细节。一般地，在 Domain/ 中定义 Repository 接口，而在基础设施中定义实现，然后通过依赖注入来使用。
+  - Repository（仓储）。实现 Entity 的存取。仓储是领域模型和数据存储（基础设施）之间的桥梁，它知晓领域类的细节以及数据存储的细节。一般地，在 Domain/ 中定义 Repository 接口，而在基础设施中定义实现，然后通过依赖注入来使用。仓储也应该是**无状态**的。
 
   - **领域层**简化版：
 
@@ -301,7 +310,7 @@ EasySwooleEvent.php : 全局事件
     - 领域层的代码应当是可测试的（单元测试）；
     - 领域层对其他层的依赖应当通过依赖注入实现，而不能在领域层直接 new 其他层的对象；
     - 领域层和其他层通信一般是基于接口的（面向接口编程）；
-    - 不应当在领域层出现 $_SESSION 这样的全局变量调用；
+    - 不要在领域层直接使用 Session、Request、Response、Cookie、Header、Container、DI、Config 等全局变量和框架相关的东西，保证业务逻辑代码是框架无关的而且是可测试的；
 
 - **基础设施层**。提供诸如 DB、Cache、SESSION 等业务无关的基础支持。
 
@@ -332,8 +341,38 @@ EasySwooleEvent.php : 全局事件
 #### Http 路由
 
 - 系统对外暴露的所有接口都要进行显式的路由定义；
+
 - 定义文件：app/Http/Routes/ 中定义，如 User.php 定义用户相关路由；
+
 - 路由类需继承 `WecarSwoole\Http\Route` 抽象类并实现 map() 方法定义具体路由，使用 get、post、put、delete 定义 Restful API 接口；
+
+  例：
+
+  ```php
+  namespace App\Http\Routes;
+  
+  use App\Foundation\Http\Route;
+  
+  class Users extends Route
+  {
+      public function map()
+      {
+          // 添加用户
+          $this->post('/v1/users', '/V1/Users/add');
+          // 用户-商户关系绑定
+          $this->post('/v1/merchants/{merchant}/users/{uid}', '/V1/MerchantUsers/bind');
+          // 修改用户信息
+          $this->put('/v1/users/{uid}', '/V1/Users/edit');
+          // 查询用户信息
+          $this->get('/v1/users/{uid}', '/V1/Users/info');
+          // 查询商户-用户列表
+          $this->get('/v1/merchants/{merchant}/users', '/V1/MerchantUsers/getUsers');
+          // 合并用户
+          $this->post('/v1/users/merge', '/V1/Merge/mergeUsers');
+          $this->delete('/v1/users/{uid}', 'V1/Users/delete');
+      }
+  }
+  ```
 
 #### 路由中间件
 
@@ -363,8 +402,11 @@ EasySwooleEvent.php : 全局事件
 - 控制器中除了对外暴露的接口，不要写 public 方法；
 - **控制器中禁止写 private 属性，必须为 protected 的**。因为框架使用了对象池技术，每次请求结束后的清理程序无法清理 private 属性，从而 priate 属性值会保留到后面的请求，从而造成污染；
 - 禁止在基类控制器对外暴露 api。基类控制器要保持尽可能简单；
-- 可以使用依赖注入从控制器的构造函数注入 Service、Repository 等。
+- 禁止在控制器中使用静态属性（静态属性不会在每次请求后重置，会造成数据混乱）；
+- 构造器中一定要在最后（而不是前面）再调用 parent::__construct()，否则后续请求无法访问这里面设置的属性；
+- 建议使用依赖注入从控制器的构造函数注入 Service、Repository 等。
 - 注意：通过依赖注入注入的依赖仅仅会创建一次，由于使用了对象池技术，后续会复用这些对象。因而，**依赖注入并赋值给控制器属性的对象必须是无状态的（如仓储、服务等）**，否则会造成混乱。
+- 控制器是有版本控制的，但 Domain 没有，Domain 一般需要保持业务一致性。
 - 目前的基类控制器提供的便捷方法：
   - `$this->params($key = null)`：获取输入参数，不分请求方式（POST、GET 等）；
   - `$this->container()`：获取符合 PSR 规范的 IoC 容器；
@@ -380,7 +422,29 @@ EasySwooleEvent.php : 全局事件
 
 可以在领域对象（领域服务、实体）中发布领域事件，实现观察者模式解耦非核心业务逻辑。
 
-- 定义事件类：在 app/Domain/Events/ 中定义，需继承 `Symfony\Contracts\EventDispatcher\Event`；
+- 定义事件类：在 app/Domain/Events/ 中定义，需继承 `Symfony\Contracts\EventDispatcher\Event`，如：
+
+  ```php
+  namespace App\Domain\Events;
+  
+  use App\Domain\User\User;
+  use Symfony\Contracts\EventDispatcher\Event;
+  
+  class UserAddedEvent extends Event
+  {
+      private $user;
+  
+      public function __construct(User $user)
+      {
+          $this->user = $user;
+      }
+  
+      public function getUser(): User
+      {
+          return $this->user;
+      }
+  }
+  ```
 
 - 发布事件：
 
@@ -421,128 +485,363 @@ EasySwooleEvent.php : 全局事件
 
 行业实践上，分成仓储接口和仓储实现，在 Domain/ 中定义仓储接口（如 `IUserRepository`），在 Foundation/Repository/ 中定义具体实现（如 `MySQLUserRepository`）。Domain/ 中只依赖于接口，不依赖实现，这样好处是后面可以随意更改实现（如换成 MongoDB）。
 
-框架默认使用的是 MySQL 实现，在 `config/di.php` 中定义：   `'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository')`，这里要求接口所在的目录结构和Foundation/Repository/ 目录结构一致。如果需要更改实现，需在此处配置（注意放到这条之前，否则不会用到。具体参见 [PHP-DI](http://php-di.org)）。
+框架默认使用的是 MySQL 实现，在 `config/di.php` 中定义：   `'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository')`，这里要求接口所在的目录结构和Foundation/Repository/ 目录结构一致，且命名需符合规范（将 I 替换成 MySQL，其它不变）。如果需要更改实现，需在此处配置（注意放到这条之前，否则不会用到。具体参见 [PHP-DI](http://php-di.org)）。
+
+- 仓储接口定义：一般直接放在 app/Domain/$module/ 下面（对于复杂的模块也可以定义专门子目录）：
+
+  ```php
+  interface IUserRepository
+  {
+      /**
+       * 添加用户
+       * @param User $user
+       * @return int|bool 成功返回 uid，失败返回 false
+       */
+      public function add(User $user);
+  
+      /**
+       * 根据 uid 获取用户
+       * @param int $uid
+       * @return User
+       */
+      public function getById(int $uid): ?User;
+  }
+  ```
+
+- 仓储实现：一般放在 app/Foundation/Repository/$module/ 下面（对应上面的目录结构）：
+
+  ```php
+  class MySQLUserRepository extends MySQLRepository implements IUserRepository
+  {
+      /**
+       * 添加用户
+       * @param User $user
+       * @return int|bool 成功返回 uid，失败返回 false
+       */
+      public function add(User $user)
+      {
+          $this->query->insert('users')->values([
+              [
+                  'name' => $user->name,
+                  'phone' => $user->phone,
+                  'nickname' => $user->nickname,
+              ]
+          ])->execute();
+  
+          return $this->query->lastInsertId();
+      }
+  
+      /**
+       * 根据 uid 获取用户
+       * @param int $uid
+       * @return User
+       * @throws \App\Exceptions\PropertyNotFoundException
+       * @throws \App\Exceptions\InvalidOperationException
+       */
+      public function getById(int $uid): ?User
+      {
+          $userInfo = $this->query->select('*')->from('users')->where(['uid' => $uid])->one();
+  
+          if ($userInfo) {
+              $user = new User($userInfo['phone'], $userInfo['name'], $userInfo['nickname']);
+              $user->setId($userInfo['uid']);
+              return $user;
+          }
+  
+          return null;
+      }
+  }
+  ```
+
+- 仓储方法入参可接收类型：Entity 类型、基本数据类型；
+- 仓储方法返回参数：Entity 类型、基本数据类型、DTO；
 
 
 
-- app 项目程序目录。该目录下的子目录和文件名都开头大写。
-    
-    - Bean  DTO（数据传输对象）放置在此。
-            数据传输对象不属于领域层对象，属于用例维度对象（即属于应用层的东西），一般可以定义Bean对象来实现用例查询优化
-        
-    - Console   控制台控制器（一般做命令行客户端交互程序）
-    
-    - Http  Http 请求处理组件（对外提供 Restful API 服务）
-        - Controllers Http 控制器。建议按模块组织存放
-            - V1 版本控制
-                - $moduleDirs 具体的模块目录，如果项目比较小，可以先不划分模块
-        - Routes Http 路由配置，建议按模块组织存放。在这里面定义路由规则。
-                通过添加路由中间件可实现诸如鉴权、数据处理等功能。
-                （为何不在基类控制器中做：我们尽量保证控制器的简单；另外，一个控制器可以对应多个路由，这样对不同对路由添加不同对中间件可以实现在同一个控制器上实现不同对鉴权方式等灵活实现）
-        - Middleware 中间件
-        
-    - Cron 定时任务，需要继承 `EasySwoole\EasySwoole\Crontab\AbstractCronTask`
-      [参见](http://www.easyswoole.com/Manual/3.x/Cn/_book/BaseUsage/crontab.html)
-      
-        > 注意：多个定时任务的 taskName 不能重复，否则会相互覆盖
-      
-    - Tasks 异步任务，需要继承`\EasySwoole\EasySwoole\Swoole\Task\AbstractAsyncTask`
-      [参见](http://www.easyswoole.com/Manual/3.x/Cn/_book/BaseUsage/async_task.html)
-      
-    - Domain 业务领域逻辑，编写具体的业务逻辑，这里面的类包含但不限于：实体、值对象、领域服务、仓储、领域事件。里面的文件按模块自由组织。
-      
-        - Events 领域事件
-        
-    - Util 项目私有但辅助类/函数。注意：公共辅助类请使用 Composer 库。
-    
-    - Exceptions 异常定义类
-    
-    - Process 自定义进程
-    
-    - Foundation 基础设施，如事件总线，数据库驱动，缓存驱动等。一般 Foundation 会抽离成单独的 Composer 包，各项目的 Foundation 用来做必要的包装。
-    
-    - AppService 应用服务
-    
-    - Subscribers 事件订阅者（所属层次同 Controller，属于处理程序，应用层）
-    
-- tests 单元测试目录，和 app目录结构相同。一般要重点针对 Domain 编写单元测试。
+#### 定时任务
 
-- config 配置文件目录
+同 linux 的 Crontab。定时任务需要依赖 Redis（实现在分布式情况下仅有一台开启定时任务）。
 
-- storage   文件生成目录
-    - app   项目生成或使用的文件
-    - cache 本地缓存目录
-    - logs  日志目录
+- 类创建。在 app/Cron/ 下面创建定时任务处理程序类：
+
+  ```php
+  namespace App\Cron;
+  
+  use EasySwoole\EasySwoole\Crontab\AbstractCronTask;
+  
+  class Test extends AbstractCronTask
+  {
+      public static function getRule(): string
+      {
+          return '*/1 * * * *';
+      }
+  
+      public static function getTaskName(): string
+      {
+          return 'test cron';
+      }
+  
+      static function run(\swoole_server $server, int $taskId, int $fromWorkerId, $flags = null)
+      {
+          echo "test cron run logic\n";
+      }
+  }
+  ```
+
+- 在 config/cron.php 中配置：
+
+  ```php
+  return [
+      // 定时任务项目名，同名的多台服务器只会有一台启动定时任务，请务必给不同项目起不同的名字，否则会相互影响
+      'name' => 'user-center-platform',
+      // crontab 需要 redis
+      'redis' => 'main',
+      'tasks' => [
+          \App\Cron\Test::class
+      ]
+  ];
+  ```
+
+> 注意：定时任务同 Controller 一样也是**处理程序**，不能在里面直接写业务逻辑，业务逻辑同样需要在 Domain/ 中实现。
+
+
+
+####异步任务
+
+一些耗时的操作可以用异步任务后台处理。
+
+-  定义：在 app/Tasks/ 下定义：
+
+  ```php
+  namespace App\Tasks;
+  
+  use App\Foundation\Mailer;
+  use EasySwoole\EasySwoole\Swoole\Task\AbstractAsyncTask;
+  
+  /**
+   * 邮件发送异步任务
+   * Class SendMail
+   * @package App\Tasks
+   */
+  class SendMail extends AbstractAsyncTask
+  {
+      /**
+       * @param array $taskData 数据：['host' => '', 'username' => '', 'password' => '', 	   'message'=> $object],其中 message 为 \Swift_Message类型，必填，其它选填
+       * @param $taskId
+       * @param $fromWorkerId
+       * @param null $flags
+       * @return mixed
+       * @throws \Exception
+       */
+      protected function run($taskData, $taskId, $fromWorkerId, $flags = null)
+      {
+          if (!$taskData['message'] || !$taskData['message'] instanceof \Swift_Message) {
+              throw new \Exception("邮件内容非法，必须为 \Swift_Message 类型");
+          }
+          $mailer = Mailer::getSwiftMailer($taskData['host'] ?? '', $taskData['username'] ?? '', $taskData['password'] ?? '');
+          return $mailer->send($taskData['message']);
+      }
+  
+      protected function finish($result, $task_id)
+      {
+          // nothing
+      }
+  }
+  ```
+
+- 投递：
+
+  ```php
+  use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
+  ...
+  TaskManager::async(new SendMail([...]));
+  ```
+
+
+
+#### 外部 API 调用
+
+- 配置 Server。在 config/env/$env.php 中定义：
+
+  ```php
+  return [
+      'server' => [
+          'OL' => [
+              'name' => '油号',
+              'servers' => [
+                  ['url' => 'http://192.168.85.201:8081', 'weight' => 100],
+              ],
+          ],
+      ]
+  ];
+  ```
+
+- 配置 api。在 config/api/ 中定义。如：
+
+  api.php:
+
+  ```php
+  return [
+      // 默认配置，如签名器、加密算法、数据格式等配置，这些配置都可以在各自 api 配置中覆盖（其中某些配置仅 http 协议适用）
+      'config' => [
+          // 请求协议
+          'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
+          // 当前项目 app_id
+          'app_id' => 17200,
+          // http 协议请求默认配置
+          'http' => [
+              // 服务器地址解析器，必须是 IHttpServerParser 类型
+              'server_parser' => \App\Foundation\Client\Http\Component\DefaultHttpServerParser::class,
+              // 请求参数组装器
+              'request_assembler' => \App\Foundation\Client\Http\Component\DefaultHttpRequestAssembler::class,
+              // 响应参数解析器
+              'response_parser' => \App\Foundation\Client\Http\Component\JsonResponseParser::class,
+              // 请求发送前的拦截器(尚未实现)
+              'before_handle' => [],
+              // 收到响应后的拦截器（尚未实现）
+              'after_handle' => [],
+              // https ssl 相关配置
+              'ssl' => [
+                  // CA 文件路径
+                  'cafile' => '',
+                  // 是否验证服务器端证书
+                  'ssl_verify_peer' => false,
+                  // 是否允许自签名证书
+                  'ssl_allow_self_signed' => true
+              ]
+          ],
+      ],
+      // 组
+      'wc' => include __DIR__ . '/weicheche.php',
+  ];
+  ```
+
+  weicheche.php:
+
+  ```php
+  return [
+      // 组公共配置，可覆盖 api.php 中的公共配置
+      'config' => [
+          'http' => [
+  
+          ]
+      ],
+      // api 定义
+      'api' => [
+          'user.coupon.info' => [
+              'desc' => '获取用户券信息',
+              'server' => 'CP',// 可以是简写的，也可以是完整写法如 https://coupon.weicheche.cn,也可以是数组(从中取一个)
+              // path 的格式支持占位符，如 users/{uid}，group/{?group_id} (?表示可选)，使用时根据传参替换
+              'path' => '/usercoupons/getUserCoupons',
+              'method' => 'POST', // http 协议下，请求方式
+              'protocol' => 'http',
+          ],
+          'merchant.users.list' => [
+              'desc' => '获取商户用户列表',
+              'server' => 'UC',
+              'path' => '/v1/merchants/{merchant}/users',
+              'method' => 'GET',
+          ],
+          'users.add' => [
+              'desc' => '添加用户',
+              'server' => 'http://localhost:9501',
+              'path' => '/v1/users',
+              'method' => 'GET',
+          ]
+      ]
+  ];
+  ```
+
+- 调用：
+
+  ```php
+  use WecarSwoole\Client\Client;
+  ...
+  $result = Client::call('wc:users.add', $reqData);
+  var_export($result->getBody());
+  ```
+
+- Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议），api 具体用的什么协议是在配置文件中配置的，调用的时候不用管。
+- 支持针对不同的分组或者单个 api 配置不同的请求参数组装器和响应参数解析器，者对于和第三方合作是很有用的，比如我们可以针对不同的第三方配置不同的分组，这些分组有各自的组装器和解析器实现。
+- 系统对自身的 api 调用也需要在此处配置。
+- 有待实现：
+  - 请求前后拦截器；
+  - 请求重试机制；
+  - 支持异步（task）调用；
+
+#### 
+
+### 框架中用到的一些组件
+
+- **Cache**: EasySwoole 没有提供缓存组件，项目使用 symfony/cache 的 PSR-16 规范的 SimpleCache。
+
+- **Redis**: 项目没有使用 EasySwoole 的 RedisPool，而是使用 phpredis 扩展自带的连接池。
     
-- vendor composer 包安装目录，需加入.gitignore 中
-
-#### 有别于传统 MVC 的分层设计（DDD 推荐的划分方式）：
-- 表示层。展示UI/数据、接收用户的输入，直接和用户打交道（用户可能是人也可能是其他系统）。如前端。
-- 应用层。从用户的维度定义系统需要完成的**任务**。应用层只定义任务，不负责具体实现。如这里的 Console、Http、Cron（实际上它们也承担了部分表示层职责）。
-- 领域层。业务逻辑的具体实现。应用层调用领域层实现具体的任务。这里的 Domain目录下的代码。
-- 基础设施层。提供诸如 DB、Cache、SESSION 等业务无关的基础支持。
-
-[参考文章](https://kb.cnblogs.com/page/112298/)
-
-#### 目录划分说明：
-- 大体分为几类：
-    - 表示层 + 应用层：Console、Cron、Http等，对外提供不同的接口（命令行、定时任务、Http API），属于"处理器"，这里不应写具体的业务逻辑。
-    - 领域层：Domain。这里放具体的业务逻辑代码，属于系统核心。注意这里侵入其他层代码（如应用层的 SESSION、Cookie 等。仓储除外，因为仓储本身是和存储层密切相关的）。
-    - 基础设施层：Utils。提供非业务领域的基础设施支持（此处仅列类Utils，因为像 Email、DB等都是通过 Composer 包安装的）。
-- 缺失的 Model：
-    由于 Model 的具体含义有分歧，容易被乱用，实际中大部分时候被用作 ORM 和 DTO，并非真正意义上的"对象"（起的是数据结构作用），因而我们并没有引入 Model 的概念，而是引入 DDD 设计中的**仓储**概念。
-- 缺失的 Logic:
-    Logic 一词同样含义模糊（一切皆逻辑），而且实际使用中过于扁平化，导致代码过于臃肿。取而代之，我们引入更加具有含义、更具纵深、更加灵活的 DDD 中的**Domain**概念（业务领域），让开发者根据实际情况自己组织代码层次。
-- Domain: 业务逻辑具体实现。Domain 里面主要包含
-    - Domain Service。领域服务，聚合领域对象的功能对应用层或其他领域服务提供粗粒度功能。
-    - Domain Object。狭义的领域对象，包括 Entity（实体）和 Value Object(值对象)，提供细粒度的单一职责实现。多个 Domain Object 可以聚合在一起提供一个比较完整的功能。
-    - Aggregate。聚合，简而言之就是一个或几个 Domain Object 组合在一起对外提供相对完整的功能。
-    - Repository。仓储，领域对象与数据存储之间的纽带。仓储接收 Aggregate 并存入存储层（如数据库），并根据查询条件从存储层查询数据并还原为 Aggregate。
-- 为何 Http/Controllers 下面有 V1 这样的版本划分？
-    Http/Controller 是系统最主要的对外 API，API 一旦定义则很难做不兼容修改（比如改个字段名，删掉某字段，改变字段含义等），因而可以采用版本控制，对外提供不同版本的 API(这也是为何 Restful API 的 uri 中包含版本的原因)。
-    不同与 API，Domain 不需要版本概念，因为 Web 产品一般只会演化而不会分版本。当然，会有定制化需求，可以采用其他方案处理。
-    
-
-#### 其它：
-- Cache: EasySwoole 没有提供缓存组件，项目使用 symfony/cache 的 PSR-16 规范的 SimpleCache。
-- Redis: 项目没有使用 EasySwoole 的 RedisPool，而是使用 phpredis 扩展自带的连接池。php.ini配置：
+    php.ini配置：
     extension=redis.so
     redis.pconnect.pooling_enabled=1 
-- Http Client: EasySwoole 自带的 http client 仅支持 get 和 post 请求，无法满足需求，故使用第三方库 swlib/saber （swoole 官方推荐）
-- 异常处理机制：遵循业界最主流的做法：抛出异常，而不是返回错误码。（遵循业务逻辑和错误处理分离原则）
-- 依赖注入：使用 [PHP-DI](http://php-di.org/doc/getting-started.html)
+    
+- **Http Client**: EasySwoole 自带的 http client 仅支持 get 和 post 请求，无法满足需求，故使用第三方库 swlib/saber （且在此基础上封装了 Client 统一使用模式）。
+
+- **异常处理机制**：遵循业界最主流的做法：抛出异常，而不是返回错误码。（遵循业务逻辑和错误处理分离原则）。
+
+- **依赖注入**：使用 [PHP-DI](http://php-di.org/doc/getting-started.html)
   附：[依赖注入最佳实践](http://php-di.org/doc/best-practices.html)
+  
     - 在控制器中使用注解注入依赖；
     - 其它类（如 Service）使用构造函数注入依赖（保证可重用性和可测试性）；
     - 不要在程序中使用 $container->get(...)，造成程序对容器对依赖；
     - 推荐使用接口类型提示，在 config 中配置接口对应的实现；
       （生产环境需要开启编译，每次发版的时候要重新编译，建议采用预编译），开发环境关闭编译
       不会编构造函数注入的和注解注入的，如果要优化这些，需要开启 cache(需要apcu扩展)
-- 开发实践：
-    - Controller 中保持简洁，不要在控制器中写业务代码；
-    - 不要在业务逻辑中直接获取/使用 Session、Request、Response、Cookie、Header、Container、DI、Config 等全局变量和框架相关的东西，保证业务逻辑代码是框架无关的而且是可测试的；
-- Controller
-    - 禁止使用静态属性
-    - 禁止使用私有属性（因为 EasySwoole 使用对象池技术，每次请求结束并不会重置私有属性，导致私有属性的修改影响后续请求）
-    - 构造器中一定要在最后（而不是前面）再调用 parent::__construct()，否则后续请求无法访问这里面设置的属性
-- 关于让 EasySwoole 支持 PHP-DI：需要修改 easyswoole/http 的 Dispatcher。
-  为了保证稳定性，需要fork easy-swoole/easyswoole 和 easy-swoole/http，修改里面的代码和依赖关系，使用fork版本
-- Repository 和 Service 不能有状态信息
-- 一般不要用 easyswoole stop force，从其实现来看，会造成僵尸进程
-- 日志：使用 monolog/monolog。不适用 easyswoole 自带的 Logger（不符合 PSR 规范，没有日志级别控制等）
-- email: 使用 SwiftMail 扩展
-- 事件：使用 symfony/event-dispatcher 扩展。[参考](https://symfony.com/doc/current/components/event_dispatcher.html)
+  
+- **日志**：使用 monolog/monolog。不使用 easyswoole 自带的 Logger（不符合 PSR 规范，没有日志级别控制等）。日志记录是异步的。
 
-#### 系统设计注意事项：
-- 扩展性
-- 容易和第三方系统对接（需要设计对接标准方案）
-- 可测试
-- 遵循 PSR 规范
+- **email**: 使用 SwiftMail 扩展。发送邮件是异步的。
 
-#### 工厂
+- **事件**：使用 symfony/event-dispatcher 扩展。[参考](https://symfony.com/doc/current/components/event_dispatcher.html)
+
+
+
+### 其它
+
+##### 缺失的 Model
+
+由于 Model 的具体含义有分歧，容易被乱用，实际中大部分时候被用作 ORM 和 DTO，并非真正意义上的"对象"（起的是数据结构作用），因而我们并没有引入 Model 的概念，而是引入 DDD 设计中的**仓储**概念。
+
+##### 缺失的 Logic
+
+Logic 一词同样含义模糊（一切皆逻辑），而且实际使用中过于扁平化，导致代码过于臃肿。取而代之，我们引入更加具有含义、更具纵深、更加灵活的 DDD 中的**Domain**概念（业务领域），让开发者根据实际情况自己组织代码层次。
+
+##### 为何 Http/Controllers 下面有 V1 这样的版本划分？
+
+Http/Controller 是系统最主要的对外 API，API 一旦定义则很难做不兼容修改（比如改个字段名，删掉某字段，改变字段含义等），因而可以采用版本控制，对外提供不同版本的 API(这也是为何 Restful API 的 uri 中包含版本的原因)。
+不同于 API，Domain 不需要版本概念，因为 Web 产品一般只会演化而不会分版本。当然，会有定制化需求，可以采用其他方案处理。
+
+##### 框架
+
+一般不要用 easyswoole stop force，从其实现来看，会造成僵尸进程。
+
+##### 工厂
+
 - MySQL、Redis、Email、Cache、Logger 等基础设施都有相应工厂来创建，工厂依赖于 EasySwoole（主要依赖于配置），并且将具体的基础设施扩展与 EasySwoole 框架隔离（即扩展本身不依赖于框架）。
-- 工厂返回的基础设施尽量符合 PSR 规范（如 Cache、Logger 等）
-- 虽然提供了工厂，但实际使用中不建议直接用工厂获取对象（工厂并不提供单例模式），项目中请用 IoC 注入（本项目用的是 PHP-DI，建议通过构造函数注入这些基础设施）
+- 工厂返回的基础设施尽量符合 PSR 规范（如 Cache、Logger 等）。
+- 虽然提供了工厂，但实际使用中不建议直接用工厂获取对象（工厂并不提供单例模式），项目中请用 IoC 注入（本项目用的是 PHP-DI，建议通过构造函数注入这些基础设施）。
 
 
-貌似国内镜像 https://packagist.phpcomposer.com 没人维护了，现在用了 https://packagist.laravel-china.org
+
+### 待实现：
+
+- webSocket 使用规范；
+
+- 单元测试引入；
+
+- 消息队列；
+
+- 接口调用：智能决定重试次数、熔断等；
+
+- 服务健康状态监控；
+
+- 请求执行日志；
+
+- 异步事件订阅；
