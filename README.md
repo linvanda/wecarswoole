@@ -1,6 +1,6 @@
 WecarSwoole
 ----
-###简介
+### 简介
 
 WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开发框架。
 
@@ -337,7 +337,7 @@ EasySwooleEvent.php : 全局事件
 
 #### 路由中间件
 
-可以添加中间件进行路由信息拦截，如用来做鉴权。如果中间件抛出异常，则终止请求执行，返回错误给用户。
+可以添加中间件进行路由信息拦截，如用来做鉴权（api鉴权、登录验证等）。如果中间件抛出异常，则终止请求执行，返回错误给用户。
 
 - 在 app/Http/Middlewares/ 中创建中间件类，需实现 `\WecarSwoole\Middleware\IRouteMiddleware` 接口（并实现其 `handle(Request $request, Response $response)` 方法）;
 - 在路由类的构造函数中调用 `$this->setMiddleware(array $middlewareNameList)` 给路由添加中间件，参数为中间件类名。该做法会让该路由类以及继承该路由类的路由全部应用该中间件；
@@ -347,6 +347,10 @@ EasySwooleEvent.php : 全局事件
 
 > 注意：不要在路由中间件中修改 $request 的数据结构，因为多个路由可能指向同一个控制器，如果在路由中修改请求数据结构，会导致同一个控制器从不同的路由接收到的数据结构不一致，导致潜在问题。
 
+#### Restful API
+
+建议使用 Restful 风格 api 定义。关于 Restful 请参见 [Restful API 最佳实践](http://www.ruanyifeng.com/blog/2018/10/restful-api-best-practices.html)
+
 
 
 #### 控制器
@@ -355,13 +359,69 @@ EasySwooleEvent.php : 全局事件
 
 控制器属于**处理器**的一种，属于应用层程序，因而控制器中不能写业务逻辑，通过调用 Domain 层实现业务处理。
 
+- 所有的控制器需继承 `WecarSwoole\Http\Controller`；
+- 控制器中除了对外暴露的接口，不要写 public 方法；
+- **控制器中禁止写 private 属性，必须为 protected 的**。因为框架使用了对象池技术，每次请求结束后的清理程序无法清理 private 属性，从而 priate 属性值会保留到后面的请求，从而造成污染；
+- 禁止在基类控制器对外暴露 api。基类控制器要保持尽可能简单；
+- 可以使用依赖注入从控制器的构造函数注入 Service、Repository 等。
+- 注意：通过依赖注入注入的依赖仅仅会创建一次，由于使用了对象池技术，后续会复用这些对象。因而，**依赖注入并赋值给控制器属性的对象必须是无状态的（如仓储、服务等）**，否则会造成混乱。
+- 目前的基类控制器提供的便捷方法：
+  - `$this->params($key = null)`：获取输入参数，不分请求方式（POST、GET 等）；
+  - `$this->container()`：获取符合 PSR 规范的 IoC 容器；
+  - `$this->return($data = [], int $status = 200, string $msg = '')`：返回 json 数据；
+
+对于命令类操作（需要修改数据的，涉及到业务逻辑的），一般是在控制器中注入并使用 Domain Service，对于查询类操作（仅获取数据用于展示，不涉及到多少业务逻辑处理的），一般可以在控制器中注入并使用 Repository，Repository 返回 DTO 对象，控制器中将 DTO 对象转成数组并格式化成 json 返回。
 
 
 
+#### 领域
 
+##### 领域事件
 
+可以在领域对象（领域服务、实体）中发布领域事件，实现观察者模式解耦非核心业务逻辑。
 
+- 定义事件类：在 app/Domain/Events/ 中定义，需继承 `Symfony\Contracts\EventDispatcher\Event`；
 
+- 发布事件：
+
+  - 依赖注入 `Psr\EventDispatcher\EventDispatcherInterface` （已经在 config/di/di.php 中配置其实现）；
+  - `$dispatcher->dispatch(new YourEvent(​...$params));`；
+
+- 订阅事件：
+
+  - 定义：在 app/Subscribers/ 目录中定义，需实现 `Symfony\Component\EventDispatcher\EventSubscriberInterface` 接口并实现 `getSubscribedEvents()` 方法，如：
+
+    ```php
+    public static function getSubscribedEvents()
+    {
+      return [
+        UserAddedEvent::class => [
+          ['initLevel'],
+          ['initCard']
+        ]
+      ];
+    }
+    
+    public function initLevel(UserAddedEvent $event)
+    {
+      echo "初始化用户等级。用户:" . $event->getUser()->getId() ."\n";
+    }
+    
+    public function initCard(UserAddedEvent $event)
+    {
+      echo "初始化用户储值卡。用户:" . $event->getUser()->getId() ."\n";
+    }
+    ```
+
+注意：订阅者和控制器一样，属于**处理程序**，里面不应该写业务逻辑（业务逻辑还是要调 Domain/下面的类）。
+
+##### 仓储
+
+仓储是领域对象（实体）和存储设施（如 MySQL 数据库）之间的桥梁，它知道两方面内容：领域对象属性细节和存储细节。
+
+行业实践上，分成仓储接口和仓储实现，在 Domain/ 中定义仓储接口（如 `IUserRepository`），在 Foundation/Repository/ 中定义具体实现（如 `MySQLUserRepository`）。Domain/ 中只依赖于接口，不依赖实现，这样好处是后面可以随意更改实现（如换成 MongoDB）。
+
+框架默认使用的是 MySQL 实现，在 `config/di.php` 中定义：   `'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository')`，这里要求接口所在的目录结构和Foundation/Repository/ 目录结构一致。如果需要更改实现，需在此处配置（注意放到这条之前，否则不会用到。具体参见 [PHP-DI](http://php-di.org)）。
 
 
 

@@ -7,7 +7,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 
 return [
     // 仓储
-    'WecarSwoole\*\I*Repository' => \DI\create('\WecarSwoole\Repository\*\MySQL*Repository'),
+    'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository'),
     // 缓存
     CacheInterface::class => \DI\factory([CacheFactory::class, 'build']),
     // 日志
