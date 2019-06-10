@@ -28,8 +28,8 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
    ```json
    {
-       "name": "wechar/myproject",
-       "description": "your project description",
+       "name": "wechar/wecarswoole_proj",
+       "description": "your project name",
        "type": "project",
        "require": {
            "framework/wecarswoole": "dev-master"
@@ -46,6 +46,14 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
            "2": {
                "type": "vcs",
                "url": "https://gitlab4.weicheche.cn/dev/mysql.git"
+           },
+           "3": {
+               "type": "vcs",
+               "url": "https://gitlab4.weicheche.cn/framework/wecar_easyswoole.git"
+           },
+           "4": {
+               "type": "vcs",
+               "url": "https://gitlab4.weicheche.cn/framework/easyswoole_http.git"
            },
            "packagist": {
                "type": "composer",
