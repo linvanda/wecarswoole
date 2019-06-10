@@ -132,11 +132,14 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
       - Events
     - Exceptions
     - Foundation
+      - Repository
+      - Util
     - Http
       - Controllers
         - V1
-      - Middleware
-      - 
+          - $modules
+      - Middlewares
+      - Routes
     - Process
     - Subscribers
     - Tasks
@@ -168,7 +171,21 @@ app/Exceptions/ : 异常类定义
 
 app/Foundation/ : 基础设施（如仓储实现类等）
 
+app/Foundation/Repository/: 仓储实现
+
+app/Foundation/Util/: 工具
+
 app/Http/ : http 路由、控制器，对外暴露 http api
+
+app/Http/Controllers/: http 控制器
+
+app/Http/Controllers/V1/: 版本
+
+app/Http/Controllers/V1/$modules/: 模块划分（模块名具体而定）
+
+app/Http/Middlewares/: 中间件（如路由中间件）
+
+app/Http/Routes/: 路由定义
 
 app/Process/ : 自定义进程
 
@@ -212,14 +229,77 @@ EasySwooleEvent.php : 全局事件
 
 
 
+> 注：以上目录划分确定了基本的开发规范，但实际开发过程中并不限制一定只能划分以上目录，各项目可以在此基础上根据实际需要开设额外的目录。
 
+
+
+### 设计思想
+
+- 借鉴于**领域驱动设计(DDD)**思想。有别于传统 MVC 分层设计，在 DDD 中，系统划分为四个层次：
+
+  - **表示层**。展示UI/数据、接收用户的输入，直接和用户打交道（用户可能是人也可能是其他系统）。如前端交互。
+  - **应用层**。从用户的维度定义系统需要完成的**任务**。应用层只定义任务，不负责具体实现。如这里的 Controller、Cron（实际上它们也承担了部分表示层职责）、Task、Subscriber等。
+  - **领域层**。业务逻辑的具体实现。应用层调用领域层实现具体的任务。这里的 Domain目录下的代码。
+  - **基础设施层**。提供诸如 DB、Cache、SESSION、Email、Log 等业务无关的基础支持。
+
+  [领域驱动设计](https://www.jdon.com/ddd.html)
+
+  [领域驱动设计分层模型](https://www.jianshu.com/p/c405aa19a049)
+
+
+
+### 框架中的分层说明
+
+- **表示层 + 应用层**：框架并没有对表示层和应用层做严格的划分。严格来说，表示层诸如 web（h5、json等）、web socket等客户端需要的数据格式以及提供的输入由表示层作转换处理，然后交由应用层，且多个表示层可以共用同一个应用层。我们的框架中路由+Controller 完成表示层+应用层的工作（不光如此，其他类型的 handle 如事件订阅者也兼顾表示层和应用层的工作）。框架处于复杂性考虑没有引入应用服务的概念，不过熟悉 DDD 的话根据实际需要可以自行引入。
+
+- **领域层**。放在 Domain/ 目录中。这里放具体的业务逻辑代码，属于系统核心。Domain/ 底下可根据实际需要自由创建目录，自由组织代码。不过根据 DDD 通行做法，会分成以下几大概念：
+
+  - Service（服务)。全称是**领域服务**(相对于应用服务)。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当保持简单（即自己不实现业务细节，而是通过调用、组织其他类来实现功能），而且是无状态的（即 Service 不能在属性中保存业务状态信息）。
+
+    另一个常见的 Service 是外部接口调用，如调用外部的积分系统，此时一般我们会创建一个单独的 Service 封装接口调用。
+
+  - Entity（实体)。Entity 对应业务中的"那一个"东西，一般在数据库有对应一条记录。Entity 有唯一标识。
+
+  - Value Object(值对象)。和 Entity 不同，Value Object 不区分"那一个"，Entity 通过标识辨识，而 Value Object 通过属性辨识。
+
+  - Aggregation（聚合）。一个或多个 Entity 集聚成一个 Aggregation。外界跟 Aggregation 打交道，而不是直接跟每个 Entity 打交道。聚合有聚合根（Aggregation Root），它是一个 Entity。很多时候，一个 Entity 就是一个 Aggregation。
+
+  - Domain Event（领域事件）。在领域对象中触发的事件。一般我们采用事件来接耦非主流业务，保持主流程的清晰简洁。
+
+  - Repository（仓储）。实现 Entity 的存取。仓储是领域模型和数据存储（基础设施）之间的桥梁，它知晓领域类的细节以及数据存储的细节。一般地，在 Domain/ 中定义 Repository 接口，而在基础设施中定义实现，然后通过依赖注入来使用。
+
+  - **领域层**简化版：
+
+    不熟悉 DDD 甚至是面向对象设计的话，上面的概念会难以理解，实际操作中可以作如下简化：
+
+    - Service（服务）。同上。服务主要起协调、组合的作用，其本身不应提供具体的业务实现；
+    - Entity（实体）。我们将上面的 Entity、Value Object、Aggregation 不做区分统一看作 实体。每个实体类都不大，负责的功能比较单一，多个实体组合/聚合完成一项完整的功能。总之，你可以把这里的实体看作类似之前的 Logic，不过是进行了职责划分的多个类的有机组合；
+    - Domain Event（领域事件）。相当于钩子，采用的是观察者模式，实现复杂业务解耦；
+    - Repository（仓储）。同上。
+
+  - 注意：
+
+    - 领域层的代码应当是可测试的（单元测试）；
+    - 领域层对其他层的依赖应当通过依赖注入实现，而不能在领域层直接 new 其他层的对象；
+    - 领域层和其他层通信一般是基于接口的（面向接口编程）；
+    - 不应当在领域层出现 $_SESSION 这样的全局变量调用；
+
+- **基础设施层**。提供诸如 DB、Cache、SESSION 等业务无关的基础支持。
+
+
+
+### 调用关系图解
+
+[]
 
 
 
 - app 项目程序目录。该目录下的子目录和文件名都开头大写。
     - Bean  DTO（数据传输对象）放置在此。
             数据传输对象不属于领域层对象，属于用例维度对象（即属于应用层的东西），一般可以定义Bean对象来实现用例查询优化
+        
     - Console   控制台控制器（一般做命令行客户端交互程序）
+    
     - Http  Http 请求处理组件（对外提供 Restful API 服务）
         - Controllers Http 控制器。建议按模块组织存放
             - V1 版本控制
@@ -228,20 +308,29 @@ EasySwooleEvent.php : 全局事件
                 通过添加路由中间件可实现诸如鉴权、数据处理等功能。
                 （为何不在基类控制器中做：我们尽量保证控制器的简单；另外，一个控制器可以对应多个路由，这样对不同对路由添加不同对中间件可以实现在同一个控制器上实现不同对鉴权方式等灵活实现）
         - Middleware 中间件
+        
     - Cron 定时任务，需要继承 `EasySwoole\EasySwoole\Crontab\AbstractCronTask`
       [参见](http://www.easyswoole.com/Manual/3.x/Cn/_book/BaseUsage/crontab.html)
       
         > 注意：多个定时任务的 taskName 不能重复，否则会相互覆盖
+      
     - Tasks 异步任务，需要继承`\EasySwoole\EasySwoole\Swoole\Task\AbstractAsyncTask`
       [参见](http://www.easyswoole.com/Manual/3.x/Cn/_book/BaseUsage/async_task.html)
+      
     - Domain 业务领域逻辑，编写具体的业务逻辑，这里面的类包含但不限于：实体、值对象、领域服务、仓储、领域事件。里面的文件按模块自由组织。
       
         - Events 领域事件
+        
     - Util 项目私有但辅助类/函数。注意：公共辅助类请使用 Composer 库。
+    
     - Exceptions 异常定义类
+    
     - Process 自定义进程
+    
     - Foundation 基础设施，如事件总线，数据库驱动，缓存驱动等。一般 Foundation 会抽离成单独的 Composer 包，各项目的 Foundation 用来做必要的包装。
+    
     - AppService 应用服务
+    
     - Subscribers 事件订阅者（所属层次同 Controller，属于处理程序，应用层）
 - tests 单元测试目录，和 app目录结构相同。一般要重点针对 Domain 编写单元测试。
 - config 配置文件目录
