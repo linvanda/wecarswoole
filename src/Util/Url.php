@@ -8,7 +8,7 @@ class Url
 {
     /**
      * 组装 url
-     * @param string $uri uri 的 path 部分或者整个 uri，可以使用占位符如 {uid}
+     * @param string $uri uri 的 path 部分或者整个 uri，可以使用占位符如 {uid}，{?group_id}（?表示可选参数）
      * @param string $base baseurl
      * @param array $queryParams 查询字符串
      * @param array $flagParams 用于替换 $uri 中的占位符
@@ -33,7 +33,9 @@ class Url
 
     /**
      * 解析出 schema,host,path,query_string
-     * @param string $url
+     * @param string $url 支持仅传递 path 部分（此时 host 和 schema 为空），支持占位符，如：
+     *                    http://www.wcc.cn/user/{uid}?phone=12909090987
+     *                    /coupon/{?cid}?type=1
      * @return array
      */
     public static function parse(string $url): array

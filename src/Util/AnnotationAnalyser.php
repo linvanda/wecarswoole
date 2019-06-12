@@ -15,7 +15,7 @@ class AnnotationAnalyser
      * @param array $annotationFilters 仅提取这些注解信息
      * @return array [属性名 => [注解名 => 注解值]]
      */
-    public static function getAnnotations(string $className, array $annotationFilters = []): array
+    public static function getPropertyAnnotations(string $className, array $annotationFilters = []): array
     {
         $data = [];
         $properties = self::properties($className);
