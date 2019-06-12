@@ -15,7 +15,6 @@ class CacheFactory
 
     /**
      * @return CacheInterface
-     * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
      */
     public static function build(): CacheInterface
     {
