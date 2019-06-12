@@ -129,7 +129,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 更多信息请参见 [语义化版本控制](https://semver.org/lang/zh-CN/)
 
-> 即是说，我们的包向外只是发布之后，不能随便修改其内容，一旦修改，就需要同时增加新的版本号（打 tag），版本号命名需遵循以上约束。
+> 即是说，我们的包向外发布之后，不能随便修改其内容，一旦修改，就需要同时增加新的版本号（打 tag），版本号命名需遵循以上约束。
 
 
 
@@ -1011,8 +1011,6 @@ EasySwooleEvent.php : 全局事件
       'config' => [
           // 请求协议
           'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
-          // 当前项目 app_id
-          'app_id' => 17200,
           // http 协议请求默认配置
           'http' => [
               // 服务器地址解析器，必须是 IHttpServerParser 类型
@@ -1040,14 +1038,16 @@ EasySwooleEvent.php : 全局事件
       'wc' => include __DIR__ . '/weicheche.php',
   ];
   ```
-
+  
   weicheche.php:
 
   ```php
-  return [
+return [
       // 组公共配置，可覆盖 api.php 中的公共配置
       'config' => [
-          'http' => [
+        	// 组 server 配置，底下 api 共用
+  				'server' => 'CP',
+        	'http' => [
   
           ]
       ],

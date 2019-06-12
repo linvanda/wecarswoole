@@ -13,8 +13,6 @@ return [
     'config' => [
         // 请求协议
         'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
-        // 当前项目 app_id
-        'app_id' => 10000,
         // http 协议请求默认配置
         'http' => [
             // 服务器地址解析器，必须是 IHttpServerParser 类型

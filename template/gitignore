@@ -1,1 +1,5 @@
 /vendor/
+/storage/cache/
+/storage/di/
+/storage/logs/
+/storage/temp/

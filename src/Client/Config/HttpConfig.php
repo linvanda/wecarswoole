@@ -22,10 +22,6 @@ class HttpConfig extends Config
     {
         parent::__construct($apiConf);
 
-        if (!$apiConf['server']) {
-            throw new \Exception("配置错误：http api 未提供 server 信息。api name:{$apiConf['api_name']}");
-        }
-
         if (!$apiConf['path']) {
             throw new \Exception("配置错误：http api 未提供 path 信息。api name:{$apiConf['api_name']}");
         }
