@@ -330,6 +330,7 @@ EasySwooleEvent.php : 全局事件
 - Service 可以调用实体 Entity 来实现功能；
 - Service 可以调用仓储获得 Entity；
 - Entity 可以调用其它 Entity；
+- Entity 可以调用 Service；
 - Entity 可以发布事件供外围程序处理；
 
 
