@@ -345,6 +345,128 @@ EasySwooleEvent.php : 全局事件
 
 - 定义文件：app/Http/Routes/ 中定义，如 User.php 定义用户相关路由；
 
+- 基类：`\WecarSwoole\Http\Route`：
+
+  ```php
+  <?php
+  
+  namespace WecarSwoole\Http;
+  
+  /**
+   * 路由基类
+   * 中间件的注册方式：
+   *  1. 类全局注册：在子类的$middleware数组中配置中间件类名，则此类中定义的所有路由共用该中间件
+   *  2. 路由注册：在设置路由时于参数中指定中间件类名，则仅用于该路由
+   * 中间件执行顺序取决于注册顺序，类全局的先于特定路由的
+   */
+  abstract class Route
+  {
+      use MiddlewareHelper;
+  
+      protected $routeCollector;
+  
+      public function __construct(RouteCollector $collector)
+      {
+          $this->routeCollector = $collector;
+      }
+  
+      public function get(string $routePattern, string $handler, array $middleware = [])
+      {
+          $this->addRoute(['GET'], $routePattern, $handler, $middleware);
+      }
+  
+      public function post(string $routePattern, string $handler, array $middleware = [])
+      {
+          $this->addRoute(['POST'], $routePattern, $handler, $middleware);
+      }
+  
+      public function put(string $routePattern, string $handler, array $middleware = [])
+      {
+          $this->addRoute(['PUT'], $routePattern, $handler, $middleware);
+      }
+  
+      public function delete(string $routePattern, string $handler, array $middleware = [])
+      {
+          $this->addRoute(['DELETE'], $routePattern, $handler, $middleware);
+      }
+  
+      public function addRoute(array $methods, string  $routePattern, string $handler, array $middleware = [])
+      {
+          ...
+      }
+  
+      /**
+       * 子类在此处添加路由
+       * @return mixed
+       */
+      abstract function map();
+  }
+  ```
+
+  MiddlewareHelper 提供了以下方法用于添加中间件：
+
+  ```php
+  <?php
+  
+  namespace WecarSwoole\Middleware;
+  
+  /**
+   * 中间件操作助手
+   * Trait MiddlewareHelper
+   * @package WecarSwoole\Middleware
+   */
+  trait MiddlewareHelper
+  {
+      private $middleware = [];
+      private $middlewareObjects = [];
+  
+      /**
+       * 设置中间件列表，该方法会重置之前设置过的值
+       * @param array $middlewareNameList
+       */
+      public function setMiddleware(array $middlewareNameList)
+      {
+          $this->middleware = $middlewareNameList;
+      }
+  
+      /**
+       * 返回中间件类名数组
+       * @return array
+       */
+      public function getMiddleware()
+      {
+          return $this->middleware;
+      }
+  
+      /**
+       * 追加中间件
+       * @param string|array $middlewareName
+       */
+      public function appendMiddleware($middlewareName)
+      {
+          if (is_string($middlewareName)) {
+              $this->middleware[] = $middlewareName;
+          } else {
+              $this->middleware = array_merge($this->middleware, $middlewareName);
+          }
+      }
+  
+      /**
+       * 删除中间件
+       * @param string $middlewareName
+       */
+      public function removeMiddleware(string $middlewareName)
+      {
+          $index = array_search($middlewareName, $this->middleware);
+          if ($index !== false) {
+              unset($this->middleware[$index]);
+          }
+      }
+     
+      ...
+  }
+  ```
+
 - 路由类需继承 `WecarSwoole\Http\Route` 抽象类并实现 map() 方法定义具体路由，使用 get、post、put、delete 定义 Restful API 接口；
 
   例：
@@ -374,6 +496,8 @@ EasySwooleEvent.php : 全局事件
       }
   }
   ```
+
+- 框架提供了一个 `\WecarSwoole\Http\ApiRoute`基类，继承该类的路有都需走 api 鉴权（我们目前的鉴权方式）。
 
 #### 路由中间件
 
