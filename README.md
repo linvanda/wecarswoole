@@ -34,6 +34,12 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
        "require": {
            "framework/wecarswoole": "dev-master"
        },
+     	"autoload": {
+           "psr-4": {
+               "App\\": "app/",
+               "Test\\": "tests/"
+           }
+       },
        "repositories": {
            "0": {
                "type": "vcs",
@@ -339,6 +345,194 @@ EasySwooleEvent.php : 全局事件
 
 ----
 
+#### 配置
+
+- config/config.php 配置入口文件
+
+  ```php
+  <?php
+  
+  use \WecarSwoole\Util\File;
+  
+  $baseConfig = [
+      // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）
+      'logger' => [
+          'debug' => [
+              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
+          ],
+          'info' => [
+              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
+          ],
+          'warning' => [
+              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/warning.log'),
+          ],
+          'error' => [
+              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+          ],
+          'critical' => [
+              'mailer' => [
+                  'driver' => 'default',
+                  'subject' => '喂车邮件告警',
+                  'to' => [
+                  ]
+              ],
+              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+          ]
+      ],
+      // 邮件。可以配多个
+      'mailer' => [
+          'default' => [
+              'host' => 'smtp.exmail.qq.com',
+              'username' => 'robot@weicheche.cn',
+              'password' => 'Chechewei123'
+          ]
+      ],
+  ];
+  
+  return array_merge(
+      $baseConfig,
+      ['cron_config' => require_once __DIR__ . '/cron.php'],
+      ['api_config' => require_once __DIR__ . '/api/api.php'],
+      ['subscriber' => require_once __DIR__ . '/subscriber/subscriber.php'],
+      require_once __DIR__ . '/env/' . ENVIRON . '.php'
+  );
+  ```
+
+- config/cron.php 定时任务配置文件
+
+  ```php
+  <?php
+  
+  return [
+      // 定时任务项目名，同名的多台服务器只会有一台启动定时任务，请务必给不同项目起不同的名字，否则会相互影响
+      'name' => 'user-center-platform',
+      // crontab 需要 redis
+      'redis' => 'main',
+      'tasks' => [
+          \App\Cron\Test::class
+      ]
+  ];
+  ```
+
+- config/subscriber/subscriber.php 事件订阅配置
+
+  ```php
+  <?php
+  
+  return [
+      \App\Subscribers\User::class,
+  ];
+  ```
+
+- config/api/api.php 外部 api 配置，详情见后文说明
+
+- config/di/di.php 依赖注入配置
+
+  ```php
+  <?php
+  
+  use App\Foundation\CacheFactory;
+  use Psr\SimpleCache\CacheInterface;
+  use Psr\Log\LoggerInterface;
+  use Psr\EventDispatcher\EventDispatcherInterface;
+  
+  return [
+      /**
+       * 仓储依赖注入配置
+       * 默认取 Foundation\Repository 下同模块的 MySQL*Repository
+       * 如果有自定义的，要放到默认配置的前面，否则不会生效
+       */
+      'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository'),
+      // 缓存
+      CacheInterface::class => \DI\factory([CacheFactory::class, 'build']),
+      // 日志
+      LoggerInterface::class => \DI\create(\WecarSwoole\Logger::class),
+      // 事件
+      EventDispatcherInterface::class => \DI\create(\Symfony\Component\EventDispatcher\EventDispatcher::class),
+      'SymfonyEventDispatcher' => \DI\get(EventDispatcherInterface::class),
+  ];
+  ```
+
+- config/env/$env.php 环境相关配置，如数据库、redis等，目前有四个环境配置：dev.php、test.php、preview.php、produce.php
+
+  ```php
+  <?php
+  
+  use \App\Util\File;
+  
+  return [
+      /**
+       * 数据库配置建议以数据库名作为 key
+       * 如果没有读写分离，则可不分 read, write，直接在里面写配置信息
+       */
+      'mysql' => [
+          'weicheche' => [
+              // 读库使用二维数组配置，以支持多个读库
+              'read' => [
+                  [
+                      'host' => '192.168.85.135',
+                      'port' => 3306,
+                      'user' => 'root',
+                      'password' => 'weicheche',
+                      'database' => 'weicheche',
+                      'charset' => 'utf8',
+                  ]
+              ],
+              // 仅支持一个写库
+              'write' => [
+                  'host' => '192.168.85.135',
+                  'port' => 3306,
+                  'user' => 'root',
+                  'password' => 'weicheche',
+                  'database' => 'weicheche',
+                  'charset' => 'utf8',
+              ],
+              // 连接池配置
+              'pool' => [
+                  'size' => 30
+              ]
+          ],
+          // 可以不配置读写分离
+          'user_center' => [
+              'host' => '192.168.85.135',
+              'port' => 3306,
+              'user' => 'root',
+              'password' => 'weicheche',
+              'database' => 'user_center',
+              'charset' => 'utf8',
+              // 连接池配置
+              'pool' => [
+                  'size' => 30
+              ]
+          ]
+      ],
+      'redis' => [
+          'main' => [
+              'host' => 'db.redis.wcc.cn',
+              'port' => 6379,
+              'auth' => 'XEXeh1l6nT3wHL0z'
+          ],
+          'cache' => [
+              'host' => 'db.redis.wcc.cn',
+              'port' => 6379,
+              'auth' => 'XEXeh1l6nT3wHL0z',
+          ],
+      ],
+      // 缓存配置
+      'cache' => [
+          'driver' => 'redis', // 可用：redis、file、array、null(一般测试时用来禁用缓存)
+          'prefix' => 'usercenter',
+          'expire' => 3600, // 缓存默认过期时间，单位秒
+          'redis' => 'cache', // 当 driver = redis 时，使用哪个 redis 配置
+          'dir' => File::join(EASYSWOOLE_ROOT, 'storage/cache'), // 当 driver = file 时，缓存存放目录
+      ],
+      // 最低记录级别：debug, info, warning, error, critical, off
+      'log_level' => 'debug',
+  ];
+  ```
+
+
+
 #### Http 路由
 
 - 系统对外暴露的所有接口都要进行显式的路由定义；
@@ -508,8 +702,6 @@ EasySwooleEvent.php : 全局事件
 - 还可以针对单独的路由添加中间件：在调用 get、post、put、delete 方法设置路由时第三个参数可以传入中间件列表，格式同上；
 
 实践：设置两个路由指向同一个控制器，这两个路由一个暴露给公司内部，一个暴露给外部第三方，两者使用不同的鉴权机制，而实现的功能相同（因而使用同一个控制器）。可以创建两个路由父类，两者使用不同的鉴权中间件，一个对内，一个对外，所有内部 api 都继承对内的那个父类，对外 api 则继承另一个。
-
-> 注意：不要在路由中间件中修改 $request 的数据结构，因为多个路由可能指向同一个控制器，如果在路由中修改请求数据结构，会导致同一个控制器从不同的路由接收到的数据结构不一致，导致潜在问题。
 
 #### Restful API
 
@@ -911,7 +1103,7 @@ EasySwooleEvent.php : 全局事件
 - **Cache**: EasySwoole 没有提供缓存组件，项目使用 symfony/cache 的 PSR-16 规范的 SimpleCache。
 
 - **Redis**: 项目没有使用 EasySwoole 的 RedisPool，而是使用 phpredis 扩展自带的连接池。
-    
+  
     php.ini配置：
     extension=redis.so
     redis.pconnect.pooling_enabled=1 

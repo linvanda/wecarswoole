@@ -20,6 +20,6 @@ class ApiAuthMiddleware implements IRouteMiddleware
      */
     public function handle(Request $request, Response $response)
     {
-        // TODO: Implement handle() method.
+
     }
 }

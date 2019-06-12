@@ -55,7 +55,7 @@ class Router extends AbstractRouter
     protected function loadRoutesFromFile(string $fileName, RouteCollector $route)
     {
         $class = '\\App\\' . str_replace('/', '\\', str_replace('.php', '', explode('/app/', $fileName)[1]));
-        if (basename($fileName) == 'Route.php' || !class_exists($class)) {
+        if (!class_exists($class)) {
             return;
         }
 
