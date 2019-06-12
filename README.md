@@ -986,115 +986,178 @@ EasySwooleEvent.php : 全局事件
 
 #### 外部 API 调用
 
-- 配置 Server。在 config/env/$env.php 中定义：
+对外部系统的 api 调用主要是通过配置来实现的，最简单的只需要配置 server 和 path信息即可，复杂的可以配置请求协议（目前仅支持 http(s)）、请求参数组装器、服务器地址解析器、响应参数解析器、拦截器等，实现定制化调用。配置好后在程序中调用 `\WecarSwoole\Client\Client::call($apiName, $requestData)` 即可。
 
-  ```php
-  return [
-      'server' => [
-          'OL' => [
-              'name' => '油号',
-              'servers' => [
-                  ['url' => 'http://192.168.85.201:8081', 'weight' => 100],
-              ],
-          ],
-      ]
-  ];
-  ```
+其中 $apiName 是 api 别名而不是 uri，这样做的好处是当需要修改 uri 时仅需修改配置文件即可。
 
-- 配置 api。在 config/api/ 中定义。如：
+api 是分组配置的，最佳实践是同一个接口提供方的 api 放在一组，而不同的提供方往往其请求参数组装方式、响应参数解析方式甚至是协议都不同，一般放到不同分组中。喂车内部接口（OS的例外）由于遵循相同的处理方式，可放到一组。 
 
-  api.php:
+1. 配置 Server。在 config/env/$env.php 中定义（实际中应该使用配置中心）：
 
-  ```php
-  return [
-      // 默认配置，如签名器、加密算法、数据格式等配置，这些配置都可以在各自 api 配置中覆盖（其中某些配置仅 http 协议适用）
-      'config' => [
-          // 请求协议
-          'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
-          // http 协议请求默认配置
-          'http' => [
-              // 服务器地址解析器，必须是 IHttpServerParser 类型
-              'server_parser' => \App\Foundation\Client\Http\Component\DefaultHttpServerParser::class,
-              // 请求参数组装器
-              'request_assembler' => \App\Foundation\Client\Http\Component\DefaultHttpRequestAssembler::class,
-              // 响应参数解析器
-              'response_parser' => \App\Foundation\Client\Http\Component\JsonResponseParser::class,
-              // 请求发送前的拦截器(尚未实现)
-              'before_handle' => [],
-              // 收到响应后的拦截器（尚未实现）
-              'after_handle' => [],
-              // https ssl 相关配置
-              'ssl' => [
-                  // CA 文件路径
-                  'cafile' => '',
-                  // 是否验证服务器端证书
-                  'ssl_verify_peer' => false,
-                  // 是否允许自签名证书
-                  'ssl_allow_self_signed' => true
-              ]
-          ],
-      ],
-      // 组
-      'wc' => include __DIR__ . '/weicheche.php',
-  ];
-  ```
-  
-  weicheche.php:
-
-  ```php
+```php
 return [
-      // 组公共配置，可覆盖 api.php 中的公共配置
-      'config' => [
-        	// 组 server 配置，底下 api 共用
-  				'server' => 'CP',
-        	'http' => [
-  
-          ]
-      ],
-      // api 定义
-      'api' => [
-          'user.coupon.info' => [
-              'desc' => '获取用户券信息',
-              'server' => 'CP',// 可以是简写的，也可以是完整写法如 https://coupon.weicheche.cn,也可以是数组(从中取一个)
-              // path 的格式支持占位符，如 users/{uid}，group/{?group_id} (?表示可选)，使用时根据传参替换
-              'path' => '/usercoupons/getUserCoupons',
-              'method' => 'POST', // http 协议下，请求方式
-              'protocol' => 'http',
-          ],
-          'merchant.users.list' => [
-              'desc' => '获取商户用户列表',
-              'server' => 'UC',
-              'path' => '/v1/merchants/{merchant}/users',
-              'method' => 'GET',
-          ],
-          'users.add' => [
-              'desc' => '添加用户',
-              'server' => 'http://localhost:9501',
-              'path' => '/v1/users',
-              'method' => 'GET',
-          ]
-      ]
-  ];
-  ```
+    'server' => [
+        'OL' => [
+            'name' => '油号',
+          	'app_id' => 2343,
+          	'secret' => 'poukhsfdsasadf43423fddd2s2erldojf',
+            'servers' => [
+                ['url' => 'http://192.168.85.201:8081', 'weight' => 100],
+            ],
+        ],
+    ]
+];
+```
 
-- 调用：
+2. 配置 api。在 config/api/ 中定义。如：
 
-  ```php
-  use WecarSwoole\Client\Client;
-  ...
-  $result = Client::call('wc:users.add', $reqData);
-  var_export($result->getBody());
-  ```
+api.php:
 
-- Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议），api 具体用的什么协议是在配置文件中配置的，调用的时候不用管。
-- 支持针对不同的分组或者单个 api 配置不同的请求参数组装器和响应参数解析器，者对于和第三方合作是很有用的，比如我们可以针对不同的第三方配置不同的分组，这些分组有各自的组装器和解析器实现。
-- 系统对自身的 api 调用也需要在此处配置。
-- 有待实现：
-  - 请求前后拦截器；
-  - 请求重试机制；
-  - 支持异步（task）调用；
+```php
+return [
+    // 默认配置，如签名器、加密算法、数据格式等配置，这些配置都可以在各自 api 配置中覆盖（其中某些配置仅 http 协议适用）
+    'config' => [
+        // 请求协议
+        'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
+        // http 协议请求默认配置
+        'http' => [
+            // 服务器地址解析器，必须是 IHttpServerParser 类型
+            'server_parser' => \App\Foundation\Client\Http\Component\DefaultHttpServerParser::class,
+            // 请求参数组装器
+            'request_assembler' => \App\Foundation\Client\Http\Component\DefaultHttpRequestAssembler::class,
+            // 响应参数解析器
+            'response_parser' => \App\Foundation\Client\Http\Component\JsonResponseParser::class,
+            // 请求发送前的拦截器(尚未实现)
+            'before_handle' => [],
+            // 收到响应后的拦截器（尚未实现）
+            'after_handle' => [],
+            // https ssl 相关配置
+            'ssl' => [
+                // CA 文件路径
+                'cafile' => '',
+                // 是否验证服务器端证书
+                'ssl_verify_peer' => false,
+                // 是否允许自签名证书
+                'ssl_allow_self_signed' => true
+            ]
+        ],
+    ],
+    // 组
+    'wc' => include __DIR__ . '/weicheche.php',
+];
+```
+
+weicheche.php:
+
+```php
+return [
+    // 组公共配置，可覆盖 api.php 中的公共配置
+    'config' => [
+      	// 组 server 配置，底下 api 共用
+				'server' => 'CP',
+      	'http' => [
+
+        ]
+    ],
+    // api 定义
+    'api' => [
+        'user.coupon.info' => [
+            'desc' => '获取用户券信息',
+            'server' => 'CP',// 可以是简写的，也可以是完整写法如 https://coupon.weicheche.cn,也可以是数组(从中取一个)
+            // path 的格式支持占位符，如 users/{uid}，group/{?group_id} (?表示可选)，使用时根据传参替换
+            'path' => '/usercoupons/getUserCoupons',
+            'method' => 'POST', // http 协议下，请求方式
+            'protocol' => 'http',
+        ],
+        'merchant.users.list' => [
+            'desc' => '获取商户用户列表',
+            'server' => 'UC',
+            'path' => '/v1/merchants/{merchant}/users',
+            'method' => 'GET',
+        ],
+        'users.add' => [
+            'desc' => '添加用户',
+            'server' => 'http://localhost:9501',
+            'path' => '/v1/users',
+            'method' => 'GET',
+        ]
+    ]
+];
+```
+
+3. 调用：
+
+```php
+use WecarSwoole\Client\Client;
+...
+$result = Client::call('wc:users.add', $reqData);
+var_export($result->getBody());
+```
+
+Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议），api 具体用的什么协议是在配置文件中配置的，调用的时候不用管。
+
+支持针对不同的分组或者单个 api 配置不同的请求参数组装器和响应参数解析器，这对于和第三方合作是很有用的，比如我们可以针对不同的第三方配置不同的分组，这些分组有各自的组装器和解析器实现。
+
+系统对自身的 api 调用也需要在此处配置。
+
+**有待实现：**
+
+- 请求前后拦截器；
+- 请求重试与告警机制；
+- 支持异步（task投递）请求；
 
 > 注：实际使用中，一般会将对外部系统的调用封装成服务类（Service），服务类调用具体接口并返回相应的数据（基本数据类型或者自定义类型）。
+
+
+
+#### Exception
+
+不同于之前的开发模式，我们采用行业通用的抛异常的方式代替返回错误码，在最外层捕获异常并记录日志，遵循"错误处理和业务逻辑分离"原则。
+
+框架在 wecarswoole/Exceptions/ 中已经定义了一些异常，项目可以在自己的 Exceptions/ 目录中定义自己项目需要的异常类。
+
+
+
+#### Email
+
+使用 SwiftMail 扩展并进行相应封装，实现异步发送（投递 task 任务）。
+
+**配置：**
+
+config/config.php
+
+```php
+// 邮件。可以配多个
+'mailer' => [
+    'default' => [
+        'host' => 'smtp.exmail.qq.com',
+        'username' => 'robot@weicheche.cn',
+        'password' => 'Chechewei123'
+    ]
+],
+```
+
+**使用：**
+
+依赖注入加载：直接在构造函数中注入：
+
+```php
+    use WecarSwoole\Mailer;
+		...
+		public function __construct(Mailer $mailer)
+    {
+        $this->mailer = $mailer;
+        parent::__construct();
+    }
+```
+
+直接创建（一般不推荐）：
+
+`$mailer = new Mailer();`
+
+(构造函数：`__construct(string $host = '', string $username = '', string $password = '')`)
+
+
 
 
 

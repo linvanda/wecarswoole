@@ -17,8 +17,8 @@
         "ocramius/proxy-manager": "2.2.2",
         "symfony/event-dispatcher": "^4.3",
         "psr/event-dispatcher": "^1.0",
-        "dev/locker": "*",
-        "dev/mysql": "*"
+        "dev/locker": "dev-master",
+        "dev/mysql": "dev-master"
     },
     "repositories": {
         "0": {

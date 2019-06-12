@@ -16,7 +16,6 @@ class ClientFactory
     /**
      * @param string $api
      * @return IClient
-     * @throws ConfigNotFoundException
      * @throws \Exception
      */
     public static function build(string $api): IClient
