@@ -28,73 +28,63 @@ return [
         'app_id'    => 10016,
         'app_name'  => '短信子系统',
     ],
-    10017 => [
+    'YH' => [
         'app_id'    => 10017,
         'app_name'  => '用户子系统',
     ],
-    10018 => [
+    'YX' => [
         'app_id'    => 10018,
         'app_name'  => '营销子系统',
     ],
-    10019 => [
+    'JS' => [
         'app_id'    => 10019,
         'app_name'  => '结算子系统',
     ],
-    10021 => [
+    'JW' => [
         'app_id'    => 10021,
         'app_name'  => '结算业务子系统',
     ],
-    10022 => [
+    'DP' => [
         'app_id'    => 10022,
         'app_name'  => '异步分发子系统',
     ],
-    10023 => [
+    'CP' => [
         'app_id'    => 10023,
         'app_name'  => '抵用券子系统',
     ],
-    10024 => [
+    'BL' => [
         'app_id'    => 10024,
         'app_name'  => '逻辑业务子系统',
     ],
-    10025 => [
+    'TR' => [
         'app_id'    => 10024,
         'app_name'  => '时间规则子系统',
     ],
-    10026 => [
+    'TY' => [
         'app_id'    => 10026,
         'app_name'  => '推送分发子系统(业务)',
     ],
-    10027 => [
+    'DC' => [
         'app_id'    => 10027,
         'app_name'  => '数据中心',
     ],
-    10028 => [
+    'AY' => [
         'app_id'    => 10028,
         'app_name'  => '统计分析',
     ],
-    10111 => [
-        'app_id'    => 10111,
-        'app_name'  => '微信平台 - IP',
-    ],
-    10112 => [
+    'MA' => [
         'app_id'    => 10112,
-        'app_name'  => '商户端 - IP',
+        'app_name'  => '商户端',
         'secret'    => '2iiigbbXfM0VbgpwSCAUpjYbbEZAokLl',
     ],
-    10113 => [
+    'MP' => [
         'app_id'    => 10113,
-        'app_name'  => '商户平台 - IP',
+        'app_name'  => '商户平台',
         'secret'    => '2iiigbbXfM0VbgpwSCAUpjYbbEZAokLl',
     ],
-    // PD
-    10121 => [
-        'app_id'    => 10121,
-        'app_name'  => 'APP接口 - PD',
-    ],
-    // MO
-    10131 => [
+    'YY' => [
         'app_id'    => 10131,
-        'app_name'  => '运营平台 - MO',
+        'app_name'  => '运营平台',
     ],
     // SS
     10141 => [
@@ -102,19 +92,15 @@ return [
         'app_name'  => '智慧加油 - SS',
         'secret'    => '2iiigbbXfM0VbgpwSCAUpjYbbEZAokLl',
     ],
-    10172 => [
+    'WX' => [
         'app_id'    => 10172,
-        'app_name'  => '微信端 - IP_WX',
+        'app_name'  => '微信端',
         'secret'    => '2iiigbbXfM0VbgpwSCAUpjYbbEZAokLl',
+        'module' => 'WX',
     ],
-    10155 => [
+    'FP' => [
         'app_id'           => 10155,
         'app_name'         => '发票子系统',
         'secret'           => 'dY1h3ebFaNfxLseKJ8YYlH0P8XkqcHri',
-    ],
-    10100 =>[
-        'app_id'           => 10100,
-        'app_name'         => '第三方',
-        'secret'           => 'ac2d43ef3f26cc74de242202e822ecb0',
     ]
 ];
