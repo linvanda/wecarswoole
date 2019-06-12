@@ -37,7 +37,7 @@ array_shift($args);
 if ($args[0] === 'install') {
     $lockFile = WECARSWOOLE_ROOT . '/install.lock';
     if (file_exists($lockFile)) {
-        return;
+        exit("不可重复安装，如果确实要重新安装，请先删除项目根目录下的 install.lock 文件再重新执行\n");
     }
 
     // 将 template 中的文件拷贝到项目根目录
