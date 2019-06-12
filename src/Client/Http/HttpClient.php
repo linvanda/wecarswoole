@@ -8,7 +8,7 @@ use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IResponseParser;
 use WecarSwoole\Client\Contract\IHttpServerParser;
 use WecarSwoole\Client\Response;
-use WecarSwoole\Client\UriHelper;
+use WecarSwoole\Util\Url;
 use Swlib\Http\Uri;
 use Swlib\Saber;
 
@@ -71,7 +71,7 @@ class HttpClient implements IClient
         // 设置 uri
         $saber->withUri(
             new Uri(
-                UriHelper::assemble(
+                Url::assemble(
                     $this->config->path,
                     $saberConf['base_uri'],
                     $requestBean->getQueryParams(),

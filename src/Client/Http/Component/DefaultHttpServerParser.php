@@ -4,7 +4,7 @@ namespace WecarSwoole\Client\Http\Component;
 
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpServerParser;
-use WecarSwoole\Client\UriHelper;
+use WecarSwoole\Util\Url;
 use EasySwoole\EasySwoole\Config as EsConfig;
 
 /**
@@ -28,7 +28,7 @@ class DefaultHttpServerParser implements IHttpServerParser
         // 没有单独配 server，则试图从 path 中解析 server
         if (!$server) {
             if ($this->config->path) {
-                $uriArr = UriHelper::parse($this->config->path);
+                $uriArr = Url::parse($this->config->path);
                 if ($uriArr['schema'] && $uriArr['host']) {
                     return implode('://', [$uriArr['schema'], $uriArr['host']]);
                 } else {

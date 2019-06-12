@@ -1,20 +1,21 @@
 <?php
 
-namespace WecarSwoole\Client;
+namespace WecarSwoole\Util;
 
 use WecarSwoole\Exceptions\ParamsCannotBeNullException;
 
-class UriHelper
+class Url
 {
     /**
-     * @param string $uri
-     * @param string $base
-     * @param array $queryParams
-     * @param array $flagParams
-     * @return mixed|string
+     * 组装 url
+     * @param string $uri uri 的 path 部分或者整个 uri，可以使用占位符如 {uid}
+     * @param string $base baseurl
+     * @param array $queryParams 查询字符串
+     * @param array $flagParams 用于替换 $uri 中的占位符
+     * @return string
      * @throws ParamsCannotBeNullException
      */
-    public static function assemble(string $uri, string $base = '', array $queryParams = [], array $flagParams = [])
+    public static function assemble(string $uri, string $base = '', array $queryParams = [], array $flagParams = []): string
     {
         $uri = self::replaceFlag($uri, $flagParams);
 
