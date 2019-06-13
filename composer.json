@@ -6,7 +6,7 @@
         "php": ">=7.2",
         "ext-swoole": ">=4.3.0",
         "ext-redis": "*",
-        "framework/wecar_easyswoole": "~3.3.0",
+        "easyswoole/easyswoole": "3.x",
         "php-di/php-di": "~6.0.0",
         "ramsey/uuid": "~3.8.0",
         "swlib/saber": "~1.0.0",

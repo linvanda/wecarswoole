@@ -80,7 +80,6 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 > 1. 由于我们目前没有私有 composer 仓库，故上面的配置文件采用 vcs 仓储模式加载组件，包括以后开发的新组建也要将 gitlab 地址加入到这里面（必须加入到项目的 composer.json 中，加入到下级组件的 composer.json 是无效的）；
 >
 > 2. 当搭建了私有 composer 仓库后，可以删掉这些 `vcs`  配置，只需将 `packagist` 项改成我们自己的私有仓库地址即可；
-> 3. 由于对 EasySwoole 框架做了修改（增加依赖注入能力），故使用我们内部的克隆版；
 > 4. 当执行 composer 命令出错时（如 install、update 等），请在后面加 -vvv 查看详细信息（如 composer install -vvv）；
 > 5. 项目不要提交 vendor 目录到 git 中；
 > 6. 关于国内镜像： https://packagist.phpcomposer.com 没人维护了，现在用了 https://packagist.laravel-china.org，虽然 Laravel China 声称会长期维护，不过不可保证，可考虑搭建内部 composer 库；
@@ -288,6 +287,8 @@ EasySwooleEvent.php : 全局事件
 
 - **领域层**。放在 Domain/ 目录中。这里放具体的业务逻辑代码，属于系统核心。Domain/ 底下可根据实际需要自由创建目录，自由组织代码。不过根据 DDD 通行做法，会分成以下几大概念：
 
+  （以下仅作为概念阐述，不了解没关系）
+
   - Service（服务)。全称是**领域服务**(相对于应用服务)。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当保持简单（即自己不实现业务细节，而是通过调用、组织其他类来实现功能），而且是**无状态的**（即 Service 不能在属性中保存业务状态信息）。
 
     另一个常见的 Service 是外部接口调用，如调用外部的积分系统，此时一般我们会创建一个单独的 Service 封装接口调用。
@@ -316,7 +317,7 @@ EasySwooleEvent.php : 全局事件
     - 领域层的代码应当是可测试的（单元测试）；
     - 领域层对其他层的依赖应当通过依赖注入实现，而不能在领域层直接 new 其他层的对象；
     - 领域层和其他层通信一般是基于接口的（面向接口编程）；
-    - 不要在领域层直接使用 Session、Request、Response、Cookie、Header、Container、DI、Config 等全局变量和框架相关的东西，保证业务逻辑代码是框架无关的而且是可测试的；
+    - **禁止在领域层直接使用 Session、Request、Response、Cookie、Header、Container、DI、Config 等全局变量和框架相关的东西**，保证业务逻辑代码是框架无关的而且是可测试的；
 
 - **基础设施层**。提供诸如 DB、Cache、SESSION 等业务无关的基础支持。
 
