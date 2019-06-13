@@ -2,8 +2,6 @@
 
 namespace WecarSwoole\Http;
 
-use Psr\Container\ContainerInterface;
-use EasySwoole\Component\Di;
 use EasySwoole\EasySwoole\Trigger;
 use EasySwoole\Http\AbstractInterface\Controller as EsController;
 

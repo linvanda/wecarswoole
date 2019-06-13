@@ -213,6 +213,7 @@ return [
     'NE' => [
         'name' => '通知包',
         'app_id' => 20004,
+        'secret' => '2iiigbbXfM0VbgpwSCAUpjYbbEZAokLl',
         'servers' => [
             ['url' => 'http://notice-api.weicheche.cn', 'weight' => 100],
         ],

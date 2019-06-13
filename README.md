@@ -70,10 +70,16 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
    ```
 
 3. 执行 `composer install`
+
 4. 执行 `php vendor/bin/wecarswoole install` 安装 WecarSwoole 框架
-5. 启动：`php easyswoole start d --env=dev` (—env : dev、test、preview、produce，d 表示后台运行)
-6. 停止：`php easyswoole stop`
-7. 其他指令参见 easyswoole 官网
+
+5. 修改配置文件
+
+6. 启动：`php easyswoole start d --env=dev` (—env : dev、test、preview、produce，d 表示后台运行)
+
+7. 停止：`php easyswoole stop`
+
+8. 其他指令参见 easyswoole 官网
 
 **注意**
 
@@ -141,7 +147,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 - 可扩展性
 - 容易和第三方系统对接
 - 可测试
-- 遵循 PSR 规范
+- 遵循 [PSR 规范](https://www.php-fig.org)
 
 
 
@@ -350,12 +356,17 @@ EasySwooleEvent.php : 全局事件
 
 - config/config.php 配置入口文件
 
+  实际项目请修改 app_name 和 app_flag 项。
+
   ```php
   <?php
   
   use \WecarSwoole\Util\File;
   
   $baseConfig = [
+    	// 具体应用请修改
+    	'app_name' => '应用名称',
+      'app_flag' => 'SY', // 应用标识
       // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）
       'logger' => [
           'debug' => [

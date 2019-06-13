@@ -18,4 +18,20 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-echo File::join(EASYSWOOLE_ROOT, 'abc');
+$sign = new \WecarSwoole\Signer\WecarSigner();
+$appId = 34342;
+$secret = "asfasd2938dfj3j";
+$params = [
+        'name' => '里斯',
+        'age' => 12,
+        'app_id' => $appId,
+        'lover' => '小资',
+];
+
+//$token = $sign->signature($params, $secret);
+//echo $token."\n";
+//echo $sign->verify($token, $params, $secret);
+
+\WecarSwoole\Util\Config::getServerInfoByAppId(10012);
+\WecarSwoole\Util\Config::getServerInfoByAppId(10012);
+\WecarSwoole\Util\Config::getServerInfoByAppId(10012);

@@ -3,6 +3,8 @@
 use \WecarSwoole\Util\File;
 
 $baseConfig = [
+    'app_name' => '应用名称',
+    'app_flag' => 'SY', // 应用标识
     // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）
     'logger' => [
         'debug' => [
