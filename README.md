@@ -1521,6 +1521,42 @@ DTO 应当放在哪？
 
 
 
+####依赖注入
+
+框架采用 PHP-DI 组件作为依赖注入容器。
+
+建议项目中使用依赖注入解决依赖问题，具体的可以采用构造函数注入依赖、直接用容器 get。
+
+- 构造函数注入：
+
+  ```php
+  public function __construct(CacheInterface $cache)
+  {
+      $this->cache = $cache;
+      parent::__construct();
+  }
+  ```
+
+- 容器获取：
+
+  控制器中可以这样：
+
+  ```php
+  $this->container()->get(IUserRepository::class);
+  ```
+
+  其它地方：
+
+  ```php
+  use WecarSwoole\Container;
+  ...
+  Container::get(IUserRepository::class);
+  ```
+
+  其中 \WecarSwoole\Container 是一个 Container facade 类。
+
+
+
 ### 框架提供的 Util 工具
 
 除了 easyswoole 提供的一些工具以外，框架还提供了以下工具供使用：
