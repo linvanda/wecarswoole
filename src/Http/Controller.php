@@ -4,7 +4,6 @@ namespace WecarSwoole\Http;
 
 use Psr\Container\ContainerInterface;
 use EasySwoole\Component\Di;
-use EasySwoole\EasySwoole\SysConst;
 use EasySwoole\EasySwoole\Trigger;
 use EasySwoole\Http\AbstractInterface\Controller as EsController;
 
@@ -22,7 +21,7 @@ class Controller extends EsController
 
     public function __construct()
     {
-        $this->container = Di::getInstance()->get(SysConst::DI_CONTAINER);
+        $this->container = Di::getInstance()->get("di-container");
         parent::__construct();
     }
 

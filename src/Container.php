@@ -14,11 +14,11 @@ class Container
 {
     public static function get($id)
     {
-        return Di::getInstance()->get(SysConst::DI_CONTAINER)->get($id);
+        return Di::getInstance()->get("di-container")->get($id);
     }
 
     public static function has($id)
     {
-        return Di::getInstance()->get(SysConst::DI_CONTAINER)->has($id);
+        return Di::getInstance()->get("di-container")->has($id);
     }
 }

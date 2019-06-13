@@ -12,7 +12,6 @@ class CronHeartBeatProcess extends AbstractProcess
 {
     /**
      * @param $arg
-     * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
      */
     public function run($arg)
     {
@@ -45,9 +44,6 @@ class CronHeartBeatProcess extends AbstractProcess
         }, 'crontab_heartbeat');
     }
 
-    /**
-     * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
-     */
     public function onShutDown()
     {
         CronTabUtil::clean();
