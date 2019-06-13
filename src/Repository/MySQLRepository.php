@@ -12,13 +12,12 @@ use WecarSwoole\MySQLFactory;
  * Class MySQLRepository
  * @package WecarSwoole\Repository
  */
-class MySQLRepository implements IRepository
+abstract class MySQLRepository implements IRepository
 {
     /**
      * @var \Dev\MySQL\Query
      */
     protected $query;
-    protected $dbName = 'user_center';
 
     /**
      * MySQLRepository constructor.
@@ -26,11 +25,11 @@ class MySQLRepository implements IRepository
      */
     public function __construct()
     {
-        if (!$this->dbName) {
-            throw new PropertyCannotBeNullException(get_called_class(), 'dbName');
+        if (!$this->dbName()) {
+            throw new \Exception('dbName can not be null');
         }
 
-        $this->query = MySQLFactory::build($this->dbName);
+        $this->query = MySQLFactory::build($this->dbName());
     }
 
     public function getDBContext()
@@ -42,4 +41,6 @@ class MySQLRepository implements IRepository
     {
         $this->query = $dbContext;
     }
+
+    abstract protected function dbName(): string;
 }

@@ -1167,7 +1167,7 @@ $this->mailer->send($message);
 
 
 
-#### 日志
+#### Logger
 
 框架没有使用 easyswoole 自带的 Logger（过于简单并不实用），使用遵循 PSR 规范的 monolog。同样，日志也是异步 task 处理的。
 
@@ -1250,7 +1250,121 @@ $this->mailer->send($message);
 
   依赖注入（构造函数或者 di 容器获取）：
 
-  
+  ```php
+  use Psr\SimpleCache\CacheInterface;
+  ...
+  public function __construct(CacheInterface $cache)
+  {
+    $this->cache = $cache;
+    parent::__construct();
+  }
+  ...
+  $this->cache->set('testcache', [343]);
+  $this->cache->get('testcache');
+  ```
+
+
+
+#### Redis
+
+使用 PHP 的 pecl 扩展 phpredis 并使用其自带的连接池。
+
+1. 安装 phpredis 扩展后，配置php.ini：
+
+   extension=redis.so
+   redis.pconnect.pooling_enabled=1
+
+2. 配置项目：
+
+   config/env/$env.php
+
+   ```php
+   'redis' => [
+       'main' => [
+           'host' => 'db.redis.wcc.cn',
+           'port' => 6379,
+           'auth' => 'XEXeh1l6nT3wHL0z'
+       ],
+       'cache' => [
+           'host' => 'db.redis.wcc.cn',
+           'port' => 6379,
+           'auth' => 'XEXeh1l6nT3wHL0z',
+       ],
+     	...
+   ],
+   ```
+
+   其中 main、cache 是自定义的别名，其它地方可以引用。
+
+3. 使用：
+
+   ```php
+   use WecarSwoole\RedisFactory;
+   ...
+   $redis = RedisFactory::build('main');
+   $redis->set('testredis', 'abcdef');
+   $result = $redis->get('testredis');
+   ```
+
+
+
+#### MySQL
+
+使用 [dev/mysql](https://gitlab4.weicheche.cn/dev/mysql) 扩展。
+
+一般情况下只在 `\WecarSwoole\Repository\MySQLRepository` 子类中使用，该负累已经自动创建了 mysql 实例，子类仅需要配置所使用的数据库别名即可。
+
+1. 项目配置 config/env/$env.php
+
+   ```php
+   'mysql' => [
+       'weicheche' => [
+           // 读库使用二维数组配置，以支持多个读库
+           'read' => [
+               [
+                   'host' => '192.168.85.135',
+                   'port' => 3306,
+                   'user' => 'root',
+                   'password' => 'weicheche',
+                   'database' => 'weicheche',
+                   'charset' => 'utf8',
+               ]
+           ],
+           // 仅支持一个写库
+           'write' => [
+               'host' => '192.168.85.135',
+               'port' => 3306,
+               'user' => 'root',
+               'password' => 'weicheche',
+               'database' => 'weicheche',
+               'charset' => 'utf8',
+           ],
+           // 连接池配置
+           'pool' => [
+               'size' => 30
+           ]
+       ],
+       // 可以不配置读写分离
+       'user_center' => [
+           'host' => '192.168.85.135',
+           'port' => 3306,
+           'user' => 'root',
+           'password' => 'weicheche',
+           'database' => 'user_center',
+           'charset' => 'utf8',
+           // 连接池配置
+           'pool' => [
+               'size' => 30
+           ]
+       ]
+   ],
+   ```
+
+2. 创建仓储继承基类：
+
+   
+
+
 
 ### 框架中用到的一些组件
 
