@@ -12,13 +12,40 @@ use EasySwoole\Component\Di;
  */
 class Container
 {
-    public static function get($id)
+    /**
+     * 从容器获取对象。单例模式，只会实例化对象一次
+     * @param $name
+     * @return mixed
+     */
+    public static function get($name)
     {
-        return Di::getInstance()->get("di-container")->get($id);
+        return Di::getInstance()->get("di-container")->get($name);
     }
 
-    public static function has($id)
+    /**
+     * 同 get，不过 make 每次会重新实例化对象
+     * @param $name
+     * @param array $parameters
+     * @return mixed
+     */
+    public static function make($name, array $parameters = [])
     {
-        return Di::getInstance()->get("di-container")->has($id);
+        return Di::getInstance()->get("di-container")->make($name, $parameters);
+    }
+
+    /**
+     * 设置注入内容
+     * @param $name
+     * @param $value
+     * @return mixed
+     */
+    public static function set($name, $value)
+    {
+        return Di::getInstance()->get("di-container")->set($name, $value);
+    }
+
+    public static function has($name)
+    {
+        return Di::getInstance()->get("di-container")->has($name);
     }
 }

@@ -10,6 +10,9 @@ namespace PHPSTORM_META
         ],
         \WecarSwoole\Container::get('') => [
             "" == "@",
-        ]
+        ],
+        \WecarSwoole\Container::make('', $params = []) => [
+            "" == "@",
+        ],
     ];
 }

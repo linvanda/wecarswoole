@@ -17,13 +17,6 @@ use EasySwoole\Http\AbstractInterface\Controller as EsController;
 class Controller extends EsController
 {
     protected $responseData;
-    protected $container;
-
-    public function __construct()
-    {
-        $this->container = Di::getInstance()->get("di-container");
-        parent::__construct();
-    }
 
     public function index()
     {
@@ -60,15 +53,6 @@ class Controller extends EsController
         }
 
         return isset($key) ? $params[$key] : $params;
-    }
-
-    /**
-     * 依赖注入容器
-     * @return ContainerInterface
-     */
-    protected function container(): ContainerInterface
-    {
-        return $this->container;
     }
 
     /**

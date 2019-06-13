@@ -727,7 +727,6 @@ EasySwooleEvent.php : 全局事件
 - 控制器是有版本控制的，但 Domain 没有，Domain 一般需要保持业务一致性。
 - 目前的基类控制器提供的便捷方法：
   - `$this->params($key = null)`：获取输入参数，不分请求方式（POST、GET 等）；
-  - `$this->container()`：获取符合 PSR 规范的 IoC 容器；
   - `$this->return($data = [], int $status = 200, string $msg = '')`：返回 json 数据；
 
 对于命令类操作（需要修改数据的，涉及到业务逻辑的），一般是在控制器中注入并使用 Domain Service，对于查询类操作（仅获取数据用于展示，不涉及到多少业务逻辑处理的），一般可以在控制器中注入并使用 Repository，Repository 返回 DTO 对象，控制器中将 DTO 对象转成数组并格式化成 json 返回。
@@ -1526,7 +1525,7 @@ DTO 应当放在哪？
 
 框架采用 PHP-DI 组件作为依赖注入容器。
 
-建议项目中使用依赖注入解决依赖问题，具体的可以采用构造函数注入依赖、直接用容器 get。
+建议项目中使用依赖注入解决依赖问题，具体的可以采用构造函数注入依赖、直接用容器 get/make。
 
 - 构造函数注入：
 
@@ -1540,21 +1539,62 @@ DTO 应当放在哪？
 
 - 容器获取：
 
-  控制器中可以这样：
-
-  ```php
-  $this->container()->get(IUserRepository::class);
-  ```
-
-  其它地方：
-
   ```php
   use WecarSwoole\Container;
   ...
   Container::get(IUserRepository::class);
   ```
 
-  其中 \WecarSwoole\Container 是一个 Container facade 类。
+  `\WecarSwoole\Container` 是一个 Container facade 类：
+
+  ```php
+  /**
+   * Container facade
+   * Class Container
+   * @package WecarSwoole
+   */
+  class Container
+  {
+      /**
+       * 从容器获取对象。单例模式，只会实例化对象一次
+       * @param $name
+       * @return mixed
+       */
+      public static function get($name)
+      {
+          return Di::getInstance()->get("di-container")->get($name);
+      }
+  
+      /**
+       * 同 get，不过 make 每次会重新实例化对象
+       * @param $name
+       * @param array $parameters
+       * @return mixed
+       */
+      public static function make($name, array $parameters = [])
+      {
+          return Di::getInstance()->get("di-container")->make($name, $parameters);
+      }
+  
+      /**
+       * 设置注入内容
+       * @param $name
+       * @param $value
+       * @return mixed
+       */
+      public static function set($name, $value)
+      {
+          return Di::getInstance()->get("di-container")->set($name, $value);
+      }
+  
+      public static function has($name)
+      {
+          return Di::getInstance()->get("di-container")->has($name);
+      }
+  }
+  ```
+
+> 注意：easyswoole 属于常驻进程，除非重启，否则多次请求的 `$container` 都是同一个，因而 `$container->get("ClassName")` 在整个进程生命周期获取到的都是同一个对象实例，因而 `$container->get()` 只能用来获取单例（如 Cache、Logger 等）或者无状态对象，如果不然，则要用 `$container->make()`，否则会造成数据混乱。
 
 
 
@@ -1597,6 +1637,10 @@ Http/Controller 是系统最主要的对外 API，API 一旦定义则很难做�
 - MySQL、Redis、Email、Cache、Logger 等基础设施都有相应工厂来创建，工厂依赖于 EasySwoole（主要依赖于配置），并且将具体的基础设施扩展与 EasySwoole 框架隔离（即扩展本身不依赖于框架）。
 - 工厂返回的基础设施尽量符合 PSR 规范（如 Cache、Logger 等）。
 - 虽然提供了工厂，但实际使用中不建议直接用工厂获取对象（工厂并不提供单例模式），项目中请用 IoC 注入（本项目用的是 PHP-DI，建议通过构造函数注入这些基础设施）。
+
+##### 生产环境
+
+每次发布生产后需执行：`composer dump-autoload -o` 优化自动加载速度。
 
 
 
