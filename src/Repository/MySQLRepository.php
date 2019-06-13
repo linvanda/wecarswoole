@@ -2,7 +2,6 @@
 
 namespace WecarSwoole\Repository;
 
-use WecarSwoole\Exceptions\PropertyCannotBeNullException;
 use WecarSwoole\MySQLFactory;
 
 /**
