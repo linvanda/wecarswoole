@@ -767,32 +767,65 @@ EasySwooleEvent.php : 全局事件
 
 - 发布事件：
 
-  - 依赖注入 `Psr\EventDispatcher\EventDispatcherInterface` （已经在 config/di/di.php 中配置其实现）；
-  - `$dispatcher->dispatch(new YourEvent(​...$params));`；
+  ```php
+  use Psr\EventDispatcher\EventDispatcherInterface;
+  ...
+  public function __construct(EventDispatcherInterface $eventDispatcher)
+  {
+    $this->eventDispatcher = $eventDispatcher;
+    parent::__construct();
+  }
+  ...
+  $this->eventDispatcher->dispatch(new YourEvent(...$params));
+  ```
 
 - 订阅事件：
 
   - 定义：在 app/Subscribers/ 目录中定义，需实现 `Symfony\Component\EventDispatcher\EventSubscriberInterface` 接口并实现 `getSubscribedEvents()` 方法，如：
 
     ```php
-    public static function getSubscribedEvents()
-    {
-      return [
-        UserAddedEvent::class => [
-          ['initLevel'],
-          ['initCard']
-        ]
-      ];
-    }
+    <?php
     
-    public function initLevel(UserAddedEvent $event)
-    {
-      echo "初始化用户等级。用户:" . $event->getUser()->getId() ."\n";
-    }
+    namespace App\Subscribers;
     
-    public function initCard(UserAddedEvent $event)
+    use App\Domain\Events\UserAddedEvent;
+    use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+    
+    /**
+     * 用户事件订阅者
+     * Class User
+     * @package App\Subscribers
+     */
+    class User implements EventSubscriberInterface
     {
-      echo "初始化用户储值卡。用户:" . $event->getUser()->getId() ."\n";
+        /**
+         * Returns an array of event names this subscriber wants to listen to.
+         * For instance:
+         *  * ['eventName' => 'methodName']
+         *  * ['eventName' => ['methodName', $priority]]
+         *  * ['eventName' => [['methodName1', $priority], ['methodName2']]]
+         *
+         * @return array The event names to listen to
+         */
+        public static function getSubscribedEvents()
+        {
+            return [
+                UserAddedEvent::class => [
+                    ['initLevel'],
+                    ['initCard']
+                ],
+            ];
+        }
+    
+        public function initLevel(UserAddedEvent $event)
+        {
+            echo "初始化用户等级。用户:" . $event->getUser()->getId() ."\n";
+        }
+    
+        public function initCard(UserAddedEvent $event)
+        {
+            echo "初始化用户储值卡。用户:" . $event->getUser()->getId() ."\n";
+        }
     }
     ```
 
