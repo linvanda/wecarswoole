@@ -705,7 +705,17 @@ EasySwooleEvent.php : 全局事件
 
 - 框架提供了一个 `\WecarSwoole\Http\ApiRoute`基类，继承该类的路有都需走 api 鉴权（我们目前的鉴权方式）。
 
-#### 路由中间件
+##### 路由定义
+
+使用 [fast-route](https://github.com/nikic/FastRoute) 规则。
+
+```
+/users
+/users/{id:\d+}			-- 正则匹配：数字
+/articles/{id:\d+}[/{title}]	-- 可选参数：title
+```
+
+##### 路由中间件
 
 可以添加中间件进行路由信息拦截，如用来做鉴权（api鉴权、登录验证等）。如果中间件抛出异常，则终止请求执行，返回错误给用户。
 
@@ -715,7 +725,7 @@ EasySwooleEvent.php : 全局事件
 
 实践：设置两个路由指向同一个控制器，这两个路由一个暴露给公司内部，一个暴露给外部第三方，两者使用不同的鉴权机制，而实现的功能相同（因而使用同一个控制器）。可以创建两个路由父类，两者使用不同的鉴权中间件，一个对内，一个对外，所有内部 api 都继承对内的那个父类，对外 api 则继承另一个。
 
-#### Restful API
+##### Restful API
 
 建议使用 Restful 风格 api 定义。关于 Restful 请参见 [Restful API 最佳实践](http://www.ruanyifeng.com/blog/2018/10/restful-api-best-practices.html)
 
@@ -1027,6 +1037,18 @@ EasySwooleEvent.php : 全局事件
   ...
   TaskManager::async(new SendMail([...]));
   ```
+
+
+
+#### 认证/鉴权
+
+认证/鉴权工作应当放在路由层之前进行。
+
+目前我们使用的自定义认证/鉴权方案不是太友好，要求请求数据必须全部放在 data 字段里面并 json encode，这对于 RESTful API 并不友好。
+
+框架虽然提供了 ApiRoute 基类供需认证/鉴权路由继承，不过目前并没有实现认证/鉴权方案。后面可能会废弃掉应用层的认证，统一走应用网关认证，也有可能会实现一种认证（如 JWT 认证，由于目前旧系统并不支持，故尚未实现于框架中）。
+
+另一种是如商户平台这种登录型系统，认证和鉴权是很明晰的（当然也是要放在路由层完成）。
 
 
 

@@ -10,7 +10,7 @@ class Config
     {
         static $conf = [];
 
-        if ($conf[$appId]) {
+        if (isset($conf[$appId])) {
             return $conf[$appId];
         }
 
