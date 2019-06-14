@@ -1380,7 +1380,7 @@ $this->mailer->send($message);
 
 使用 [dev/mysql](https://gitlab4.weicheche.cn/dev/mysql) 扩展。
 
-一般情况下只在 `\WecarSwoole\Repository\MySQLRepository` 子类中使用，该负累已经自动创建了 mysql 实例，子类仅需要配置所使用的数据库别名即可。
+一般情况下只在 `\WecarSwoole\Repository\MySQLRepository` 子类中使用，该类已经自动创建了 MySQL 实例，子类仅需要配置所使用的数据库别名即可。
 
 1. 项目配置 config/env/$env.php
 
@@ -1472,7 +1472,7 @@ $this->mailer->send($message);
            return null;
        }
      
-       protected function dbName(): string
+       protected function dbAlias(): string
        {
            return 'user_center';
        }

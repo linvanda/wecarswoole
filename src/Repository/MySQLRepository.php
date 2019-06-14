@@ -24,11 +24,11 @@ abstract class MySQLRepository implements IRepository
      */
     public function __construct()
     {
-        if (!$this->dbName()) {
+        if (!$this->dbAlias()) {
             throw new \Exception('dbName can not be null');
         }
 
-        $this->query = MySQLFactory::build($this->dbName());
+        $this->query = MySQLFactory::build($this->dbAlias());
     }
 
     public function getDBContext()
@@ -41,5 +41,5 @@ abstract class MySQLRepository implements IRepository
         $this->query = $dbContext;
     }
 
-    abstract protected function dbName(): string;
+    abstract protected function dbAlias(): string;
 }
