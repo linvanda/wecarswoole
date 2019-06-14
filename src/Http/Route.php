@@ -61,9 +61,9 @@ abstract class Route
                     }
 
                     try {
-                        $midw->handle($request, $response);
+                        $midw->handle($request);
                     } catch (\Exception $e) {
-                        $response->write($e->getMessage());
+                        $response->write(json_encode(['info' => $e->getMessage(), 'status' => $e->getCode() ?: 500]));
                         return false;
                     }
                 }
