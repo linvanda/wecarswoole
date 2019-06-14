@@ -719,7 +719,7 @@ EasySwooleEvent.php : 全局事件
 
 可以添加中间件进行路由信息拦截，如用来做鉴权（api鉴权、登录验证等）。如果中间件抛出异常，则终止请求执行，返回错误给用户。
 
-- 在 app/Http/Middlewares/ 中创建中间件类，需实现 `\WecarSwoole\Middleware\IRouteMiddleware` 接口（并实现其 `handle(Request $request, Response $response)` 方法）;
+- 在 app/Http/Middlewares/ 中创建中间件类，需实现 `\WecarSwoole\Middleware\IRouteMiddleware` 接口（并实现其 `handle(Request $request)` 方法）;
 - 在路由类的构造函数中调用 `$this->setMiddleware(array $middlewareNameList)` 给路由添加中间件，参数为中间件类名。该做法会让该路由类以及继承该路由类的路由全部应用该中间件；
 - 还可以针对单独的路由添加中间件：在调用 get、post、put、delete 方法设置路由时第三个参数可以传入中间件列表，格式同上；
 
