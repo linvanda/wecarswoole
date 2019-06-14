@@ -352,6 +352,12 @@ EasySwooleEvent.php : 全局事件
 
 ----
 
+#### 环境
+
+目前有四个环境：dev、test、preview、produce
+
+
+
 #### 配置
 
 - config/config.php 配置入口文件
@@ -1508,8 +1514,8 @@ $query = MySQLFactory::build('dbalias');
 use WecarSwoole\Transaction;
 ...
 
-$repos1 = $this->container()->get(IUserRepository::class);
-$repos2 = $this->container()->get(IMerchantRepository::class);
+$repos1 = Container::make(IUserRepository::class);
+$repos2 = Container::make(IMerchantRepository::class);
 
 $trans = Transaction::begin([$repos1, $repos2]);
 $res1 = $repos1->add(new User('13909094444'));

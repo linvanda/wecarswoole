@@ -9,7 +9,7 @@ use WecarSwoole\Client\Contract\IResponseParser;
 use WecarSwoole\Client\Contract\IHttpServerParser;
 use WecarSwoole\Client\Http\HttpClient;
 use WecarSwoole\Client\Config\Config;
-use WecarSwoole\Exceptions\ConfigNotFoundException;
+use EasySwoole\EasySwoole\Config as EsConfig;
 
 class ClientFactory
 {
@@ -21,6 +21,15 @@ class ClientFactory
     public static function build(string $api): IClient
     {
         $config = Config::load($api);
+
+        // 当前项目的 app_id
+        if (!$config['app_id'] && ($serverFlag = EsConfig::getInstance()->getConf('app_flag'))) {
+            $config['app_id'] = EsConfig::getInstance()->getConf("server.$serverFlag")['app_id'];
+        }
+
+        if (!$config['app_id']) {
+            throw new \Exception("当前项目没有配置合法的app_id");
+        }
 
         switch (strtolower($config['protocol'])) {
             case 'http':

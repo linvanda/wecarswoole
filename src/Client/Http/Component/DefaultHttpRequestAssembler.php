@@ -5,6 +5,8 @@ namespace WecarSwoole\Client\Http\Component;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
+use WecarSwoole\Signer\WecarSigner;
+use WecarSwoole\Util\Config as UtilConfig;
 
 /**
  * 默认请求组装器
@@ -27,10 +29,7 @@ class DefaultHttpRequestAssembler implements IHttpRequestAssembler
         $flagParams = $this->parseFlagParams($params);
         $body = $this->parseBody($params);
 
-        // 签名
-        $token = DefaultSigner::sign($this->config->appId, $this->config->server, $flagParams + $queryParams + $body);
-        // 重新组装：加入签名信息
-        $data = $this->reassemble($flagParams, $queryParams, $body, $token);
+        $data = $this->reassemble($flagParams, $queryParams, $body);
 
         return new HttpRequestBean(
             $data['body'],
@@ -41,20 +40,25 @@ class DefaultHttpRequestAssembler implements IHttpRequestAssembler
         );
     }
 
-    protected function reassemble(array $flagParams, array $queryParams, array $body, string $secret): array
+    protected function reassemble(array $flagParams, array $queryParams, array $body): array
     {
+        // 签名器
+        $signer = new WecarSigner();
+        $currentServerInfo = UtilConfig::getServerInfoByAppId($this->config->appId);
+        $secret = $currentServerInfo['secret'] ?? '';
+
         if ($this->config->method === 'GET') {
             $queryParams = [
                 'app_id' => $this->config->appId,
-                'token' => $secret,
                 'data' => json_encode($queryParams)
             ];
+            $queryParams['token'] = $signer->signature($queryParams, $secret);
         } else {
             $body = [
                 'app_id' => $this->config->appId,
-                'token' => $secret,
                 'data' => json_encode($body)
             ];
+            $body['token'] = $signer->signature($body, $secret);
         }
 
         return ['flag_params' => $flagParams, 'query_params' => $queryParams, 'body' => $body];
