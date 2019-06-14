@@ -148,6 +148,10 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 - 容易和第三方系统对接
 - 可测试
 - 遵循 [PSR 规范](https://www.php-fig.org)
+- 组合优于继承：
+  - 类继承层次不要过深，一般不要超过3层。
+  - 不要在基类写太多功能，基类功能越多越笨重不灵活。
+  - 优先使用多个类组合完成功能，而不是全塞到基类里面实现。
 
 
 
@@ -679,7 +683,7 @@ EasySwooleEvent.php : 全局事件
   }
   ```
 
-- 路由类需继承 `WecarSwoole\Http\Route` 抽象类并实现 map() 方法定义具体路由，使用 get、post、put、delete 定义 Restful API 接口；
+- 路由类需继承 `WecarSwoole\Http\Route` 抽象类并实现 map() 方法定义具体路由，使用 get、post、put、delete 定义 RESTful API 接口；
 
   例：
 
@@ -709,7 +713,7 @@ EasySwooleEvent.php : 全局事件
   }
   ```
 
-- 框架提供了一个 `\WecarSwoole\Http\ApiRoute`基类，继承该类的路有都需走 api 鉴权（我们目前的鉴权方式）。
+- 框架提供了一个 `\WecarSwoole\Http\ApiRoute`基类，继承该类的路由都需走 api 鉴权（我们目前的鉴权方式）。
 
 ##### 路由定义
 
@@ -731,9 +735,9 @@ EasySwooleEvent.php : 全局事件
 
 实践：设置两个路由指向同一个控制器，这两个路由一个暴露给公司内部，一个暴露给外部第三方，两者使用不同的鉴权机制，而实现的功能相同（因而使用同一个控制器）。可以创建两个路由父类，两者使用不同的鉴权中间件，一个对内，一个对外，所有内部 api 都继承对内的那个父类，对外 api 则继承另一个。
 
-##### Restful API
+##### RESTful API
 
-建议使用 Restful 风格 api 定义。关于 Restful 请参见 [Restful API 最佳实践](http://www.ruanyifeng.com/blog/2018/10/restful-api-best-practices.html)
+建议使用 RESTful 风格 api 定义。关于 RESTful 请参见 [Restful API 最佳实践](http://www.ruanyifeng.com/blog/2018/10/restful-api-best-practices.html)
 
 
 

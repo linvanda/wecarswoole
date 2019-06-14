@@ -123,7 +123,7 @@ class HotReload extends AbstractProcess
         global $inotifyResource;
 
         $lastReloadTime = 0;
-        $files = File::scanDirectory(EASYSWOOLE_ROOT . '/App');
+        $files = File::scanDirectory(EASYSWOOLE_ROOT . '/app');
         $files = array_merge($files['files'], $files['dirs']);
 
         $inotifyResource = inotify_init();
