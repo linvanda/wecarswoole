@@ -126,7 +126,7 @@ class HttpClient implements IClient
         return $data;
     }
 
-    private static function formatHeaderKey(\string $key): \string
+    private static function formatHeaderKey(string $key): string
     {
         $k = explode('-', $key);
         $k = array_map(function ($item) {

@@ -17,7 +17,7 @@ class RedisFactory
      * @return \Redis
      * @throws ConfigNotFoundException
      */
-    public static function build(\string $redisAlias): \Redis
+    public static function build(string $redisAlias): \Redis
     {
         $redisConf = $cacheConf = Config::getInstance()->getConf("redis.$redisAlias");
         if (!$redisConf) {

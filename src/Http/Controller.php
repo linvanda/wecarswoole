@@ -21,7 +21,7 @@ class Controller extends EsController
         // do nothing default
     }
 
-    protected function afterAction(?\string $action): void
+    protected function afterAction(?string $action): void
     {
         if ($this->responseData) {
             $this->response()->write(is_string($this->responseData) ? $this->responseData : json_encode($this->responseData, JSON_UNESCAPED_UNICODE));
@@ -59,7 +59,7 @@ class Controller extends EsController
      * @param int $status
      * @param string $msg
      */
-    protected function return($data = [], int $status = 200, \string $msg = ''): void
+    protected function return($data = [], int $status = 200, string $msg = ''): void
     {
         $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data];
     }

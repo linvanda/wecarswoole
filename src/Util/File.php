@@ -11,7 +11,7 @@ class File extends EsFile
      * @param array ...$paths
      * @return string
      */
-    public static function join(...$paths): \string
+    public static function join(...$paths): string
     {
         return (strtoupper(substr(PHP_OS,0,3)) === 'WIN' ? '' : '/')
             . implode('/', array_map(function ($path) {

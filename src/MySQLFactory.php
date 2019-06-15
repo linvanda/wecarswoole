@@ -22,7 +22,7 @@ class MySQLFactory
      * @return Query
      * @throws \Exception
      */
-    public static function build(\string $dbAlias): Query
+    public static function build(string $dbAlias): Query
     {
         $dbConf = Config::getInstance()->getConf("mysql.$dbAlias");
         if (!$dbConf) {

@@ -21,7 +21,7 @@ class DefaultHttpServerParser implements IHttpServerParser
         $this->config = $config;
     }
 
-    public function parse(): \string
+    public function parse(): string
     {
         $server = $this->config->server;
 
@@ -47,7 +47,7 @@ class DefaultHttpServerParser implements IHttpServerParser
         return $this->parseFromConfig($server);
     }
 
-    protected function parseFromConfig(\string $server): \string
+    protected function parseFromConfig(string $server): string
     {
         if (!($serverConf = EsConfig::getInstance()->getConf("server.$server"))) {
             return $server;
@@ -65,7 +65,7 @@ class DefaultHttpServerParser implements IHttpServerParser
      * @param array $servers
      * @return string
      */
-    protected function chooseServer(array $servers): \string
+    protected function chooseServer(array $servers): string
     {
         return $servers[mt_rand(0, count($servers) - 1)]['url'];
     }

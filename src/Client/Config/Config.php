@@ -65,7 +65,7 @@ class Config
      * @throws ConfigNotFoundException
      * @throws \Exception
      */
-    public static function load(\string $api): array
+    public static function load(string $api): array
     {
         $apiInfo = self::parseApi($api);
         $conf = EsConfig::getInstance()->getConf('api_config');
@@ -99,7 +99,7 @@ class Config
      * @return array ['group' => '...', 'api' => '...']
      * @throws \Exception
      */
-    private static function parseApi(\string $api): array
+    private static function parseApi(string $api): array
     {
         $arr = explode(':', $api);
 

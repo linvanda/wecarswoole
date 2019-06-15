@@ -18,7 +18,7 @@ class ClientFactory
      * @return IClient
      * @throws \Exception
      */
-    public static function build(\string $api): IClient
+    public static function build(string $api): IClient
     {
         $config = Config::load($api);
 
