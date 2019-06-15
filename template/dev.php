@@ -12,7 +12,7 @@ return [
             'worker_num' => 4,
             'task_worker_num' => 16,
             'reload_async' => true,
-            'max_wait_time'=>5,
+            'max_wait_time' => 5,
             'max_request' => 10000,
             'task_enable_coroutine' => true,
             'task_max_request' => 5000,
@@ -28,7 +28,7 @@ return [
         'HOST' => '127.0.0.1',
         'PORT' => 9500,
         'USER' => 'root',
-        'PASSWORD' =>'123456'
+        'PASSWORD' => '123456'
     ],
     'DISPLAY_ERROR' => true,
     'PHAR' => [

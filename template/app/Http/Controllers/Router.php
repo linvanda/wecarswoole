@@ -19,13 +19,13 @@ class Router extends AbstractRouter
 {
     public function initialize(RouteCollector $routeCollector)
     {
-        $this->setMethodNotAllowCallBack(function (Request $request,Response $response){
+        $this->setMethodNotAllowCallBack(function (Request $request, Response $response) {
             $response->withStatus(404);
             $response->write('未找到处理方法');
             return false;
         });
 
-        $this->setRouterNotFoundCallBack(function (Request $request,Response $response){
+        $this->setRouterNotFoundCallBack(function (Request $request, Response $response) {
             $response->withStatus(404);
             $response->write('未找到路由匹配');
             return false;
