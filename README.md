@@ -84,11 +84,13 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 **注意**
 
 > 1. 由于我们目前没有私有 composer 仓库，故上面的配置文件采用 vcs 仓储模式加载组件，包括以后开发的新组建也要将 gitlab 地址加入到这里面（必须加入到项目的 composer.json 中，加入到下级组件的 composer.json 是无效的）；
->
 > 2. 当搭建了私有 composer 仓库后，可以删掉这些 `vcs`  配置，只需将 `packagist` 项改成我们自己的私有仓库地址即可；
 > 4. 当执行 composer 命令出错时（如 install、update 等），请在后面加 -vvv 查看详细信息（如 composer install -vvv）；
 > 5. 项目不要提交 vendor 目录到 git 中；
 > 6. 关于国内镜像： https://packagist.phpcomposer.com 没人维护了，现在用了 https://packagist.laravel-china.org，虽然 Laravel China 声称会长期维护，不过不可保证，可考虑搭建内部 composer 库；
+> 6. 全局修改 composer 源：
+>    1. 查看现在用的源：`composer config -l`；
+>    2. 修改源：`composer config -g repo.packagist composer https://packagist.laravel-china.org`
 
 
 
@@ -1658,6 +1660,48 @@ DTO 应当放在哪？
 
 
 
+### 锁
+
+待定
+
+
+
+### 单元测试
+
+待定
+
+
+
+### 代码规范
+
+代码需符合 [PHP 开发规范](https://github.com/linvanda/think/blob/master/PHP编码规范.md)。
+
+##### phpcs (PHP Code Sniffer)：
+
+phpcs 用来检测代码编写规范（如是否符合 PSR-2 规范）。
+
+安装：
+
+1. composer 全局安装 [phpcs]((https://github.com/squizlabs/PHP_CodeSniffer))：`composer global require "squizlabs/php_codesniffer=*"`；
+2. [PhpStorm 集成 phpcs](https://www.jetbrains.com/help/phpstorm/using-php-code-sniffer.html)：
+   1. 打开 phpstorm 点击 File->Settings->Languages & Frameworks->PHP->Code Sniffer，点击 Configuration 右侧的按钮，选择 PHP Code Sniffer (phpcs) path: 的路径，就是刚才 composer 之后生成的那个 phpcs.bat的路径。选择之后点击 Validate 验证成功；
+   2. 点击 Editor->Inspections，展开点击右侧的 PHP，勾选 PHP Code Sniffer Validation，Coding Standard 选择右侧的 PSR2；
+   3. 如果写的代码不符合psr2编码风格规范的时候，该行代码会有波浪线，点击波浪线可以查看提示信息，根据信息我们修改就可以写出优雅的代码了。
+
+##### phpmd (PHP Mess Detector):
+
+phpmd 用来检测代码坏味道(如类大小、命名规范等)。
+
+安装：
+
+1. composer 全局安装 [phpmd](https://github.com/phpmd/phpmd)：`composer global require phpmd/phpmd`；
+2. [PhpStorm 集成 phpmd](https://www.jetbrains.com/help/phpstorm/using-php-mess-detector.html)：
+   1. 打开 phpstorm 点击 File->Settings->Languages & Frameworks->PHP->Mess Detector，点击 Configuration 右侧的按钮，选择 PHP Mess Detector (phpmd) path: 的路径，就是刚才 composer 之后生成的那个 phpmd.bat的路径。选择之后点击 Validate 验证成功；
+   2. 点击 Editor->Inspections，展开点击右侧的 PHP，勾选 PHP Mess Detector Validation，将相关 options 都选上，确定；
+   3. 当写的代码不符合 phpmd 规范，则会有波浪线提示。
+
+
+
 ### 其它
 
 ##### 缺失的 Model
@@ -1692,15 +1736,10 @@ Http/Controller 是系统最主要的对外 API，API 一旦定义则很难做�
 ### 待实现：
 
 - webSocket 使用规范；
-
 - 单元测试引入；
-
 - 消息队列；
-
 - 接口调用：智能决定重试次数、熔断等（后面视具体情况是否需要）；
-
 - 服务健康状态监控；
-
 - 请求执行日志；
-
 - 异步事件订阅；
+- 防止重复请求
