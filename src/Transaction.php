@@ -36,7 +36,7 @@ class Transaction
      */
     public static function begin(...$repositories): Transaction
     {
-       $trans = new static();
+        $trans = new static();
         $trans->add(...$repositories);
 
         return $trans;

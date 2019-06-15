@@ -13,9 +13,9 @@ class File extends EsFile
      */
     public static function join(...$paths): string
     {
-        return (strtoupper(substr(PHP_OS,0,3)) === 'WIN' ? '' : '/')
+        return (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ? '' : '/')
             . implode('/', array_map(function ($path) {
-            return trim($path, '/');
-        }, $paths));
+                return trim($path, '/');
+            }, $paths));
     }
 }

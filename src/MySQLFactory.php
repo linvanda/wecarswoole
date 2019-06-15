@@ -26,7 +26,7 @@ class MySQLFactory
     {
         $dbConf = Config::getInstance()->getConf("mysql.$dbAlias");
         if (!$dbConf) {
-            throw new ConfigNotFoundException("mysql.".$dbAlias);
+            throw new ConfigNotFoundException("mysql." . $dbAlias);
         }
 
         if (!isset($dbConf['read']) && !isset($dbConf['write'])) {
