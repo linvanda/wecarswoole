@@ -89,7 +89,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 > 5. 项目不要提交 vendor 目录到 git 中；
 > 6. 关于国内镜像： https://packagist.phpcomposer.com 没人维护了，现在用了 https://packagist.laravel-china.org，虽然 Laravel China 声称会长期维护，不过不可保证，可考虑搭建内部 composer 库；
 > 6. 全局修改 composer 源：
->    1. 查看现在用的源：`composer config -l`；
+>    1. 查看现在用的源：`composer config -gl`；
 >    2. 修改源：`composer config -g repo.packagist composer https://packagist.laravel-china.org`
 
 
@@ -1685,8 +1685,8 @@ phpcs 用来检测代码编写规范（如是否符合 PSR-2 规范）。
 1. composer 全局安装 [phpcs]((https://github.com/squizlabs/PHP_CodeSniffer))：`composer global require "squizlabs/php_codesniffer=*"`（注意观察输出，告知了  phpcs 安装目录，Windows 应该是C:Users/Administrator/AppData/Roaming/Composer/vendor/bin 里面的 phpcs.bat，后面需要用到）；
 2. [PhpStorm 集成 phpcs](https://www.jetbrains.com/help/phpstorm/using-php-code-sniffer.html)：
    1. 打开 phpstorm 点击 File->Settings->Languages & Frameworks->PHP->Code Sniffer，点击 Configuration 右侧的按钮，选择 PHP Code Sniffer (phpcs) path: 的路径，就是刚才 composer 之后生成的那个 phpcs.bat的路径。选择之后点击 Validate 验证成功；
-   2. 点击 Editor->Inspections，展开点击右侧的 PHP，勾选 PHP Code Sniffer Validation，Coding Standard 选择右侧的 PSR2；
-   3. 如果写的代码不符合psr2编码风格规范的时候，该行代码会有波浪线，点击波浪线可以查看提示信息，根据信息我们修改就可以写出优雅的代码了。
+   2. 点击 Editor->Inspections，展开点击右侧的 PHP，勾选 PHP Code Sniffer Validation，Coding Standard 选择右侧的 PSR12；
+   3. 如果写的代码不符合 PSR-12 编码风格规范的时候，该行代码会有波浪线，点击波浪线可以查看提示信息，根据信息我们修改就可以写出优雅的代码了。
 
 ##### phpmd (PHP Mess Detector):
 

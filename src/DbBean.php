@@ -15,7 +15,7 @@ class DbBean extends SplBean
     // 是否将传入的下划线格式字段（数据库字段）自动对应到 Bean 的驼峰字段
     protected $snackToCamel = true;
 
-    public function __construct(array $data = null,$autoCreateProperty = false)
+    public function __construct(array $data = null, $autoCreateProperty = false)
     {
         if ($this->snackToCamel) {
             foreach ($data as $field => $val) {

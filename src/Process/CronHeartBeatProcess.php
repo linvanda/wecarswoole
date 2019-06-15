@@ -49,7 +49,7 @@ class CronHeartBeatProcess extends AbstractProcess
         CronTabUtil::clean();
     }
 
-    public function onReceive(string $str)
+    public function onReceive(\string $str)
     {
     }
 }

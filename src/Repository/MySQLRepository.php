@@ -41,5 +41,5 @@ abstract class MySQLRepository implements IRepository
         $this->query = $dbContext;
     }
 
-    abstract protected function dbAlias(): string;
+    abstract protected function dbAlias(): \string;
 }

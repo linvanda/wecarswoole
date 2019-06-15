@@ -27,27 +27,27 @@ abstract class Route
         $this->routeCollector = $collector;
     }
 
-    public function get(string $routePattern, string $handler, array $middleware = [])
+    public function get(\string $routePattern, \string $handler, array $middleware = [])
     {
         $this->addRoute(['GET'], $routePattern, $handler, $middleware);
     }
 
-    public function post(string $routePattern, string $handler, array $middleware = [])
+    public function post(\string $routePattern, \string $handler, array $middleware = [])
     {
         $this->addRoute(['POST'], $routePattern, $handler, $middleware);
     }
 
-    public function put(string $routePattern, string $handler, array $middleware = [])
+    public function put(\string $routePattern, \string $handler, array $middleware = [])
     {
         $this->addRoute(['PUT'], $routePattern, $handler, $middleware);
     }
 
-    public function delete(string $routePattern, string $handler, array $middleware = [])
+    public function delete(\string $routePattern, \string $handler, array $middleware = [])
     {
         $this->addRoute(['DELETE'], $routePattern, $handler, $middleware);
     }
 
-    public function addRoute(array $methods, string  $routePattern, string $handler, array $middleware = [])
+    public function addRoute(array $methods, \string  $routePattern, \string $handler, array $middleware = [])
     {
         $this->routeCollector->addRoute(
             $methods,

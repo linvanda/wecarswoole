@@ -8,14 +8,14 @@ class Url
 {
     /**
      * 组装 url
-     * @param string $uri uri 的 path 部分或者整个 uri，可以使用占位符如 {uid}，{?group_id}（?表示可选参数）
-     * @param string $base baseurl
+     * @param \string $uri uri 的 path 部分或者整个 uri，可以使用占位符如 {uid}，{?group_id}（?表示可选参数）
+     * @param \string $base baseurl
      * @param array $queryParams 查询字符串
      * @param array $flagParams 用于替换 $uri 中的占位符
-     * @return string
+     * @return \string
      * @throws ParamsCannotBeNullException
      */
-    public static function assemble(string $uri, string $base = '', array $queryParams = [], array $flagParams = []): string
+    public static function assemble(\string $uri, \string $base = '', array $queryParams = [], array $flagParams = []): \string
     {
         $uri = self::replaceFlag($uri, $flagParams);
 
@@ -38,7 +38,7 @@ class Url
      *                    /coupon/{?cid}?type=1
      * @return array
      */
-    public static function parse(string $url): array
+    public static function parse(\string $url): array
     {
         $tmpUrl = $url;
         $data = ['schema' => '', 'host' => '', 'path' => '', 'query_string' => ''];
@@ -70,7 +70,7 @@ class Url
      * @return mixed|string
      * @throws ParamsCannotBeNullException
      */
-    private static function replaceFlag(string $uri, array $params = [])
+    private static function replaceFlag(\string $uri, array $params = [])
     {
         if (!$params) {
             return $uri;

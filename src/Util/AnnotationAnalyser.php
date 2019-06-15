@@ -15,7 +15,7 @@ class AnnotationAnalyser
      * @param array $annotationFilters 仅提取这些注解信息
      * @return array [属性名 => [注解名 => 注解值]]
      */
-    public static function getPropertyAnnotations(string $className, array $annotationFilters = []): array
+    public static function getPropertyAnnotations(\string $className, array $annotationFilters = []): array
     {
         $data = [];
         $properties = self::properties($className);
@@ -33,7 +33,7 @@ class AnnotationAnalyser
      * @param string $doc
      * @return array
      */
-    private static function extract(string $doc): array
+    private static function extract(\string $doc): array
     {
         preg_match_all('/@(.+)/', $doc, $matches);
 
@@ -46,7 +46,7 @@ class AnnotationAnalyser
         return $data;
     }
 
-    private static function properties(string $className)
+    private static function properties(\string $className)
     {
         return (new \ReflectionClass($className))->getProperties();
     }

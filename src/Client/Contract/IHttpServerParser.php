@@ -13,5 +13,5 @@ interface IHttpServerParser
 {
     public function __construct(HttpConfig $config);
 
-    public function parse(): string;
+    public function parse(): \string;
 }

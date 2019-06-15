@@ -17,7 +17,7 @@ class Mailer
     private $username;
     private $password;
 
-    public function __construct(string $host = '', string $username = '', string $password = '')
+    public function __construct(\string $host = '', \string $username = '', \string $password = '')
     {
         $this->host = $host;
         $this->username = $username;
@@ -35,7 +35,7 @@ class Mailer
         ]));
     }
 
-    public static function getSwiftMailer(string $host = '', string $username = '', string $password = ''): \Swift_Mailer
+    public static function getSwiftMailer(\string $host = '', \string $username = '', \string $password = ''): \Swift_Mailer
     {
         $config = Config::getInstance()->getConf('mailer');
         $config = $config['default'] ?? $config;

@@ -47,7 +47,7 @@ trait MiddlewareHelper
      * 删除中间件
      * @param string $middlewareName
      */
-    public function removeMiddleware(string $middlewareName)
+    public function removeMiddleware(\string $middlewareName)
     {
         $index = array_search($middlewareName, $this->middleware);
         if ($index !== false) {

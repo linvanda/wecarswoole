@@ -9,13 +9,13 @@ namespace WecarSwoole\Signer;
  */
 class WecarSigner
 {
-    public function signature(array $params, string $secret): string
+    public function signature(array $params, \string $secret): \string
     {
         ksort($params);
         return md5(http_build_query($params) . $secret);
     }
 
-    public function verify(array $params, string $token, string $secret): bool
+    public function verify(array $params, \string $token, \string $secret): bool
     {
         if (!$params['app_id']) {
             return false;

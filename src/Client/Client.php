@@ -16,7 +16,7 @@ class Client
      * @return Response
      * @throws \Exception
      */
-    public static function call(string $api, array $params = []): Response
+    public static function call(\string $api, array $params = []): Response
     {
         return ClientFactory::build($api)->call($params);
     }
