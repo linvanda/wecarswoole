@@ -1,16 +1,10 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: yf
- * Date: 2019-01-01
- * Time: 20:06
- */
 
 return [
     'SERVER_NAME' => "EasySwoole",
     'MAIN_SERVER' => [
         'LISTEN_ADDRESS' => '0.0.0.0',
-        'PORT' => 80,
+        'PORT' => 9501,
         'SERVER_TYPE' => EASYSWOOLE_WEB_SERVER,
         'SOCK_TYPE' => SWOOLE_TCP,
         'RUN_MODEL' => SWOOLE_PROCESS,
@@ -18,8 +12,12 @@ return [
             'worker_num' => 4,
             'task_worker_num' => 16,
             'reload_async' => true,
+            'max_wait_time'=>5,
+            'max_request' => 10000,
             'task_enable_coroutine' => true,
-            'max_wait_time'=>5
+            'task_max_request' => 5000,
+            'dispatch_mode' => 1,
+            'enable_reuse_port' => 1,
         ],
     ],
     'TEMP_DIR' => 'storage/temp',

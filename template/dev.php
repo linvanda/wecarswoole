@@ -9,11 +9,15 @@ return [
         'SOCK_TYPE' => SWOOLE_TCP,
         'RUN_MODEL' => SWOOLE_PROCESS,
         'SETTING' => [
-            'worker_num' => 8,
-            'task_worker_num' => 8,
+            'worker_num' => 4,
+            'task_worker_num' => 16,
             'reload_async' => true,
+            'max_wait_time'=>5,
+            'max_request' => 10000,
             'task_enable_coroutine' => true,
-            'max_wait_time'=>5
+            'task_max_request' => 5000,
+            'dispatch_mode' => 1,
+            'enable_reuse_port' => 1,
         ],
     ],
     'TEMP_DIR' => 'storage/temp',
