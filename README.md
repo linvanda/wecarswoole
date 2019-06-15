@@ -1682,7 +1682,7 @@ phpcs 用来检测代码编写规范（如是否符合 PSR-2 规范）。
 
 安装：
 
-1. composer 全局安装 [phpcs]((https://github.com/squizlabs/PHP_CodeSniffer))：`composer global require "squizlabs/php_codesniffer=*"`；
+1. composer 全局安装 [phpcs]((https://github.com/squizlabs/PHP_CodeSniffer))：`composer global require "squizlabs/php_codesniffer=*"`（注意观察输出，告知了  phpcs 安装目录，Windows 应该是C:Users/Administrator/AppData/Roaming/Composer/vendor/bin 里面的 phpcs.bat，后面需要用到）；
 2. [PhpStorm 集成 phpcs](https://www.jetbrains.com/help/phpstorm/using-php-code-sniffer.html)：
    1. 打开 phpstorm 点击 File->Settings->Languages & Frameworks->PHP->Code Sniffer，点击 Configuration 右侧的按钮，选择 PHP Code Sniffer (phpcs) path: 的路径，就是刚才 composer 之后生成的那个 phpcs.bat的路径。选择之后点击 Validate 验证成功；
    2. 点击 Editor->Inspections，展开点击右侧的 PHP，勾选 PHP Code Sniffer Validation，Coding Standard 选择右侧的 PSR2；
