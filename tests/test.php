@@ -18,20 +18,17 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-$sign = new \WecarSwoole\Signer\WecarSigner();
-$appId = 34342;
-$secret = "asfasd2938dfj3j";
-$params = [
-        'name' => '里斯',
-        'age' => 12,
-        'app_id' => $appId,
-        'lover' => '小资',
-];
+class MyDTO extends \EasySwoole\Spl\SplBean
+{
+    public $name;
+    public $age;
+    /**
+     * @field gender
+     * @map 1 => 男, 2 => 女
+     */
+    public $sex;
+    public $loveMan;
+}
 
-//$token = $sign->signature($params, $secret);
-//echo $token."\n";
-//echo $sign->verify($token, $params, $secret);
-
-\WecarSwoole\Util\Config::getServerInfoByAppId(10012);
-\WecarSwoole\Util\Config::getServerInfoByAppId(10012);
-\WecarSwoole\Util\Config::getServerInfoByAppId(10012);
+$bean = new MyDTO(['name' => '三', 'love_man' => '三字', 'gender' => 1]);
+var_export($bean->toArray());

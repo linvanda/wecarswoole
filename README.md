@@ -1530,13 +1530,13 @@ if ($res1 && $res2) {
 
 
 
-#### DTO(data transfer object，数据传输对象)
+#### DTO(Data Transfer Object，数据传输对象)
 
 DTO 并非严格意义上 OOD 中的对象，其起数据容器的作用，本质上属于数据结构范畴（《代码整洁之道》）。
 
 DTO 在 OOD（特别是 DDD）中的一大作用是进行**用例层面**（和领域层面相对）的数据组装。
 
-easySwoole 中的 Bean 实际上就是 DTO（不过很多人把它用作和数据库打交道的 Model 或者 DAO 了）。
+EasySwoole 中的 Bean 实际上就是 DTO（不过很多人把它用作和数据库打交道的 Model 或者 DAO 了）。
 
 一个事实是，**用例(用户)层面的东西和领域层面不是一一对应的**，比如说用例（用户）层面需要同时看到订单以及其下面的商品信息，甚至还包括这些商品的热度等，这些在用例（用户）层面属于一条查询"任务"，但在领域层面，它们属于不同的业务领域（订单领域和商品领域），一般会由不同的系统提供。通常，我们会通过一个聚合服务从多个子系统获取到相关信息，然后将这些信息聚合在一起，然后组装成一个符合用例要求的 DTO 返回到控制器，控制器进一步解析成客户端需要的数据格式（如 json）返回。
 
@@ -1554,7 +1554,7 @@ DTO 应当放在哪？
 
 **待完善：**
 
-目前框架尚未提供针对字段映射优化的 DTO，只能使用 easyswoole 的 Bean。后面会在此基础上做一个基类，增加字段映射功能（基于注解，但功能会弱于 ORM）。
+目前框架尚未提供针对字段映射优化的 DTO，只能使用 EasySwoole 的 Bean。后面会在此基础上做一个基类，增加字段映射功能（基于注解，但功能会弱于 ORM）。
 
 
 
@@ -1680,6 +1680,17 @@ phpcs 用来检测代码编写规范（如是否符合 PSR-2 规范）。
    2. 点击 Editor->Inspections，展开点击右侧的 PHP，勾选 PHP Code Sniffer Validation，Coding Standard 选择右侧的 PSR12；
    3. 如果写的代码不符合 PSR-12 编码风格规范的时候，该行代码会有波浪线，点击波浪线可以查看提示信息，根据信息我们修改就可以写出优雅的代码了。
 
+**phpcbf (PHP Code Beautify Fixer):**
+
+phpcbf 和 phpcs 配合使用，用来将 phpcs 检测出来的问题代码一键格式化为符合规范的代码。
+
+上面 composer 安装 phpcs 过程中已经自动安装了 phpcbf。
+
+手动用法：
+
+1. `phpcs $fileNameOrDirName` 检测代码看有哪些规范问题；
+2. `phpcbf $fileNameOrDirName` 格式化代码；
+
 ##### phpmd (PHP Mess Detector):
 
 phpmd 用来检测代码坏味道(如类大小、命名规范等)。
@@ -1722,6 +1733,12 @@ Http/Controller 是系统最主要的对外 API，API 一旦定义则很难做�
 ##### 生产环境
 
 每次发布生产后需执行：`composer dump-autoload -o` 优化自动加载速度。
+
+
+
+##### readme 文案书写规范
+
+参见[中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines)。
 
 
 
