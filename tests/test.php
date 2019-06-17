@@ -18,31 +18,35 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-class DDD extends \WecarSwoole\Entity
+class Id extends \WecarSwoole\Entity
 {
-    protected $serverName = 'server test';
-}
+    protected $id;
+    protected $type;
 
-class MyDTO extends \WecarSwoole\Entity
-{
-    public $name;
-    public $age;
-    public $sex;
-    protected $loveMan;
-    protected $teste;
-    protected $ddd;
-
-    public function __construct()
+    public function __construct(string $id, string $type)
     {
-        $this->name = '三';
-        $this->age = 543;
-        $this->sex = true;
-        $this->teste = [
-                'ageSay' => 33
-        ];
-        $this->ddd = new DDD();
+        $this->id = $id;
+        $this->type = $type;
     }
 }
 
-$bean = new MyDTO(['name' => '三', 'love_man' => '三字', 'sex' => 1, 'teste' => ['ageSay' => 33]]);
-var_export($bean->toArray(true, false));
+class User extends \WecarSwoole\Entity
+{
+    protected $name;
+    protected $age;
+    protected $sex;
+    protected $id;
+
+    public function __construct($name, $age, $sex, $idArr)
+    {
+        $this->name = $name;
+        $this->age = $age;
+        $this->sex = $sex;
+        $this->id = new Id($idArr['id'], $idArr['type']);
+    }
+}
+
+$userDTO = new User("张三", 12, '男', ['id' => '2342112213', 'type' => '身份证']);
+var_export($userDTO->toArray(true, true, true));
+
+

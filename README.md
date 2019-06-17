@@ -941,6 +941,72 @@ EasySwooleEvent.php : 全局事件
 >
 > 领域层仅仅依赖于仓储接口，不依赖于实现，这样我们可以调整实现而不影响领域层代码，比如我们可以调整依赖注入配置，将实现从 MySQL 改成 MongoDB，或者我们可以重构数据库结构，这些影响的都仅仅是仓储实现部分的代码。另外，领域层仅仅依赖于仓储接口，有利于单元测试，单元测试的时候，我们可以使用模拟的仓储类，从而不依赖于数据库等外设。
 
+##### Entity
+
+创建类继承 `\WecarSwoole\Entity`：
+
+```php
+class Id extends \WecarSwoole\Entity
+{
+    protected $id;
+    protected $type;
+
+    public function __construct(string $id, string $type)
+    {
+        $this->id = $id;
+        $this->type = $type;
+    }
+  	...
+}
+
+class User extends \WecarSwoole\Entity
+{
+    protected $name;
+    protected $age;
+    protected $sex;
+    protected $id;
+
+    public function __construct($name, $age, $sex, $idArr)
+    {
+        $this->name = $name;
+        $this->age = $age;
+        $this->sex = $sex;
+        $this->id = new Id($idArr['id'], $idArr['type']);
+    }
+  	...
+}
+
+$user = new User("张三", 12, '男', ['id' => '2342112213', 'type' => '身份证']);
+```
+
+同 DTO，Entity 也可以调用 toArray() 将对象转成数组，方便对外输出：
+
+```php
+$user->toArray();
+// output:
+array (
+    'name' => '张三',
+    'age' => 12,
+    'sex' => '男',
+    'id' => array (
+        'id' => '2342112213',
+        'type' => '身份证',
+    ),
+);
+
+$userDTO->toArray(true, true, true);
+// output:
+array (
+    'name' => '张三',
+    'age' => 12,
+    'sex' => '男',
+    'id' => '2342112213',
+    'type' => '身份证',
+)
+```
+
+
+
 
 
 #### 定时任务
@@ -1552,9 +1618,91 @@ DTO 应当放在哪？
 
 从上面的分析可知，DTO 不属于 Domain，属于用例维度的东西，具体实现上一般用在 Controller/handler 和 Repository 中，建议可以根据使用情况放置，例如仓储返回的直接放在 Foudation/Repository/目录下。或者干脆直接在 app/下的 DTO/ 目录下（默认没有这个目录）亦可。
 
-**待完善：**
+##### 创建 DTO：
 
-目前框架尚未提供针对字段映射优化的 DTO，只能使用 EasySwoole 的 Bean。后面会在此基础上做一个基类，增加字段映射功能（基于注解，但功能会弱于 ORM）。
+继承 `\WecarSwoole\DTO`：
+
+```php
+class IdDTO extends \WecarSwoole\DTO
+{
+    protected $id;
+    protected $type;
+}
+
+class UserDTO extends \WecarSwoole\DTO
+{
+    protected $name;
+    protected $age;
+    /**
+     * @field gender
+     * @mapping 1 => 女, 2 => 男
+     */
+    protected $sex;
+    protected $liveAddress;
+    protected $id;
+
+    public function __construct(array $data = [])
+    {
+        parent::__construct($data);
+        $this->id = new IdDTO($data['identify']);
+    }
+}
+
+// 注意 $sex 属性的注解是如何映射到这里的 gender 字段的
+$data = [
+    'name' => '张三',
+    'age' => 12,
+    'gender' => 1,
+    'live_address' => [
+        'city' => '深圳',
+        'area' => '福田'
+    ],
+    'identify' => [
+        'id' => '13090909000032',
+        'type' => '身份证',
+    ]
+];
+$userDTO = new UserDTO($data);
+var_export($userDTO->toArray());
+```
+
+toArray() 的默认返回格式(将驼峰转成下划线)：
+
+```php
+$userDTO->toArray();
+// output:
+array (
+    'name' => '张三',
+    'age' => 12,
+    'sex' => '女',
+    'id' => array (
+        'id' => '13090909000032',
+        'type' => '身份证',
+    ),
+    'live_address' => array (
+        'city' => '深圳',
+        'area' => '福田',
+    ),
+)
+  
+$userDTO->toArray(true, true, true);
+// output(可将多维数组转成一维数组。此时应注意多维数组字段不要重名，否则会发生覆盖):
+array (
+    'name' => '张三',
+    'age' => 12,
+    'sex' => '女',
+    'city' => '深圳',
+    'area' => '福田',
+    'id' => '13090909000032',
+    'type' => '身份证',
+)
+```
+
+说明：
+
+1. 构造函数传入的数组会将下划线转成驼峰来匹配属性；
+2. 可使用 @field 和 @mapping 注解分别做字段和值映射；
+3. 在 toArray 过程中，如果属性是 DTO 类型，会递归解析；
 
 
 
