@@ -20,13 +20,13 @@ class Bootstrap
     public static function boot()
     {
         // 加载配置
-        self::loadConfig();
+        static::loadConfig();
 
         // 注册 DI
-        self::registerDI();
+        static::registerDI();
 
         // 注册事件订阅者
-        self::registerSubscriber();
+        static::registerSubscriber();
     }
 
     protected static function loadConfig()
@@ -45,7 +45,7 @@ class Bootstrap
     protected static function registerSubscriber()
     {
         $dispatcher = Container::get(EventDispatcher::class);
-        foreach (Config::getInstance()->getConf('subscriber') as $subscriber) {
+        foreach (Config::getInstance()->getConf('subscriber') ?? [] as $subscriber) {
             $subCls = new \ReflectionClass($subscriber);
             if ($subCls->isSubclassOf(EventSubscriberInterface::class)) {
                 $dispatcher->addSubscriber($subCls->newInstance());
