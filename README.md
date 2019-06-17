@@ -358,7 +358,7 @@ EasySwooleEvent.php : 全局事件
 
 #### 配置
 
-- config/config.php 配置入口文件
+- config/config.php 配置入口文件（修改改文件后需要 stop & start 服务）
 
   实际项目请修改 app_name 和 app_flag 项。
 
@@ -414,7 +414,7 @@ EasySwooleEvent.php : 全局事件
   );
   ```
 
-- config/cron.php 定时任务配置文件
+- config/cron.php 定时任务配置文件（修改改文件后需要 stop & start 服务）
 
   ```php
   <?php
@@ -430,7 +430,7 @@ EasySwooleEvent.php : 全局事件
   ];
   ```
 
-- config/subscriber/subscriber.php 事件订阅配置
+- config/subscriber/subscriber.php 事件订阅配置（修改后 reload 服务即可）
 
   ```php
   <?php
@@ -440,9 +440,9 @@ EasySwooleEvent.php : 全局事件
   ];
   ```
 
-- config/api/api.php 外部 api 配置，详情见后文说明
+- config/api/api.php 外部 api 配置，详情见后文说明（修改后 reload 服务即可）
 
-- config/di/di.php 依赖注入配置
+- config/di/di.php 依赖注入配置（修改后 reload 服务即可）
 
   ```php
   <?php
@@ -469,7 +469,7 @@ EasySwooleEvent.php : 全局事件
   ];
   ```
 
-- config/env/$env.php 环境相关配置，如数据库、redis等，目前有四个环境配置：dev.php、test.php、preview.php、produce.php
+- config/env/$env.php 环境相关配置，如数据库、redis等，目前有四个环境配置：dev.php、test.php、preview.php、produce.php（修改改文件后需要 stop & start 服务）
 
   ```php
   <?php
