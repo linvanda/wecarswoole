@@ -18,12 +18,12 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-class DDD extends \WecarSwoole\DTO
+class DDD extends \WecarSwoole\Entity
 {
     protected $serverName = 'server test';
 }
 
-class MyDTO extends \WecarSwoole\DTO
+class MyDTO extends \WecarSwoole\Entity
 {
     public $name;
     public $age;
@@ -36,7 +36,7 @@ class MyDTO extends \WecarSwoole\DTO
     {
         $this->name = '三';
         $this->age = 543;
-        $this->sex = '男';
+        $this->sex = true;
         $this->teste = [
                 'ageSay' => 33
         ];
@@ -45,4 +45,4 @@ class MyDTO extends \WecarSwoole\DTO
 }
 
 $bean = new MyDTO(['name' => '三', 'love_man' => '三字', 'sex' => 1, 'teste' => ['ageSay' => 33]]);
-var_export($bean->toArray(true, false, true));
+var_export($bean->toArray(true, false));

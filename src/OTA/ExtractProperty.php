@@ -20,8 +20,13 @@ trait ExtractProperty
         }
 
         foreach ($values as $propName => &$propValue) {
+            if (!is_scalar($propValue) && !is_array($propValue) && !$propValue instanceof IExtractable) {
+                unset($values[$propName]);
+                continue;
+            }
+
             if (is_bool($propValue)) {
-                $propValue = boolval($propValue);
+                $propValue = intval($propValue);
             } elseif ($propValue instanceof IExtractable) {
                 $propValue = $propValue->toArray();
             }
