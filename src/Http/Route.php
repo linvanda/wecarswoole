@@ -61,7 +61,10 @@ abstract class Route
                     }
 
                     try {
-                        $midw->handle($request);
+                        $result = $midw->handle($request, $response);
+                        if ($result instanceof Response) {
+                            return false;
+                        }
                     } catch (\Exception $e) {
                         $response->write(json_encode(['info' => $e->getMessage(), 'status' => $e->getCode() ?: 500]));
                         return false;
@@ -77,5 +80,5 @@ abstract class Route
      * 子类在此处添加路由
      * @return mixed
      */
-    abstract function map();
+    abstract public function map();
 }

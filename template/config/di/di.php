@@ -14,5 +14,4 @@ return [
     LoggerInterface::class => \DI\create(\WecarSwoole\Logger::class),
     // 事件
     EventDispatcherInterface::class => \DI\create(\Symfony\Component\EventDispatcher\EventDispatcher::class),
-    'SymfonyEventDispatcher' => \DI\get(EventDispatcherInterface::class),
 ];

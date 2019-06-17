@@ -4,6 +4,8 @@ namespace WecarSwoole\Http;
 
 use EasySwoole\EasySwoole\Trigger;
 use EasySwoole\Http\AbstractInterface\Controller as EsController;
+use Psr\Log\LoggerInterface;
+use WecarSwoole\Container;
 
 /**
  * 控制器基类
@@ -24,7 +26,10 @@ class Controller extends EsController
     protected function afterAction(?string $action): void
     {
         if ($this->responseData) {
-            $this->response()->write(is_string($this->responseData) ? $this->responseData : json_encode($this->responseData, JSON_UNESCAPED_UNICODE));
+            $this->response()->write(
+                is_string($this->responseData)
+                    ? $this->responseData : json_encode($this->responseData, JSON_UNESCAPED_UNICODE)
+            );
         }
     }
 
@@ -34,8 +39,14 @@ class Controller extends EsController
      */
     protected function onException(\Throwable $throwable): void
     {
-        Trigger::getInstance()->error($throwable->getMessage(), $throwable->getCode());
-        $this->return([], 500, $throwable->getMessage());
+        Container::get(LoggerInterface::class)->error(
+            $throwable->getMessage(),
+            [
+                'trace' => $throwable->getTraceAsString()
+            ]
+        );
+
+        $this->return([], $throwable->getCode() ?: 500, $throwable->getMessage());
     }
 
     /**

@@ -42,7 +42,5 @@ $baseConfig = [
 return array_merge(
     $baseConfig,
     ['cron_config' => require_once __DIR__ . '/cron.php'],
-    ['api_config' => require_once __DIR__ . '/api/api.php'],
-    ['subscriber' => require_once __DIR__ . '/subscriber/subscriber.php'],
     require_once __DIR__ . '/env/' . ENVIRON . '.php'
 );

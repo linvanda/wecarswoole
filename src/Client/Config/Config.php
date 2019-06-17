@@ -68,10 +68,10 @@ class Config
     public static function load(string $api): array
     {
         $apiInfo = self::parseApi($api);
-        $conf = EsConfig::getInstance()->getConf('api_config');
+        $conf = EsConfig::getInstance()->getConf('api');
 
         if (!$conf) {
-            throw new ConfigNotFoundException("api_config");
+            throw new ConfigNotFoundException("api");
         }
 
         $globalConf = $conf['config'] ?? [];
@@ -80,7 +80,7 @@ class Config
         $apiConf = $apiConf[$apiInfo['api']] ?? $apiConf['/' . $apiInfo['api']];
 
         if (!$apiConf) {
-            throw new ConfigNotFoundException("api_config.{$api}");
+            throw new ConfigNotFoundException("api.{$api}");
         }
 
         $protocol = $apiConf['protocol'] ?? $groupConf['protocol'] ?? $globalConf['protocol'] ?? 'http';
