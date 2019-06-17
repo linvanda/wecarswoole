@@ -29,6 +29,31 @@ class AnnotationAnalyser
     }
 
     /**
+     * mapping 注解转换成 array
+     * @param string $mappingStr 如 0=>女,1=>男
+     * @return array
+     */
+    public static function mappingToArray(string $mappingStr): array
+    {
+        $mappingStr = str_replace('，', ',', trim($mappingStr));
+
+        if (!$mappingStr) {
+            return [];
+        }
+
+        $mapping = [];
+        foreach (explode(',', $mappingStr) as $itemStr) {
+            $item = explode('=>', $itemStr);
+
+            if (count($item) == 2) {
+                $mapping[trim($item[0])] = trim($item[1]);
+            }
+        }
+
+        return $mapping;
+    }
+
+    /**
      * 从 doc 中抽取注解信息
      * @param string $doc
      * @return array

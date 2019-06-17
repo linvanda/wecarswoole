@@ -46,7 +46,7 @@ class Controller extends EsController
     protected function params($key = null)
     {
         $params = $this->request()->getRequestParam();
-        if ($params['data']) {
+        if (isset($params['data'])) {
             $params = is_string($params['data']) ? json_decode($params['data'], true) : $params['data'];
         }
 

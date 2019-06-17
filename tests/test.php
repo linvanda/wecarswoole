@@ -18,17 +18,31 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-class MyDTO extends \EasySwoole\Spl\SplBean
+class DDD extends \WecarSwoole\DTO
+{
+    protected $serverName = 'server test';
+}
+
+class MyDTO extends \WecarSwoole\DTO
 {
     public $name;
     public $age;
-    /**
-     * @field gender
-     * @map 1 => 男, 2 => 女
-     */
     public $sex;
-    public $loveMan;
+    protected $loveMan;
+    protected $teste;
+    protected $ddd;
+
+    public function __construct()
+    {
+        $this->name = '三';
+        $this->age = 543;
+        $this->sex = '男';
+        $this->teste = [
+                'ageSay' => 33
+        ];
+        $this->ddd = new DDD();
+    }
 }
 
-$bean = new MyDTO(['name' => '三', 'love_man' => '三字', 'gender' => 1]);
-var_export($bean->toArray());
+$bean = new MyDTO(['name' => '三', 'love_man' => '三字', 'sex' => 1, 'teste' => ['ageSay' => 33]]);
+var_export($bean->toArray(true, false, true));
