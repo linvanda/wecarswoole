@@ -187,6 +187,8 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 app/ : 项目代码目录
 
+app/Bootstrap : work/task 进程启动脚本，此脚本在 reload 服务后会执行
+
 app/Cron/ : 定时任务
 
 app/Domain/ : 业务（领域）逻辑，核心目录
@@ -1797,6 +1799,12 @@ array (
 - `\WecarSwoole\Util\Url`：Url 辅助类
   - `assemble(string $uri, string $base = '', array $queryParams = [], array $flagParams = []): string`：组装 url
   - `parse(string $url): array`：解析出 schema,host,path,query_string
+
+
+
+### 会话管理
+
+
 
 
 

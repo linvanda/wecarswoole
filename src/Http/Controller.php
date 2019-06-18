@@ -2,7 +2,6 @@
 
 namespace WecarSwoole\Http;
 
-use EasySwoole\EasySwoole\Trigger;
 use EasySwoole\Http\AbstractInterface\Controller as EsController;
 use Psr\Log\LoggerInterface;
 use WecarSwoole\Container;

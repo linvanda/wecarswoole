@@ -11,6 +11,7 @@ use WecarSwoole\Client\Response;
 use WecarSwoole\Util\Url;
 use Swlib\Http\Uri;
 use Swlib\Saber;
+use Swlib\Http\BufferStream;
 
 /**
  * Http 客户端
@@ -39,7 +40,6 @@ class HttpClient implements IClient
     /**
      * @param array $params
      * @return Response
-     * @throws \WecarSwoole\Exceptions\ParamsCannotBeNullException
      */
     public function call(array $params): Response
     {
@@ -89,7 +89,11 @@ class HttpClient implements IClient
         }
 
         if ($body = $requestBean->getBody()) {
-            $saber->withParsedBody($body);
+            if (!is_string($body)) {
+                $body = isset($headers['Content-Type']) && $headers['Content-Type'] == 'application/json'
+                    ? json_encode($body) : http_build_query($body);
+            }
+            $saber->withBody(new BufferStream($body));
         }
 
         // 执行请求
