@@ -66,7 +66,8 @@ class DefaultHttpRequestAssembler implements IHttpRequestAssembler
 
     protected function parseFlagParams(array $params): array
     {
-        $params = self::isSimpleStructure($params) ? $params : ($params['flag_params'] ?? $params['query_params'] ?? $params['body']);
+        $params = self::isSimpleStructure($params)
+            ? $params : ($params['flag_params'] ?? $params['query_params'] ?? $params['body']);
         preg_match_all('/{\??([^}]+)}/', $this->config->path, $flags);
 
         return array_intersect_key($params, array_flip($flags[1]));

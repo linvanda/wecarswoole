@@ -2,6 +2,7 @@
 
 namespace WecarSwoole\Client\Http;
 
+use Swlib\Http\Cookies;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IClient;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
@@ -85,7 +86,7 @@ class HttpClient implements IClient
         }
 
         if ($requestBean->cookies()) {
-            $saber->withCookieParams($requestBean->cookies());
+            $saber->withHeader('Cookie', (new Cookies($requestBean->cookies()))->toRequestString());
         }
 
         if ($body = $requestBean->getBody()) {

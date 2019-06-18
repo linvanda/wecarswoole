@@ -1219,7 +1219,7 @@ return [
             'desc' => '添加用户',
             'server' => 'http://localhost:9501',
             'path' => '/v1/users',
-            'method' => 'GET',
+            'method' => 'POST',
         ]
     ]
 ];
@@ -1239,6 +1239,44 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
 支持针对不同的分组或者单个 api 配置不同的请求参数组装器和响应参数解析器，这对于和第三方合作是很有用的，比如我们可以针对不同的第三方配置不同的分组，这些分组有各自的组装器和解析器实现。
 
 系统对自身的 api 调用也需要在此处配置。
+
+4. 默认实现：
+
+   框架默认提供了 `\WecarSwoole\Client\Http\Component\DefaultHttpRequestAssembler`、`\DefaultHttpServerParser\DefaultHttpServerParser` 和 `WecarSwoole\Client\Http\Component\JsonResponseParser` 作为请求参数、服务器、响应参数的解析器，项目可以实现自己的。
+
+   - `DefaultHttpRequestAssembler`：使用此请求解析器时，Client::call() 传参格式：
+
+     ```php
+     $params = [
+         'oilstation_id' => 172073,
+         'uid' => 21343,
+     ];
+     ```
+
+     或者：
+
+     ```php
+     $params = [
+         'cookies' => [
+             'session_id' => '424dkjnt33fdew320fooee',
+         ],
+         'headers' => [
+             'Auth-Token' => 'ah2jj2hb20djeyqmkiag476242',
+         ],
+         'query_params' => [
+             'flag' => 'wx'
+         ],
+       	// flag_params 是 RESTful API 中占位符替换的内容
+         'flag_params' => [
+             'uid' => 33433
+         ],
+         'body' => [
+             'oilstation_id' => 172073,
+         ]
+     ];
+     ```
+
+
 
 **有待实现：**
 
