@@ -37,6 +37,29 @@ $baseConfig = [
             'password' => 'Chechewei123'
         ]
     ],
+    'wcc_private_key' => '-----BEGIN PRIVATE KEY-----
+MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEApFFwW79DIfUCw4t9
+0sww59XroXRYbLCDyab8zdR0rBZ1pDIxx8ABuqs8no5+Y0mZGkBdwqlH5/wFVgwX
++zG+gQIDAQABAkEAlSG0sBAuhasxDviTAbaAzGjCqo5Fkp/BfEsqNkUUfvmO6L2Q
+XG27qeUmAacVjbZBlhacdZhXhtBBt6fVIMvxYQIhANMkO7FAVpmIvYa416QVBYdX
+brMSLWNKXJI83z7mIpDPAiEAxzqHfUimoFID9DCDNWQ3igv8URRz/HI0kjmabHKJ
+b68CIQCEBcz5aWR8/l6b5eqYo7hgR1Bl0kDlK/M0UbG6L8Z/SwIgNdvPxwG98fda
+FEiNIADwtsQYuP6TgHqLVcB2y7yHBQcCIG7g1jRCQcb6yNlu+dyb35Adf+6IIanU
+qQqo/Ja8ohKN
+-----END PRIVATE KEY-----
+',
+    'wcc_public_key' => '-----BEGIN PUBLIC KEY-----
+MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKRRcFu/QyH1AsOLfdLMMOfV66F0WGyw
+g8mm/M3UdKwWdaQyMcfAAbqrPJ6OfmNJmRpAXcKpR+f8BVYMF/sxvoECAwEAAQ==
+-----END PUBLIC KEY-----
+',
+    'ss_public_key' => '-----BEGIN PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDWP1vtrNLKoh0IqqtNRjkmC1vm
+z/mVIZ58QnAjD/ZmYockGjkts8N1knvFRZuHenY20wLMmlFtdXKAix5QBUTUQpoA
+EcKu/hieK53nHd9WTz5ht1Au1HM+DR359Wm43TNpSeYniSJGpoRG8t3QBebB3VYy
+tIBhommmFXw6U9owvQIDAQAB
+-----END PUBLIC KEY-----
+',
 ];
 
 return array_merge(

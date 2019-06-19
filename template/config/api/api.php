@@ -37,5 +37,6 @@ return [
         ],
     ],
     // 组
-    'weiche' => include __DIR__ . '/weicheche.php',
+    'weiche' => include_once __DIR__ . '/weicheche.php',
+    'sscard' => include_once __DIR__ . '/sscard.php',
 ];

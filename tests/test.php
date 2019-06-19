@@ -18,35 +18,47 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-class Id extends \WecarSwoole\Entity
+class Address extends \WecarSwoole\DTO
 {
-    protected $id;
-    protected $type;
-
-    public function __construct(string $id, string $type)
-    {
-        $this->id = $id;
-        $this->type = $type;
-    }
+    /**
+     * @field city
+     */
+    public $cityName;
+    public $area;
 }
 
-class User extends \WecarSwoole\Entity
+class Td extends \WecarSwoole\DTO
 {
-    protected $name;
-    protected $age;
-    protected $sex;
-    protected $id;
-
-    public function __construct($name, $age, $sex, $idArr)
-    {
-        $this->name = $name;
-        $this->age = $age;
-        $this->sex = $sex;
-        $this->id = new Id($idArr['id'], $idArr['type']);
-    }
+    public $name;
+    /**
+     * @field gender
+     * @mapping 1=>女,2=>男
+     */
+    public $sex;
+    /**
+     * @var Address
+     */
+    public $address;
 }
+//
+//$arr = [
+//        new Td(['name'=>'李四', 'sex'=>1, 'address'=> ['city'=>'深圳','area'=>'落户']]),
+//        new Td(['name'=>'王五', 'sex'=>'男', 'address'=>['city'=>'广州', 'area'=>"百余"]]),
+//];
+//
+//$it = new \WecarSwoole\OTA\Collection($arr);
 
-$userDTO = new User("张三", 12, '男', ['id' => '2342112213', 'type' => '身份证']);
-var_export($userDTO->toArray(true, true, true));
+//var_export($it->toArray());
 
+$data = [
+    'name' => '张三',
+    'gender' => 2,
+    'address' => [
+            'city' => '广州',
+            'area' => '白云'
+    ]
+];
+$dto = new Td($data);
 
+var_export($dto->address->cityName);
+var_export($dto->toArray());

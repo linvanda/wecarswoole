@@ -217,5 +217,14 @@ return [
         'servers' => [
             ['url' => 'http://notice-api.weicheche.cn', 'weight' => 100],
         ],
-    ]
+    ],
+    'CD' => [
+        'name' => '储值卡',
+        'app_id' => 11201,
+        "user_name" => "testuser",
+        "user_pass" => "testpass",
+        'servers' => [
+            ['url' => 'http://weios.wecar.me:10842/WebService/FuncSrv', 'weight' => 100],
+        ],
+    ],
 ];

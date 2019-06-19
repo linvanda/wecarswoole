@@ -39,13 +39,26 @@ trait ObjectToArray
         return $data;
     }
 
-    protected function getPropertiesValue(bool $withNull): array
+    public function getPropertiesValue(bool $withNull): array
     {
         $values = get_object_vars($this);
         if (!$withNull) {
             $values = array_filter($values, function ($value) {
                 return !is_null($value);
             });
+        }
+
+        foreach ($values as $propName => &$propValue) {
+            if (!is_scalar($propValue) && !is_array($propValue) && !$propValue instanceof IExtractable) {
+                unset($values[$propName]);
+                continue;
+            }
+
+            if (is_bool($propValue)) {
+                $propValue = intval($propValue);
+            } elseif ($propValue instanceof IExtractable) {
+                $propValue = $propValue->toArray();
+            }
         }
 
         return $values;

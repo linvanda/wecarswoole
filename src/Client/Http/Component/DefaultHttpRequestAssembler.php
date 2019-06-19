@@ -5,8 +5,6 @@ namespace WecarSwoole\Client\Http\Component;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
-use WecarSwoole\Signer\WecarSigner;
-use WecarSwoole\Util\Config as UtilConfig;
 
 /**
  * 默认请求组装器
@@ -40,27 +38,16 @@ class DefaultHttpRequestAssembler implements IHttpRequestAssembler
         );
     }
 
+    /**
+     * 默认实现：直接返回
+     * 子类可重写该方法以增加自定义的组装规则
+     * @param array $flagParams
+     * @param array $queryParams
+     * @param array $body
+     * @return array
+     */
     protected function reassemble(array $flagParams, array $queryParams, array $body): array
     {
-        // 签名器
-        $signer = new WecarSigner();
-        $currentServerInfo = UtilConfig::getServerInfoByAppId($this->config->appId);
-        $secret = $currentServerInfo['secret'] ?? '';
-
-        if ($this->config->method === 'GET') {
-            $queryParams = [
-                'app_id' => $this->config->appId,
-                'data' => json_encode($queryParams)
-            ];
-            $queryParams['token'] = $signer->signature($queryParams, $secret);
-        } else {
-            $body = [
-                'app_id' => $this->config->appId,
-                'data' => json_encode($body)
-            ];
-            $body['token'] = $signer->signature($body, $secret);
-        }
-
         return ['flag_params' => $flagParams, 'query_params' => $queryParams, 'body' => $body];
     }
 

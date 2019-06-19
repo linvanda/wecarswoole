@@ -12,8 +12,13 @@ class HttpRequestBean implements IHttpRequestBean
     private $headers;
     private $cookies;
 
-    public function __construct(array $body, array $flagParams = [], array $queryParams = [], array $headers = [], array $cookies = [])
-    {
+    public function __construct(
+        array $body,
+        array $flagParams = [],
+        array $queryParams = [],
+        array $headers = [],
+        array $cookies = []
+    ) {
         $this->flagParams = $flagParams;
         $this->queryParams = $queryParams;
         $this->body = $body;

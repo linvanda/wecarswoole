@@ -2,8 +2,9 @@
 
 namespace WecarSwoole;
 
+use WecarSwoole\ATO\ArrayToObject;
+use WecarSwoole\ATO\IArrayBuildable;
 use WecarSwoole\Exceptions\PropertyNotFoundException;
-use WecarSwoole\OTA\ExtractProperty;
 use WecarSwoole\OTA\IExtractable;
 use WecarSwoole\OTA\ObjectToArray;
 
@@ -13,12 +14,9 @@ use WecarSwoole\OTA\ObjectToArray;
  * Class Entity
  * @package WecarSwoole
  */
-class Entity implements IExtractable
+class Entity implements IExtractable, IArrayBuildable
 {
-    use ObjectToArray, ExtractProperty {
-        ExtractProperty::getPropertiesValue insteadof ObjectToArray;
-        getPropertiesValue as protected;
-    }
+    use ObjectToArray, ArrayToObject;
 
     /**
      * @param $name
