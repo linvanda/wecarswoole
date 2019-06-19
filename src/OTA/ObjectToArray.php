@@ -39,9 +39,10 @@ trait ObjectToArray
         return $data;
     }
 
-    public function getPropertiesValue(bool $withNull): array
+    protected function getPropertiesValue(bool $withNull): array
     {
         $values = get_object_vars($this);
+
         if (!$withNull) {
             $values = array_filter($values, function ($value) {
                 return !is_null($value);
@@ -50,14 +51,13 @@ trait ObjectToArray
 
         foreach ($values as $propName => &$propValue) {
             if (!is_scalar($propValue) && !is_array($propValue) && !$propValue instanceof IExtractable) {
-                unset($values[$propName]);
                 continue;
             }
 
             if (is_bool($propValue)) {
                 $propValue = intval($propValue);
             } elseif ($propValue instanceof IExtractable) {
-                $propValue = $propValue->toArray();
+                $propValue = $propValue->toArray(false, $withNull);
             }
         }
 
@@ -81,7 +81,7 @@ trait ObjectToArray
     protected static function camelToSnake(array $data): array
     {
         foreach ($data as $k => &$val) {
-            if ($k !== Str::snake($k)) {
+            if (is_string($k) && ctype_alpha($k) && !ctype_lower($k)) {
                 $data[Str::snake($k)] = $val;
                 unset($data[$k]);
             }

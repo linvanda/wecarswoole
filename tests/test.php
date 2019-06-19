@@ -25,6 +25,7 @@ class Address extends \WecarSwoole\Entity
      */
     public $cityName;
     public $area;
+    public $country;
 }
 
 class Td extends \WecarSwoole\Entity
@@ -39,6 +40,7 @@ class Td extends \WecarSwoole\Entity
      * @var Address
      */
     public $address;
+    public $age;
 }
 //
 //$arr = [
@@ -59,5 +61,10 @@ $data = [
 $dto = new Td();
 $dto->buildFromArray($data, false);
 
-var_export($dto->toArray());
+var_export(json_encode($dto->toArray()));
 //var_export($dto);
+//if (is_string($k) && !ctype_lower($k)) {
+
+//echo ctype_lower('dDddf');
+
+//echo ctype_alpha('abAdfd');
