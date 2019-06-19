@@ -12,7 +12,5 @@ use WecarSwoole\Client\Response;
  */
 interface IResponseParser
 {
-    public function __construct(Config $config);
-
     public function parser(Response $response): Response;
 }

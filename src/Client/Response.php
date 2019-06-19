@@ -8,14 +8,14 @@ class Response
     protected $message;
     protected $status;
 
-    public function __construct($body, $status, $message)
+    public function __construct($body = [], $status = 500, $message = '请求出错')
     {
         $this->body = $body;
         $this->status = $status;
         $this->message = $message;
     }
 
-    public function getMessage(): array
+    public function getMessage()
     {
         return $this->message;
     }
@@ -26,7 +26,7 @@ class Response
     }
 
     /**
-     * 注意此 status 是协议层状态码，业务层定义的状态码（如果有）是在 message 中
+     * 注意此 status 是协议层状态码，业务层定义的状态码（如果有）是在 body 中
      * @return int
      */
     public function getStatus(): int

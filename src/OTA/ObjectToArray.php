@@ -50,10 +50,6 @@ trait ObjectToArray
         }
 
         foreach ($values as $propName => &$propValue) {
-            if (!is_scalar($propValue) && !is_array($propValue) && !$propValue instanceof IExtractable) {
-                continue;
-            }
-
             if (is_bool($propValue)) {
                 $propValue = intval($propValue);
             } elseif ($propValue instanceof IExtractable) {

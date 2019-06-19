@@ -9,10 +9,10 @@ use EasySwoole\EasySwoole\Config as EsConfig;
 
 /**
  * 默认的 Http 服务器解析器
- * Class DefaultHttpServerParser
+ * Class HttpServerParser
  * @package WecarSwoole\Client\Http\Component
  */
-class DefaultHttpServerParser implements IHttpServerParser
+class HttpServerParser implements IHttpServerParser
 {
     protected $config;
 

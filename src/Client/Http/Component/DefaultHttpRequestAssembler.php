@@ -5,6 +5,7 @@ namespace WecarSwoole\Client\Http\Component;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
+use WecarSwoole\Client\Contract\IHttpServerParser;
 
 /**
  * 默认请求组装器
@@ -15,10 +16,12 @@ use WecarSwoole\Client\Contract\IHttpRequestBean;
 class DefaultHttpRequestAssembler implements IHttpRequestAssembler
 {
     protected $config;
+    protected $serverParser;
 
     public function __construct(HttpConfig $config)
     {
         $this->config = $config;
+        $this->serverParser = new HttpServerParser($config);
     }
 
     public function assemble(array $params): IHttpRequestBean
@@ -34,7 +37,8 @@ class DefaultHttpRequestAssembler implements IHttpRequestAssembler
             $data['flag_params'],
             $data['query_params'],
             $this->parseHeaders($params),
-            $this->parseCookies($params)
+            $this->parseCookies($params),
+            $this->serverParser->parse()
         );
     }
 

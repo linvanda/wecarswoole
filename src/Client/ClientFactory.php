@@ -7,9 +7,12 @@ use WecarSwoole\Client\Contract\IClient;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IResponseParser;
 use WecarSwoole\Client\Contract\IHttpServerParser;
+use WecarSwoole\Client\Http\Component\HttpServerParser;
+use WecarSwoole\Client\Http\Hook\IRequestDecorator;
 use WecarSwoole\Client\Http\HttpClient;
 use WecarSwoole\Client\Config\Config;
 use EasySwoole\EasySwoole\Config as EsConfig;
+use WecarSwoole\Container;
 
 class ClientFactory
 {
@@ -42,14 +45,8 @@ class ClientFactory
 
     private static function createHttpClient(array $conf): HttpClient
     {
-        $serverParser = $requestAssembler = $responseParser = null;
         $config = new HttpConfig($conf);
-
-        // server parser
-        $serverParserClass = $config->serverParser;
-        if (is_subclass_of($serverParserClass, IHttpServerParser::class)) {
-            $serverParser = new $serverParserClass($config);
-        }
+        $serverParser = $requestAssembler = $responseParser = null;
 
         // request assembler
         $requestAssemblerClass = $config->requestAssembler;
@@ -61,6 +58,14 @@ class ClientFactory
         $responseParserClass = $config->responseParser;
         if (is_subclass_of($responseParserClass, IResponseParser::class)) {
             $responseParser = new $responseParserClass($config);
+        }
+
+        // hooks
+        $hooks = [];
+        foreach ($config->hooks as $hook) {
+            if (is_subclass_of($hook, IRequestDecorator::class)) {
+                $hooks[] = new $hook();
+            }
         }
 
         return new HttpClient($config, $serverParser, $requestAssembler, $responseParser);

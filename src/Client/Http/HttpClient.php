@@ -2,12 +2,14 @@
 
 namespace WecarSwoole\Client\Http;
 
+use Psr\Http\Message\ResponseInterface;
 use Swlib\Http\Cookies;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IClient;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
+use WecarSwoole\Client\Contract\IHttpRequestBean;
 use WecarSwoole\Client\Contract\IResponseParser;
-use WecarSwoole\Client\Contract\IHttpServerParser;
+use WecarSwoole\Client\Http\Hook\IRequestDecorator;
 use WecarSwoole\Client\Response;
 use WecarSwoole\Util\Url;
 use Swlib\Http\Uri;
@@ -22,20 +24,20 @@ use Swlib\Http\BufferStream;
 class HttpClient implements IClient
 {
     protected $config;
-    protected $serverParser;
     protected $requestAssembler;
     protected $responseParser;
+    protected $hooks;
 
     public function __construct(
         HttpConfig $config,
-        IHttpServerParser $serverParser,
         IHttpRequestAssembler $requestAssembler,
-        IResponseParser $responseParser
+        IResponseParser $responseParser,
+        array $hooks = []
     ) {
         $this->config = $config;
-        $this->serverParser = $serverParser;
         $this->requestAssembler = $requestAssembler;
         $this->responseParser = $responseParser;
+        $this->hooks = $hooks;
     }
 
     /**
@@ -44,15 +46,14 @@ class HttpClient implements IClient
      */
     public function call(array $params): Response
     {
-        $saberConf = [
-            'base_uri' => $this->serverParser->parse(),
-            'use_pool' => true,
-            'timeout' => $this->config->timeout ?: 3,
-        ];
+        // 解析请求信息
+        $requestBean = $this->requestAssembler->assemble($params);
 
-        if (strpos($saberConf['base_uri'], 'http') !== 0) {
-            $saberConf['base_uri'] = 'http://' . $saberConf['base_uri'];
-        }
+        $saberConf = [
+            'base_uri' => $requestBean->baseUri(),
+            'use_pool' => true,
+            'timeout' => $this->config->timeout ?? 3,
+        ];
 
         // ssl
         if (strpos($saberConf['base_uri'], 'https') === 0) {
@@ -65,9 +66,6 @@ class HttpClient implements IClient
 
         $saber = Saber::create($saberConf)->psr();
         $saber->withMethod($this->config->method);
-
-        // 解析请求信息
-        $requestBean = $this->requestAssembler->assemble($params);
 
         // 设置 uri
         $saber->withUri(
@@ -98,16 +96,48 @@ class HttpClient implements IClient
         }
 
         // 执行请求
-        $result = $saber->exec()->recv();
+        if (!$this->onBefore($requestBean)) {
+            return new Response();
+        }
 
-        $response = new Response(
-            $result->getBody()->read($result->getBody()->getSize()),
-            $result->getStatusCode(),
-            $result->getReasonPhrase()
-        );
+        $response = $saber->exec()->recv();
+
+        $this->onAfter($requestBean, $response);
 
         // 解析响应数据
-        return $this->responseParser->parser($response);
+        return $this->responseParser->parser(
+            new Response(
+                $response->getBody()->read($response->getBody()->getSize()),
+                $response->getStatusCode(),
+                $response->getReasonPhrase()
+            )
+        );
+    }
+
+    private function onBefore(IHttpRequestBean $request): bool
+    {
+        foreach ($this->hooks as $hook) {
+            if (!$hook instanceof IRequestDecorator) {
+                continue;
+            }
+
+            if (!$hook->before($this->config, $request)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private function onAfter(IHttpRequestBean $request, ResponseInterface $response)
+    {
+        foreach ($this->hooks as $hook) {
+            if (!$hook instanceof IRequestDecorator) {
+                continue;
+            }
+
+            $hook->after($this->config, $request, $response);
+        }
     }
 
     private function headers(array $headers): array

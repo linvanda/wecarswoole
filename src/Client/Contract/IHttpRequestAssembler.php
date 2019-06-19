@@ -11,6 +11,5 @@ use WecarSwoole\Client\Config\HttpConfig;
  */
 interface IHttpRequestAssembler
 {
-    public function __construct(HttpConfig $config);
     public function assemble(array $params): IHttpRequestBean;
 }

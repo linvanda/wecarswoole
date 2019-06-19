@@ -12,6 +12,7 @@ class HttpConfig extends Config
     public $CAFile;
     public $sslVerifyPeer;
     public $sslAllowSelfSigned;
+    public $hooks;
 
     /**
      * HttpConfig constructor.
@@ -29,6 +30,7 @@ class HttpConfig extends Config
         $this->server = $apiConf['server'];
         $this->path = $apiConf['path'];
         $this->method = $apiConf['method'] ? strtoupper($apiConf['method']) : 'POST';
+        $this->hooks = $apiConf['hooks'] ?? [];
 
         if (isset($apiConf['content_type'])) {
             $this->contentType = $apiConf['content_type'];

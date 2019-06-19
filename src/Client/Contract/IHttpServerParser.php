@@ -11,7 +11,5 @@ use WecarSwoole\Client\Config\HttpConfig;
  */
 interface IHttpServerParser
 {
-    public function __construct(HttpConfig $config);
-
     public function parse(): string;
 }
