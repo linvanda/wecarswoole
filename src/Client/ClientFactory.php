@@ -46,7 +46,7 @@ class ClientFactory
     private static function createHttpClient(array $conf): HttpClient
     {
         $config = new HttpConfig($conf);
-        $serverParser = $requestAssembler = $responseParser = null;
+        $requestAssembler = $responseParser = null;
 
         // request assembler
         $requestAssemblerClass = $config->requestAssembler;
@@ -68,6 +68,6 @@ class ClientFactory
             }
         }
 
-        return new HttpClient($config, $serverParser, $requestAssembler, $responseParser);
+        return new HttpClient($config, $requestAssembler, $responseParser, $hooks);
     }
 }
