@@ -4,6 +4,7 @@ namespace WecarSwoole\Client\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Swlib\Http\Cookies;
+use Swlib\Http\Exception\HttpExceptionMask;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IClient;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
@@ -65,6 +66,8 @@ class HttpClient implements IClient
         }
 
         $saber = Saber::create($saberConf)->psr();
+        $saber->setExceptionReport(HttpExceptionMask::E_NONE);
+
         $saber->withMethod($this->config->method);
 
         // 设置 uri

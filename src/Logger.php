@@ -7,7 +7,6 @@ use EasySwoole\EasySwoole\Config;
 use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
 use Monolog\Handler\NullHandler;
 use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
 use Monolog\Logger as MonoLogger;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SwiftMailerHandler;
@@ -20,14 +19,14 @@ use Monolog\Handler\SwiftMailerHandler;
 class Logger extends AbstractLogger
 {
     protected static $levels = [
-        'DEBUG' => LogLevel::DEBUG,
-        'INFO' => LogLevel::INFO,
-        'NOTICE' => LogLevel::NOTICE,
-        'WARNING' => LogLevel::WARNING,
-        'ERROR' => LogLevel::ERROR,
-        'CRITICAL' => LogLevel::CRITICAL,
-        'ALERT' => LogLevel::ALERT,
-        'EMERGENCY' => LogLevel::EMERGENCY,
+        'DEBUG' => MonoLogger::DEBUG,
+        'INFO' => MonoLogger::INFO,
+        'NOTICE' => MonoLogger::NOTICE,
+        'WARNING' => MonoLogger::WARNING,
+        'ERROR' => MonoLogger::ERROR,
+        'CRITICAL' => MonoLogger::CRITICAL,
+        'ALERT' => MonoLogger::ALERT,
+        'EMERGENCY' => MonoLogger::EMERGENCY,
     ];
 
     public function log($level, $message, array $context = array())
