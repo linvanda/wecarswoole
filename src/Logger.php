@@ -99,6 +99,10 @@ class Logger extends AbstractLogger
                     $handle = self::emailHandler($val, $levelNum);
                 }
 
+                if (!$handle) {
+                    continue;
+                }
+
                 // 第一个设置 buddle = false
                 if ($cnt++ == 0) {
                     $handle->setBubble(false);
