@@ -7,7 +7,6 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
-use WecarSwoole\Client\Http\Component\HttpRequestBean;
 
 /**
  * 记录请求日志
@@ -46,6 +45,9 @@ class LogRequestDecorator implements IRequestDecorator
 
     protected function logContext(HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response): array
     {
+        $body = (string)$response->getBody();
+        $body = mb_strlen($body) > 1024 * 400 ? mb_strcut($body, 0, 1024 * 400) : $body;
+
         return [
             'use_time' => time() - $this->startTime,
             'request' => (string)$request,
@@ -53,7 +55,7 @@ class LogRequestDecorator implements IRequestDecorator
                 'http_code' => $response->getStatusCode(),
                 'reason' => $response->getReasonPhrase(),
                 'headers' => $response->getHeaders(),
-                'body' => $response->getBody()->read(min($response->getBody()->getSize(), 1024 * 200)),
+                'body' => $body,
             ]
         ];
     }

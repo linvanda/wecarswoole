@@ -121,7 +121,7 @@ class HttpClient implements IClient
                 continue;
             }
 
-            if (!$hook->before($this->config, $request)) {
+            if ($hook->before($this->config, $request) === false) {
                 return false;
             }
         }

@@ -2,7 +2,6 @@
 
 namespace WecarSwoole\Client\Contract;
 
-use WecarSwoole\Client\Config\Config;
 use WecarSwoole\Client\Response;
 
 /**
