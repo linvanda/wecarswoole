@@ -114,11 +114,15 @@ class Logger extends AbstractLogger
     private static function emailHandler(array $config, int $levelNum): ?SwiftMailerHandler
     {
         $mailerConfig = $config['driver'] ? Config::getInstance()->getConf("mailer.{$config['driver']}") : null;
-        if (!$mailerConfig) {
+        if (!$mailerConfig || !$config['to']) {
             return null;
         }
 
-        $mailer = Mailer::getSwiftMailer($mailerConfig['host'] ?? '', $mailerConfig['username'] ?? '', $mailerConfig['password'] ?? '');
+        $mailer = Mailer::getSwiftMailer(
+            $mailerConfig['host'] ?? '',
+            $mailerConfig['username'] ?? '',
+            $mailerConfig['password'] ?? ''
+        );
 
         $messager = new \Swift_Message($config['subject'] ?? "日志邮件告警");
         $messager->setFrom(["{$mailerConfig['username']}" => $config['subject'] ?? "日志邮件告警"])->setTo($config['to']);
