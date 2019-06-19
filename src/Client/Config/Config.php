@@ -20,12 +20,6 @@ class Config
     public $appId;
 
     /**
-     * 服务器地址解析器
-     * @var string|null
-     */
-    public $serverParser;
-
-    /**
      * @var string uri 组装器
      */
     public $uriAssembler;
@@ -54,7 +48,6 @@ class Config
         $this->appId = $apiConf['app_id'];
         $this->requestAssembler = $apiConf['request_assembler'];
         $this->responseParser = $apiConf['response_parser'];
-        $this->serverParser = $apiConf['server_parser'];
 
         $this->config = $apiConf;
     }
@@ -75,7 +68,8 @@ class Config
         }
 
         $globalConf = $conf['config'] ?? [];
-        $groupConf = isset($conf[$apiInfo['group']]) && isset($conf[$apiInfo['group']]['config']) ? $conf[$apiInfo['group']]['config'] : [];
+        $groupConf = isset($conf[$apiInfo['group']]) && isset($conf[$apiInfo['group']]['config']) ?
+            $conf[$apiInfo['group']]['config'] : [];
         $apiConf = $conf[$apiInfo['group']]['api'];
         $apiConf = $apiConf[$apiInfo['api']] ?? $apiConf['/' . $apiInfo['api']];
 
@@ -85,7 +79,11 @@ class Config
 
         $protocol = $apiConf['protocol'] ?? $groupConf['protocol'] ?? $globalConf['protocol'] ?? 'http';
         // 协议配置
-        $protocolConf = array_merge($globalConf[$protocol] ?? [], $groupConf[$protocol] ?? [], $apiConf[$protocol] ?? []);
+        $protocolConf = array_merge(
+            $globalConf[$protocol] ?? [],
+            $groupConf[$protocol] ?? [],
+            $apiConf[$protocol] ?? []
+        );
 
         unset($globalConf[$protocol], $groupConf[$protocol], $apiConf[$protocol]);
 
