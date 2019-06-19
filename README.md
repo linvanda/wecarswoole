@@ -996,7 +996,7 @@ array (
     ),
 );
 
-$userDTO->toArray(true, true, true);
+$user->toArray(true, true, true);
 // output:
 array (
     'name' => '张三',
@@ -1007,7 +1007,7 @@ array (
 )
 ```
 
-
+Entity 可以调用 buildFromArray($array) 从数组构建对象。
 
 
 
@@ -1679,13 +1679,12 @@ class UserDTO extends \WecarSwoole\DTO
      */
     protected $sex;
     protected $liveAddress;
+  	/**
+  	 * 该属性是 DTO 子类，会被自动构建，详情参见 buildFromArray() 方法
+  	 *@field identity
+  	 *@var IdDTO
+  	 */
     protected $id;
-
-    public function __construct(array $data = [])
-    {
-        parent::__construct($data);
-        $this->id = new IdDTO($data['identify']);
-    }
 }
 
 // 注意 $sex 属性的注解是如何映射到这里的 gender 字段的

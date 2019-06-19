@@ -11,6 +11,7 @@ use WecarSwoole\Util\AnnotationAnalyser;
  *          field 字段别名，如 @field gender，表示使用数组中 gender 字段的值作为此属性值
  *          mapping 值映射，如 @mapping 1=>女,2=>男 表示数组中的 1 将被映射成属性值"男"。仅支持基本类型(number/string/bool)映射
  *          var 属性类型，需写类全名（包括命名空间）。当类型是 WecarSwoole/ATO/IArrayBuildable 时，会尝试根据数组自动构建此属性
+ * 注意：不要有循环依赖，否则自动构建会出现死循环
  * Trait ArrayToObject
  * @package WecarSwoole\ATO
  */

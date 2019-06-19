@@ -23,11 +23,11 @@ class ClientFactory
         $config = Config::load($api);
 
         // 当前项目的 app_id
-        if (!$config['app_id'] && ($serverFlag = EsConfig::getInstance()->getConf('app_flag'))) {
+        if (!isset($config['app_id']) && ($serverFlag = EsConfig::getInstance()->getConf('app_flag'))) {
             $config['app_id'] = EsConfig::getInstance()->getConf("server.$serverFlag")['app_id'];
         }
 
-        if (!$config['app_id']) {
+        if (!isset($config['app_id'])) {
             throw new \Exception("当前项目没有配置合法的app_id");
         }
 

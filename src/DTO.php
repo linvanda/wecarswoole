@@ -18,8 +18,8 @@ class DTO implements IExtractable, IArrayBuildable
 {
     use ObjectToArray, ArrayToObject;
 
-    public function __construct(array $data = [])
+    public function __construct(array $data = [], bool $strict = true)
     {
-        $this->buildFromArray($data);
+        $this->buildFromArray($data, $strict);
     }
 }

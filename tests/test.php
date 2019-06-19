@@ -18,7 +18,7 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-class Address extends \WecarSwoole\DTO
+class Address extends \WecarSwoole\Entity
 {
     /**
      * @field city
@@ -27,7 +27,7 @@ class Address extends \WecarSwoole\DTO
     public $area;
 }
 
-class Td extends \WecarSwoole\DTO
+class Td extends \WecarSwoole\Entity
 {
     public $name;
     /**
@@ -53,12 +53,11 @@ class Td extends \WecarSwoole\DTO
 $data = [
     'name' => '张三',
     'gender' => 2,
-    'address' => [
-            'city' => '广州',
-            'area' => '白云'
-    ]
+    'city' => '广州',
+    'area' => '白云'
 ];
-$dto = new Td($data);
+$dto = new Td();
+$dto->buildFromArray($data, false);
 
-var_export($dto->address->cityName);
 var_export($dto->toArray());
+//var_export($dto);
