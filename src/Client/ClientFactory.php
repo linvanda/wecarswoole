@@ -64,7 +64,7 @@ class ClientFactory
         $hooks = [];
         foreach ($config->hooks as $hook) {
             if (is_subclass_of($hook, IRequestDecorator::class)) {
-                $hooks[] = new $hook();
+                $hooks[] = Container::make($hook);
             }
         }
 
