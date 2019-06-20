@@ -20,7 +20,7 @@ class SmSHandler extends AbstractProcessingHandler
     protected function write(array $record)
     {
         foreach ($this->mobiles as $mobile) {
-            Container::get(Sms::class)->send($mobile, $record['formatted']);
+            Container::get(Sms::class)->send($mobile, mb_substr($record['message'], 0, 50));
         }
     }
 }
