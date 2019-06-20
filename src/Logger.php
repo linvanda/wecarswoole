@@ -115,6 +115,11 @@ class Logger extends AbstractLogger
             }
         }
 
+        // 如果是命令行调试模式，则增加 StreamHandler
+        if (DEBUG_MODEL) {
+            $handles[] = new StreamHandler(STDOUT);
+        }
+
         return $handles;
     }
 

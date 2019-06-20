@@ -47,6 +47,9 @@ if (!defined('ENVIRON')) {
     $args[] = $serverEnv;
 }
 
+// 是否调试模式
+!defined('DEBUG_MODEL') && define('DEBUG_MODEL', !in_array('d', $args) && in_array('--debug', $args));
+
 $ret = CommandRunner::getInstance()->run($args);
 if(!empty($ret)){
     echo $ret."\n";
