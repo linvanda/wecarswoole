@@ -3,6 +3,7 @@
 namespace WecarSwoole;
 
 use EasySwoole\EasySwoole\ServerManager;
+use Monolog\Handler\RotatingFileHandler;
 use WecarSwoole\LogHandler\FileHandler;
 use WecarSwoole\LogHandler\SmSHandler;
 use WecarSwoole\Tasks\Log;
@@ -100,7 +101,7 @@ class Logger extends AbstractLogger
             foreach ($config as $handleType => $val) {
                 switch ($handleType) {
                     case 'file':
-                        $handle = new FileHandler($val, $levelNum);
+                        $handle = new RotatingFileHandler($val, 0, $levelNum, true, null, true);
                         break;
                     case 'mailer':
                     case 'email':

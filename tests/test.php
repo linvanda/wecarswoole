@@ -69,4 +69,10 @@ Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php')
 
 //echo ctype_alpha('abAdfd');
 
-var_export(getdate());
+$dt = getdate();
+$s = str_replace(
+    ['%Y', '%m', '%d', '%H', '%i', '%s'],
+    [$dt['year'], $dt['mon'], $dt['mday'], $dt['hours'], $dt['minutes'], $dt['seconds']],
+    'error_%Y-%m-%d'
+);
+echo $s;
