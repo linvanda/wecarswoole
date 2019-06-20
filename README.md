@@ -1154,23 +1154,31 @@ return [
 api.php:
 
 ```php
+<?php
+
+use WecarSwoole\Client\Http\Component\WecarHttpRequestAssembler;
+use WecarSwoole\Client\Http\Component\JsonResponseParser;
+use \WecarSwoole\Client\Http\Hook\LogRequestDecorator;
+
+/**
+ * 外部 api 定义
+ * 可支持多种协议（典型如 http 协议，rpc 协议）
+ * api 外部使用方式：group_name:apiname
+ */
 return [
-    // 默认配置，如签名器、加密算法、数据格式等配置，这些配置都可以在各自 api 配置中覆盖（其中某些配置仅 http 协议适用）
     'config' => [
         // 请求协议
         'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
         // http 协议请求默认配置
         'http' => [
-            // 服务器地址解析器，必须是 IHttpServerParser 类型
-            'server_parser' => \App\Foundation\Client\Http\Component\DefaultHttpServerParser::class,
             // 请求参数组装器
-            'request_assembler' => \App\Foundation\Client\Http\Component\DefaultHttpRequestAssembler::class,
+            'request_assembler' => WecarHttpRequestAssembler::class,
             // 响应参数解析器
-            'response_parser' => \App\Foundation\Client\Http\Component\JsonResponseParser::class,
-            // 请求发送前的拦截器(尚未实现)
-            'before_handle' => [],
-            // 收到响应后的拦截器（尚未实现）
-            'after_handle' => [],
+            'response_parser' => JsonResponseParser::class,
+            // 请求钩子，必须实现 \WecarSwoole\Client\Http\Hook\IRequestDecorator 接口
+            'hooks' => [
+                LogRequestDecorator::class
+            ],
             // https ssl 相关配置
             'ssl' => [
                 // CA 文件路径
@@ -1183,8 +1191,10 @@ return [
         ],
     ],
     // 组
-    'wc' => include __DIR__ . '/weicheche.php',
+    'weiche' => include_once __DIR__ . '/weicheche.php',
+    'sscard' => include_once __DIR__ . '/sscard.php',
 ];
+
 ```
 
 weicheche.php:
