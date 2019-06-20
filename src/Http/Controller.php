@@ -6,7 +6,7 @@ use EasySwoole\Http\AbstractInterface\Controller as EsController;
 use Psr\Log\LoggerInterface;
 use WecarSwoole\Container;
 use WecarSwoole\Exceptions\EmergencyErrorException;
-use WecarSwoole\Exceptions\FatalErrorException;
+use WecarSwoole\Exceptions\CriticalErrorException;
 
 /**
  * 控制器基类
@@ -44,7 +44,7 @@ class Controller extends EsController
         $message = $throwable->getMessage();
         $context = ['trace' => $throwable->getTraceAsString()];
 
-        if ($throwable instanceof FatalErrorException) {
+        if ($throwable instanceof CriticalErrorException) {
             $logger->critical($message, $context);
         } elseif ($throwable instanceof EmergencyErrorException) {
             $logger->emergency($message, $context);

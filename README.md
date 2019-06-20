@@ -1304,6 +1304,18 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
 
 框架在 wecarswoole/Exceptions/ 中已经定义了一些异常，项目可以在自己的 Exceptions/ 目录中定义自己项目需要的异常类。
 
+框架提供的异常类：
+
+- AuthException	授权异常
+- ConfigNotFoundException 配置信息获取失败
+- InvalidOperationException 非法操作
+- MethodNotFoundException 方法不存在
+- ParamsCannotBeNullException 参数不能为空
+- PropertyCannotBeNullException 属性不能空
+- PropertyNotFoundException 属性不存在
+- CriticalErrorException 严重异常。如果用的框架默认配置，该异常会记录文件日志并发送邮件告警
+- EmergencyErrorException 比 CriticalErrorException 还严重的异常。如果用的框架默认配置，该异常会记录文件日志并发送邮件和短信告警
+
 
 
 #### Email
@@ -1413,6 +1425,11 @@ $this->mailer->send($message);
   ...
   $this->logger->critical("严重错误日志，需要发送邮件");
   ```
+
+> 根据框架默认配置，开发环境开启 debug 级别日志，生产环境开启 error 级别日志。
+> 所有 error 及以下的日志都是记录文件，critical 记录文件并发邮件，emergency 记录文件并发送邮件和短信。
+>
+> 在项目中抛出 CriticalErrorException 会记录 critical 级别日志，抛出 EmergencyErrorException 会记录 emergency 级别日志。
 
 
 

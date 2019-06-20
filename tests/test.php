@@ -18,30 +18,30 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-class Address extends \WecarSwoole\Entity
-{
-    /**
-     * @field city
-     */
-    public $cityName;
-    public $area;
-    public $country;
-}
-
-class Td extends \WecarSwoole\Entity
-{
-    public $name;
-    /**
-     * @field gender
-     * @mapping 1=>女,2=>男
-     */
-    public $sex;
-    /**
-     * @var Address
-     */
-    public $address;
-    public $age;
-}
+//class Address extends \WecarSwoole\Entity
+//{
+//    /**
+//     * @field city
+//     */
+//    public $cityName;
+//    public $area;
+//    public $country;
+//}
+//
+//class Td extends \WecarSwoole\Entity
+//{
+//    public $name;
+//    /**
+//     * @field gender
+//     * @mapping 1=>女,2=>男
+//     */
+//    public $sex;
+//    /**
+//     * @var Address
+//     */
+//    public $address;
+//    public $age;
+//}
 //
 //$arr = [
 //        new Td(['name'=>'李四', 'sex'=>1, 'address'=> ['city'=>'深圳','area'=>'落户']]),
@@ -52,19 +52,21 @@ class Td extends \WecarSwoole\Entity
 
 //var_export($it->toArray());
 
-$data = [
-    'name' => '张三',
-    'gender' => 2,
-    'city' => '广州',
-    'area' => '白云'
-];
-$dto = new Td();
-$dto->buildFromArray($data, false);
-
-var_export(json_encode($dto->toArray()));
+//$data = [
+//    'name' => '张三',
+//    'gender' => 2,
+//    'city' => '广州',
+//    'area' => '白云'
+//];
+//$dto = new Td();
+//$dto->buildFromArray($data, false);
+//
+//var_export(json_encode($dto->toArray()));
 //var_export($dto);
 //if (is_string($k) && !ctype_lower($k)) {
 
 //echo ctype_lower('dDddf');
 
 //echo ctype_alpha('abAdfd');
+
+var_export(getdate());

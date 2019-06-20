@@ -3,6 +3,7 @@
 namespace WecarSwoole;
 
 use EasySwoole\EasySwoole\ServerManager;
+use WecarSwoole\LogHandler\FileHandler;
 use WecarSwoole\LogHandler\SmSHandler;
 use WecarSwoole\Tasks\Log;
 use EasySwoole\EasySwoole\Config;
@@ -99,7 +100,7 @@ class Logger extends AbstractLogger
             foreach ($config as $handleType => $val) {
                 switch ($handleType) {
                     case 'file':
-                        $handle = new StreamHandler($val, $levelNum);
+                        $handle = new FileHandler($val, $levelNum);
                         break;
                     case 'mailer':
                     case 'email':

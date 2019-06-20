@@ -4,10 +4,10 @@ namespace WecarSwoole\Exceptions;
 
 /**
  * 致命异常
- * Class FatalErrorException
+ * Class CriticalErrorException
  * @package WecarSwoole\Exceptions
  */
-class FatalErrorException extends \Exception
+class CriticalErrorException extends \Exception
 {
 
 }
