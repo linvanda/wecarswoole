@@ -158,6 +158,6 @@ class Logger extends AbstractLogger
             return null;
         }
 
-        return new SmSHandler(array_keys($config));
+        return new SmSHandler(array_keys($config), $levelNum);
     }
 }
