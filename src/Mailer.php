@@ -2,6 +2,7 @@
 
 namespace WecarSwoole;
 
+use EasySwoole\EasySwoole\ServerManager;
 use WecarSwoole\Tasks\SendMail;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
@@ -26,13 +27,19 @@ class Mailer
 
     public function send(\Swift_Message $message)
     {
-        // 投递异步任务
-        TaskManager::async(new SendMail([
+        $server = ServerManager::getInstance()->getSwooleServer();
+        $mailer = new SendMail([
             'message' => $message,
             'host' => $this->host,
             'username' => $this->username,
             'password' => $this->password
-        ]));
+        ]);
+        // 如果在工作进程中，则投递异步任务，否则直接执行（task进程不能投递异步任务）
+        if (!$server->taskworker) {
+            TaskManager::async($mailer);
+        } else {
+            $mailer->__onTaskHook($server->worker_id, $server->worker_id);
+        }
     }
 
     public static function getSwiftMailer(

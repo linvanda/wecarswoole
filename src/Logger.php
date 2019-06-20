@@ -2,6 +2,7 @@
 
 namespace WecarSwoole;
 
+use EasySwoole\EasySwoole\ServerManager;
 use WecarSwoole\Tasks\Log;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
@@ -31,12 +32,14 @@ class Logger extends AbstractLogger
 
     public function log($level, $message, array $context = array())
     {
-        // 投递异步任务
-        TaskManager::async(new Log([
-            'level' => $level,
-            'message' => $message,
-            'context' => $context
-        ]));
+        $server = ServerManager::getInstance()->getSwooleServer();
+        $log = new Log(['level' => $level, 'message' => $message, 'context' => $context]);
+        // 如果在工作进程中，则投递异步任务，否则直接执行（task进程不能投递异步任务）
+        if (!$server->taskworker) {
+            TaskManager::async($log);
+        } else {
+            $log->__onTaskHook($server->worker_id, $server->worker_id);
+        }
     }
 
     /**

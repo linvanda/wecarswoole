@@ -25,7 +25,7 @@ class Log extends AbstractAsyncTask
             return false;
         }
 
-        Logger::getMonoLogger()->log($taskData['level'], $taskData['message'], $taskData['context'] ?? []);
+        return Logger::getMonoLogger()->log($taskData['level'], $taskData['message'], $taskData['context'] ?? []);
     }
 
     protected function finish($result, $task_id)
