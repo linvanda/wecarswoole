@@ -20,19 +20,22 @@ class WecarHttpRequestAssembler extends DefaultHttpRequestAssembler
         $secret = $currentServerInfo['secret'] ?? '';
 
         if ($this->config->method === 'GET') {
-            $queryParams = [
-                'app_id' => $this->config->appId,
-                'data' => json_encode($queryParams)
-            ];
-            $queryParams['token'] = $signer->signature($queryParams, $secret);
+            $queryParams = $this->combineWithSignature($signer, $secret, $queryParams);
         } else {
-            $body = [
-                'app_id' => $this->config->appId,
-                'data' => json_encode($body)
-            ];
-            $body['token'] = $signer->signature($body, $secret);
+            $body = $this->combineWithSignature($signer, $secret, $body);
         }
 
         return ['flag_params' => $flagParams, 'query_params' => $queryParams, 'body' => $body];
+    }
+
+    protected function combineWithSignature(WecarSigner $signer, string $secret, array $params): array
+    {
+        $params = [
+            'app_id' => $this->config->appId,
+            'data' => json_encode($params)
+        ];
+        $params['token'] = $signer->signature($params, $secret);
+
+        return $params;
     }
 }

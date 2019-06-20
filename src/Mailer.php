@@ -35,8 +35,11 @@ class Mailer
         ]));
     }
 
-    public static function getSwiftMailer(string $host = '', string $username = '', string $password = ''): \Swift_Mailer
-    {
+    public static function getSwiftMailer(
+        string $host = '',
+        string $username = '',
+        string $password = ''
+    ): \Swift_Mailer {
         $config = Config::getInstance()->getConf('mailer');
         $config = $config['default'] ?? $config;
 
