@@ -2,9 +2,9 @@
 
 namespace WecarSwoole;
 
+use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\ServerManager;
 use Monolog\Handler\RotatingFileHandler;
-use WecarSwoole\LogHandler\FileHandler;
 use WecarSwoole\LogHandler\SmSHandler;
 use WecarSwoole\Tasks\Log;
 use EasySwoole\EasySwoole\Config;
@@ -22,6 +22,8 @@ use Monolog\Handler\SwiftMailerHandler;
  */
 class Logger extends AbstractLogger
 {
+    use Singleton;
+
     protected static $levels = [
         'DEBUG' => MonoLogger::DEBUG,
         'INFO' => MonoLogger::INFO,
@@ -32,6 +34,10 @@ class Logger extends AbstractLogger
         'ALERT' => MonoLogger::ALERT,
         'EMERGENCY' => MonoLogger::EMERGENCY,
     ];
+
+    protected function __construct()
+    {
+    }
 
     public function log($level, $message, array $context = array())
     {
