@@ -6,29 +6,7 @@ $baseConfig = [
     'app_name' => '应用名称',
     'app_flag' => 'SY', // 应用标识
     // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）
-    'logger' => [
-        'debug' => [
-            'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
-        ],
-        'info' => [
-            'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
-        ],
-        'warning' => [
-            'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/warning.log'),
-        ],
-        'error' => [
-            'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
-        ],
-        'critical' => [
-            'mailer' => [
-                'driver' => 'default',
-                'subject' => '喂车邮件告警',
-                'to' => [
-                ]
-            ],
-            'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
-        ]
-    ],
+    'logger' => include_once __DIR__ . '/logger.php',
     // 邮件。可以配多个
     'mailer' => [
         'default' => [

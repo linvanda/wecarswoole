@@ -5,6 +5,7 @@ namespace WecarSwoole\Http;
 use EasySwoole\Http\AbstractInterface\Controller as EsController;
 use Psr\Log\LoggerInterface;
 use WecarSwoole\Container;
+use WecarSwoole\Exceptions\EmergencyErrorException;
 use WecarSwoole\Exceptions\FatalErrorException;
 
 /**
@@ -40,21 +41,15 @@ class Controller extends EsController
     protected function onException(\Throwable $throwable): void
     {
         $logger = Container::get(LoggerInterface::class);
+        $message = $throwable->getMessage();
+        $context = ['trace' => $throwable->getTraceAsString()];
 
         if ($throwable instanceof FatalErrorException) {
-            $logger->critical(
-                $throwable->getMessage(),
-                [
-                    'trace' => $throwable->getTraceAsString()
-                ]
-            );
+            $logger->critical($message, $context);
+        } elseif ($throwable instanceof EmergencyErrorException) {
+            $logger->emergency($message, $context);
         } else {
-            $logger->error(
-                $throwable->getMessage(),
-                [
-                    'trace' => $throwable->getTraceAsString()
-                ]
-            );
+            $logger->error($message, $context);
         }
 
         $this->return([], $throwable->getCode() ?: 500, $throwable->getMessage());

@@ -3,6 +3,7 @@
 namespace WecarSwoole;
 
 use EasySwoole\EasySwoole\ServerManager;
+use WecarSwoole\LogHandler\SmSHandler;
 use WecarSwoole\Tasks\Log;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
@@ -96,10 +97,17 @@ class Logger extends AbstractLogger
 
             $cnt = 0;
             foreach ($config as $handleType => $val) {
-                if ($handleType == 'file' && $val) {
-                    $handle = new StreamHandler($val, $levelNum);
-                } elseif ($handleType == 'mailer' || $handleType == 'email') {
-                    $handle = self::emailHandler($val, $levelNum);
+                switch ($handleType) {
+                    case 'file':
+                        $handle = new StreamHandler($val, $levelNum);
+                        break;
+                    case 'mailer':
+                    case 'email':
+                        $handle = self::emailHandler($val, $levelNum);
+                        break;
+                    case 'sms':
+                        $handle = self::smsHandler($val, $levelNum);
+                        break;
                 }
 
                 if (!$handle) {
@@ -137,9 +145,19 @@ class Logger extends AbstractLogger
         );
 
         $messager = new \Swift_Message($config['subject'] ?? "日志邮件告警");
-        $messager->setFrom(["{$mailerConfig['username']}" => $config['subject'] ?? "日志邮件告警"])->setTo($config['to']);
+        $messager->setFrom(["{$mailerConfig['username']}" => $config['subject'] ?? "日志邮件告警"])
+            ->setTo(array_keys($config['to']));
         $emailHandler = new SwiftMailerHandler($mailer, $messager, $levelNum, false);
 
         return $emailHandler;
+    }
+
+    private static function smsHandler(array $config, int $levelNum): ?SmSHandler
+    {
+        if (!$config) {
+            return null;
+        }
+
+        return new SmSHandler(array_keys($config));
     }
 }
