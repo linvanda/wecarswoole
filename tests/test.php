@@ -69,10 +69,22 @@ Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php')
 
 //echo ctype_alpha('abAdfd');
 
-$dt = getdate();
-$s = str_replace(
-    ['%Y', '%m', '%d', '%H', '%i', '%s'],
-    [$dt['year'], $dt['mon'], $dt['mday'], $dt['hours'], $dt['minutes'], $dt['seconds']],
-    'error_%Y-%m-%d'
-);
-echo $s;
+//WecarSwoole\HealthCheck\HealthCheck::watch();
+
+//$b = new \WecarSwoole\HealthCheck\Buckets(4);
+//$b->push(3);
+//$b->push(6);
+//$b->push(4);
+//$b->push(1);
+//$b->push(8);
+//$b->push(8);
+//
+//var_export($b);
+
+go(function () {
+    \WecarSwoole\HealthCheck\HealthCheck::watch(\WecarSwoole\Logger::getInstance());
+    $str = "";
+    swoole_timer_tick(20, function () use (&$str) {
+        $str .= str_repeat("helloword", 10000);
+    });
+});
