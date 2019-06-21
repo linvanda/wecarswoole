@@ -5,8 +5,10 @@ namespace WecarSwoole;
 use DI\ContainerBuilder;
 use EasySwoole\Component\Di;
 use EasySwoole\EasySwoole\Config;
+use Psr\Log\LoggerInterface;
 use \Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use WecarSwoole\HealthCheck\HealthCheck;
 use WecarSwoole\Util\File;
 
 /**
@@ -27,6 +29,9 @@ class Bootstrap
 
         // 注册事件订阅者
         static::registerSubscriber();
+
+        // worker 进程健康监测
+        HealthCheck::watch(Container::get(LoggerInterface::class));
     }
 
     protected static function loadConfig()
