@@ -1,6 +1,6 @@
 <?php
 
-namespace WecarSwoole\Middleware;
+namespace WecarSwoole\Http\Middlewares;
 
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
@@ -8,7 +8,6 @@ use EasySwoole\Http\Response;
 /**
  * 路由中间件接口
  * Interface IRouteMiddleware
- * @package WecarSwoole\Middleware
  */
 interface IRouteMiddleware
 {

@@ -2,7 +2,7 @@
 
 use WecarSwoole\Client\Http\Component\WecarHttpRequestAssembler;
 use WecarSwoole\Client\Http\Component\JsonResponseParser;
-use \WecarSwoole\Client\Http\Hook\LogRequestDecorator;
+use \WecarSwoole\Client\Http\Middleware\LogRequestMiddleware;
 
 /**
  * 外部 api 定义
@@ -19,9 +19,9 @@ return [
             'request_assembler' => WecarHttpRequestAssembler::class,
             // 响应参数解析器
             'response_parser' => JsonResponseParser::class,
-            // 请求钩子，必须实现 \WecarSwoole\Client\Http\Hook\IRequestDecorator 接口
-            'hooks' => [
-                LogRequestDecorator::class
+            // 请求中间件，必须实现 \WecarSwoole\Client\Http\Middleware\IRequestMiddleware 接口
+            'middlewares' => [
+                LogRequestMiddleware::class
             ],
             // https ssl 相关配置
             'ssl' => [

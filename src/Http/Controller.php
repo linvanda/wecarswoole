@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use WecarSwoole\Container;
 use WecarSwoole\Exceptions\EmergencyErrorException;
 use WecarSwoole\Exceptions\CriticalErrorException;
+use WecarSwoole\MiddlewareHelper;
 
 /**
  * 控制器基类
@@ -17,21 +18,49 @@ use WecarSwoole\Exceptions\CriticalErrorException;
  */
 class Controller extends EsController
 {
+    use MiddlewareHelper;
+
     protected $responseData;
 
     public function index()
     {
-        // do nothing default
+        // do nothing
     }
 
+    /**
+     * 请求执行前
+     * @param null|string $action
+     * @return bool|null
+     * @throws \Exception
+     */
+    protected function onRequest(?string $action): ?bool
+    {
+        if (!$this->execMiddlewares('before', $this->request(), $this->response())) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * 请求执行后
+     * @param null|string $action
+     */
     protected function afterAction(?string $action): void
     {
+        $this->execMiddlewares('after', $this->request(), $this->response());
+
         if ($this->responseData) {
             $this->response()->write(
                 is_string($this->responseData)
                     ? $this->responseData : json_encode($this->responseData, JSON_UNESCAPED_UNICODE)
             );
         }
+    }
+
+    protected function gc()
+    {
+        $this->execMiddlewares('gc');
     }
 
     /**

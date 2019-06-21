@@ -1,6 +1,6 @@
 <?php
 
-namespace WecarSwoole\Client\Http\Hook;
+namespace WecarSwoole\Client\Http\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -10,10 +10,10 @@ use WecarSwoole\Client\Contract\IHttpRequestBean;
 
 /**
  * 记录请求日志
- * Class LogRequestDecorator
- * @package WecarSwoole\Client\Http\Hook
+ * Class LogRequestMiddleware
+ * @package WecarSwoole\Client\Http\Middleware
  */
-class LogRequestDecorator implements IRequestDecorator
+class LogRequestMiddleware implements IRequestMiddleware
 {
     protected $logger;
     protected $startTime;
@@ -34,7 +34,7 @@ class LogRequestDecorator implements IRequestDecorator
         $level = $this->logLevel($response);
         $context = $this->logContext($config, $request, $response);
 
-        $this->logger->log($level, '请求信息', $context);
+        $this->logger->log($level, 'API 调用信息', $context);
     }
 
     protected function logLevel(ResponseInterface $response): string

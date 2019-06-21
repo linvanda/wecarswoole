@@ -10,8 +10,8 @@ use WecarSwoole\Client\Contract\IClient;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
 use WecarSwoole\Client\Contract\IResponseParser;
-use WecarSwoole\Client\Http\Hook\IRequestDecorator;
 use WecarSwoole\Client\Response;
+use WecarSwoole\MiddlewareHelper;
 use WecarSwoole\Util\Url;
 use Swlib\Http\Uri;
 use Swlib\Saber;
@@ -24,21 +24,20 @@ use Swlib\Http\BufferStream;
  */
 class HttpClient implements IClient
 {
+    use MiddlewareHelper;
+
     protected $config;
     protected $requestAssembler;
     protected $responseParser;
-    protected $hooks;
 
     public function __construct(
         HttpConfig $config,
         IHttpRequestAssembler $requestAssembler,
-        IResponseParser $responseParser,
-        array $hooks = []
+        IResponseParser $responseParser
     ) {
         $this->config = $config;
         $this->requestAssembler = $requestAssembler;
         $this->responseParser = $responseParser;
-        $this->hooks = $hooks;
     }
 
     /**
@@ -98,14 +97,12 @@ class HttpClient implements IClient
             $saber->withBody(new BufferStream($body));
         }
 
-        // 执行请求
-        if (!$this->onBefore($requestBean)) {
+        // 执行
+        if (!$this->execMiddlewares('before', $this->config, $requestBean)) {
             return new Response();
         }
-
         $response = $saber->exec()->recv();
-
-        $this->onAfter($requestBean, $response);
+        $this->execMiddlewares('after', $this->config, $requestBean, $response);
 
         // 解析响应数据
         return $this->responseParser->parser(
@@ -115,32 +112,6 @@ class HttpClient implements IClient
                 $response->getReasonPhrase()
             )
         );
-    }
-
-    private function onBefore(IHttpRequestBean $request): bool
-    {
-        foreach ($this->hooks as $hook) {
-            if (!$hook instanceof IRequestDecorator) {
-                continue;
-            }
-
-            if ($hook->before($this->config, $request) === false) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    private function onAfter(IHttpRequestBean $request, ResponseInterface $response)
-    {
-        foreach ($this->hooks as $hook) {
-            if (!$hook instanceof IRequestDecorator) {
-                continue;
-            }
-
-            $hook->after($this->config, $request, $response);
-        }
     }
 
     private function headers(array $headers): array

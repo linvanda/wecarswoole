@@ -81,10 +81,3 @@ Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php')
 //
 //var_export($b);
 
-go(function () {
-    \WecarSwoole\HealthCheck\HealthCheck::watch(\WecarSwoole\Logger::getInstance());
-    $str = "";
-    swoole_timer_tick(20, function () use (&$str) {
-        $str .= str_repeat("helloword", 10000);
-    });
-});

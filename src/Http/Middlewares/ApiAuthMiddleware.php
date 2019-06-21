@@ -1,6 +1,6 @@
 <?php
 
-namespace WecarSwoole\Middleware;
+namespace WecarSwoole\Http\Middlewares;
 
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
@@ -8,7 +8,6 @@ use EasySwoole\Http\Response;
 /**
  * api 鉴权中间件
  * Class ApiAuthMiddleware
- * @package WecarSwoole\Middleware
  */
 class ApiAuthMiddleware implements IRouteMiddleware
 {

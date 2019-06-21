@@ -2,8 +2,8 @@
 
 namespace WecarSwoole\Http;
 
-use WecarSwoole\Middleware\MiddlewareHelper;
-use WecarSwoole\Middleware\IRouteMiddleware;
+use WecarSwoole\MiddlewareHelper;
+use WecarSwoole\IRouteMiddleware;
 use FastRoute\RouteCollector;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
@@ -27,48 +27,38 @@ abstract class Route
         $this->routeCollector = $collector;
     }
 
-    public function get(string $routePattern, string $handler, array $middleware = [])
+    public function get(string $routePattern, string $handler)
     {
-        $this->addRoute(['GET'], $routePattern, $handler, $middleware);
+        $this->addRoute(['GET'], $routePattern, $handler);
     }
 
-    public function post(string $routePattern, string $handler, array $middleware = [])
+    public function post(string $routePattern, string $handler)
     {
-        $this->addRoute(['POST'], $routePattern, $handler, $middleware);
+        $this->addRoute(['POST'], $routePattern, $handler);
     }
 
-    public function put(string $routePattern, string $handler, array $middleware = [])
+    public function put(string $routePattern, string $handler)
     {
-        $this->addRoute(['PUT'], $routePattern, $handler, $middleware);
+        $this->addRoute(['PUT'], $routePattern, $handler);
     }
 
-    public function delete(string $routePattern, string $handler, array $middleware = [])
+    public function delete(string $routePattern, string $handler)
     {
-        $this->addRoute(['DELETE'], $routePattern, $handler, $middleware);
+        $this->addRoute(['DELETE'], $routePattern, $handler);
     }
 
-    public function addRoute(array $methods, string  $routePattern, string $handler, array $middleware = [])
+    public function addRoute(array $methods, string  $routePattern, string $handler)
     {
         $this->routeCollector->addRoute(
             $methods,
             $routePattern,
-            function (Request $request, Response $response) use ($handler, $middleware) {
+            function (Request $request, Response $response) use ($handler) {
                 // 执行中间件
-                $middlewares = self::buildMiddlewareStatic(array_merge($this->getMiddleware(), $middleware));
-                foreach ($middlewares as $midw) {
-                    if (!($midw instanceof IRouteMiddleware)) {
-                        continue;
-                    }
-
-                    try {
-                        $result = $midw->handle($request, $response);
-                        if ($result instanceof Response) {
-                            return false;
-                        }
-                    } catch (\Exception $e) {
-                        $response->write(json_encode(['info' => $e->getMessage(), 'status' => $e->getCode() ?: 500]));
-                        return false;
-                    }
+                try {
+                    $this->execMiddlewares('handle', $request, $response);
+                } catch (\Exception $e) {
+                    $response->write(json_encode(['info' => $e->getMessage(), 'status' => $e->getCode() ?: 500]));
+                    return false;
                 }
 
                 return $handler;

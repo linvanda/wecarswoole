@@ -620,12 +620,12 @@ EasySwooleEvent.php : 全局事件
   ```php
   <?php
   
-  namespace WecarSwoole\Middleware;
+  namespace WecarSwoole;
   
   /**
    * 中间件操作助手
    * Trait MiddlewareHelper
-   * @package WecarSwoole\Middleware
+   * @package WecarSwoole
    */
   trait MiddlewareHelper
   {
@@ -757,6 +757,12 @@ EasySwooleEvent.php : 全局事件
   - `$this->return($data = [], int $status = 200, string $msg = '')`：返回 json 数据；
 
 对于命令类操作（需要修改数据的，涉及到业务逻辑的），一般是在控制器中注入并使用 Domain Service，对于查询类操作（仅获取数据用于展示，不涉及到多少业务逻辑处理的），一般可以在控制器中注入并使用 Repository，Repository 返回 DTO 对象，控制器中将 DTO 对象转成数组并格式化成 json 返回。
+
+##### 控制器中间件
+
+可以在控制器中调用 setMiddlewares 或者 appendMiddlewares 设置控制器中间件，中间件需实现 `\WecarSwoole\Middleware\IControllerMiddleware` 接口。
+
+框架提供了 `RequestRecordMiddleware` 中间件，用以记录请求信息。不过默认控制器基类并没有使用该中间件，由具体项目决定是否使用。
 
 > 注：不建议在控制器中进行鉴权（如 api 鉴权、登录验证等），因为这样的话控制器就只能局限于当前鉴权上下文使用（如只能在用户登录状态下使用）。建议将鉴权操作前置到路由层（通过路有中间件实现，这点同 Laravel），路由层如果鉴权通过后，将必要信息追加到请求参数中传递给控制器。
 
@@ -1158,7 +1164,7 @@ api.php:
 
 use WecarSwoole\Client\Http\Component\WecarHttpRequestAssembler;
 use WecarSwoole\Client\Http\Component\JsonResponseParser;
-use \WecarSwoole\Client\Http\Hook\LogRequestDecorator;
+use \WecarSwoole\Client\Http\Middleware\LogRequestMiddleware;
 
 /**
  * 外部 api 定义
@@ -1175,9 +1181,9 @@ return [
             'request_assembler' => WecarHttpRequestAssembler::class,
             // 响应参数解析器
             'response_parser' => JsonResponseParser::class,
-            // 请求钩子，必须实现 \WecarSwoole\Client\Http\Hook\IRequestDecorator 接口
-            'hooks' => [
-                LogRequestDecorator::class
+            // 请求中间件，必须实现 \WecarSwoole\Client\Http\Middleware\IRequestMiddleware 接口
+            'middlewares' => [
+                LogRequestMiddleware::class
             ],
             // https ssl 相关配置
             'ssl' => [
@@ -1192,9 +1198,7 @@ return [
     ],
     // 组
     'weiche' => include_once __DIR__ . '/weicheche.php',
-    'sscard' => include_once __DIR__ . '/sscard.php',
 ];
-
 ```
 
 weicheche.php:

@@ -1,6 +1,6 @@
 <?php
 
-namespace WecarSwoole\Client\Http\Hook;
+namespace WecarSwoole\Client\Http\Middleware;
 
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
@@ -8,10 +8,10 @@ use Psr\Http\Message\ResponseInterface;
 
 /**
  * 请求装饰器
- * Interface IRequestDecorator
+ * Interface IRequestMiddleware
  * @package WecarSwoole\Client\Http\Hook
  */
-interface IRequestDecorator
+interface IRequestMiddleware
 {
     /**
      * 请求前执行的钩子函数，在请求解析器解析请求参数后执行
