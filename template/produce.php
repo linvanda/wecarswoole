@@ -18,6 +18,7 @@ return [
             'task_max_request' => 5000,
             'dispatch_mode' => 1,
             'enable_reuse_port' => 1,
+            'pid_file' => \WecarSwoole\Util\File::join(EASYSWOOLE_ROOT, 'storage/temp/master.pid')
         ],
     ],
     'TEMP_DIR' => 'storage/temp',

@@ -13,8 +13,8 @@ use WecarSwoole\Container;
  */
 class HealthCheck
 {
-    private const BUCKETS_SIZE = 600;
-    private const TICK_FREQ = 1000;
+    private const BUCKETS_SIZE = 60;
+    private const TICK_FREQ = 10000;
 
     /**
      * @var LoggerInterface
@@ -28,9 +28,14 @@ class HealthCheck
     private static $avgThreshold = 0.7;
     private static $lastCriticalLogTime = 0;
     private static $lastEmergencyLogTime = 0;
+    private static $processType;
 
-    public static function watch(LoggerInterface $logger, float $currThreshold = 0.8, float $avgThreshold = 0.7)
-    {
+    public static function watch(
+        LoggerInterface $logger,
+        float $currThreshold = 0.8,
+        float $avgThreshold = 0.7,
+        string $processType = null
+    ) {
         if (self::$started) {
             return;
         }
@@ -41,6 +46,7 @@ class HealthCheck
         self::$memoryBuckets = new Buckets(self::BUCKETS_SIZE);
         self::$currThreshold = $currThreshold;
         self::$avgThreshold = $avgThreshold;
+        self::$processType = $processType;
 
         // 启动定时器定时监测内存使用情况
         swoole_timer_tick(self::TICK_FREQ, function () {
@@ -82,7 +88,7 @@ class HealthCheck
         if ($errMsg) {
             $server = ServerManager::getInstance()->getSwooleServer();
             $pid = $server->worker_id;
-            $ptype = $server->taskworker ? 'task进程' : 'work进程';
+            $ptype = self::$processType ?? ($server->taskworker ? 'task进程' : 'work进程');
 
             $errMsg .= "{$ptype}pid:{$pid}。内存峰值：" . self::$peakMemory;
             self::log($errMsg);
