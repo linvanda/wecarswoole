@@ -130,8 +130,16 @@ class LockerMiddleware implements IControllerMiddleware
     {
         $p = [];
         foreach ($fields as $field) {
+            if (!isset($params[$field])) {
+                continue;
+            }
             $p[] = is_array($params[$field]) ? json_encode($params[$field]) : ($params[$field] ?? '');
         }
+
+        if (!$p) {
+            return '';
+        }
+
         sort($p);
 
         return md5(implode('-', $p));
