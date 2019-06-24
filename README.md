@@ -742,7 +742,7 @@ EasySwooleEvent.php : 全局事件
 
 #### 控制器
 
-严格来说叫 Http 控制器。目录：`app/Http/Controllers/$version`。
+目录：`app/Http/Controllers/$version`。
 
 控制器属于**处理器**的一种，属于应用层程序，因而控制器中不能写业务逻辑，通过调用 Domain 层实现业务处理。
 
@@ -764,6 +764,10 @@ EasySwooleEvent.php : 全局事件
 ##### 控制器中间件
 
 可以在控制器中调用 setMiddlewares 或者 appendMiddlewares 设置控制器中间件，中间件需实现 `\WecarSwoole\Middleware\IControllerMiddleware` 接口。
+
+框架提供的中间件：
+
+- `RequestRecordMiddleware`：记录请求信息。不过默认控制器基类并没有使用该中间件，由具体项目决定是否使用。
 
 框架提供了 `RequestRecordMiddleware` 中间件，用以记录请求信息。不过默认控制器基类并没有使用该中间件，由具体项目决定是否使用。
 

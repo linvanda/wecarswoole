@@ -2,6 +2,7 @@
 
 namespace WecarSwoole\Http\Middlewares;
 
+use EasySwoole\EasySwoole\Config;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use Psr\Log\LoggerInterface;
@@ -15,15 +16,41 @@ use WecarSwoole\Http\Controller;
  */
 class RequestRecordMiddleware implements IControllerMiddleware
 {
+    protected static $on;
+    protected $logTheRequest;
     protected $startTime;
 
     public function before(Controller $controller, Request $request, Response $response)
     {
+        if (self::$on === false) {
+            return true;
+        }
+
+        $conf = Config::getInstance()->getConf('request_log');
+        if (!$conf || !isset($conf['onoff']) || $conf['onoff'] == 'off' || !$conf['methods']) {
+            self::$on = false;
+            return true;
+        }
+
+        self::$on = true;
+
+        if (!in_array(strtoupper($request->getMethod()), array_map($conf['methods'], function ($item) {return strtoupper($item);}))) {
+            $this->logTheRequest = false;
+            return true;
+        }
+
+        $this->logTheRequest = true;
         $this->startTime = time();
+
+        return true;
     }
 
     public function after(Controller $controller, Request $request, Response $response)
     {
+        if (self::$on === false || !$this->logTheRequest) {
+            return;
+        }
+
         $duration = time() - $this->startTime;
         $uri = $request->getUri()->getPath() . '?' . $request->getUri()->getQuery();
         $context = [
@@ -37,6 +64,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
 
     public function gc()
     {
+        $this->logTheRequest = null;
         $this->startTime = null;
     }
 

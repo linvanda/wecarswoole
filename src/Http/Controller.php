@@ -8,6 +8,7 @@ use WecarSwoole\Container;
 use WecarSwoole\Exceptions\EmergencyErrorException;
 use WecarSwoole\Exceptions\CriticalErrorException;
 use WecarSwoole\Http\Middlewares\LockerMiddleware;
+use WecarSwoole\Http\Middlewares\RequestRecordMiddleware;
 use WecarSwoole\MiddlewareHelper;
 
 /**
@@ -25,7 +26,7 @@ class Controller extends EsController
 
     public function __construct()
     {
-        $this->appendMiddlewares([new LockerMiddleware()]);
+        $this->appendMiddlewares([new LockerMiddleware(), new RequestRecordMiddleware()]);
         parent::__construct();
     }
 
@@ -83,14 +84,14 @@ class Controller extends EsController
      */
     protected function afterAction(?string $action): void
     {
-        $this->execMiddlewares('after', $this, $this->request(), $this->response());
-
         if ($this->responseData) {
             $this->response()->write(
                 is_string($this->responseData)
                     ? $this->responseData : json_encode($this->responseData, JSON_UNESCAPED_UNICODE)
             );
         }
+
+        $this->execMiddlewares('after', $this, $this->request(), $this->response());
     }
 
     protected function gc()

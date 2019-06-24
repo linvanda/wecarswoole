@@ -1,11 +1,10 @@
 <?php
 
-use \WecarSwoole\Util\File;
-
 $baseConfig = [
     'app_name' => '应用名称',
-    'app_flag' => 'SY', // 应用标识
-    // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）
+    // 应用标识
+    'app_flag' => 'SY',
+    // 日志配置
     'logger' => include_once __DIR__ . '/logger.php',
     // 邮件。可以配多个
     'mailer' => [
@@ -15,8 +14,16 @@ $baseConfig = [
             'password' => 'Chechewei123'
         ]
     ],
+    // 并发锁配置
     'concurrent_locker' => [
-        'onoff' => 'off'
+        'onoff' => 'off',
+        "redis" => ''
+    ],
+    // 请求日志配置。默认是关闭的，如果项目需要开启，则自行修改为 on
+    'request_log' => [
+        'onoff' => 'off',
+        // 记录哪些请求类型的日志
+        'methods' => ['POST', 'GET', 'PUT', 'DELETE']
     ],
     'wcc_private_key' => '-----BEGIN PRIVATE KEY-----
 MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEApFFwW79DIfUCw4t9
