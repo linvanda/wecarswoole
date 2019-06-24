@@ -34,7 +34,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
 
         self::$on = true;
 
-        if (!in_array(strtoupper($request->getMethod()), array_map($conf['methods'], function ($item) {return strtoupper($item);}))) {
+        if (!in_array(strtoupper($request->getMethod()), array_map(function ($item) {return strtoupper($item);}), $conf['methods'])) {
             $this->logTheRequest = false;
             return true;
         }
