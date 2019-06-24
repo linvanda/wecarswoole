@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use WecarSwoole\Container;
 use WecarSwoole\Exceptions\EmergencyErrorException;
 use WecarSwoole\Exceptions\CriticalErrorException;
+use WecarSwoole\Http\Middlewares\LockerMiddleware;
 use WecarSwoole\MiddlewareHelper;
 
 /**
@@ -21,6 +22,44 @@ class Controller extends EsController
     use MiddlewareHelper;
 
     protected $responseData;
+
+    public function __construct()
+    {
+        $this->setMiddlewares(
+            [
+              new LockerMiddleware()
+            ]
+        );
+        parent::__construct();
+    }
+
+    /**
+     * 并发锁定义，定义用哪些请求信息生成锁的 key。默认采用"客户端 ip + 请求url + 请求数据"生成 key
+     * 格式：[请求action=>[请求字段数组]]。
+     * 注意，如果提供了该方法，默认是严格按照该方法的定义实现锁的，即如果请求action没有出现在该方法中，就不会加锁，
+     * 除非加上 '__default' => 'default'，表示如果没有出现在该方法中，就使用默认策略加锁（客户端 ip + 请求url + 请求数据）。
+     * 例：
+     * // 只有 addUser 会加锁：
+     * [
+     *      'addUser' => ['phone', 'parter_id']
+     * ]
+     * // addUser 按照指定策略加锁，其它 action 按照默认策略加锁
+     * [
+     *      'addUser' => ['phone', 'parter_id'],
+     *      '__default' => 'default'
+     * ]
+     * // addUser 不加锁，其它按照默认策略加锁
+     * [
+     *      'addUser' => 'none',
+     *      '__default' => 'default'
+     * ]
+     */
+    public function lockers()
+    {
+        return [
+            '__default' => 'default'
+        ];
+    }
 
     public function index()
     {

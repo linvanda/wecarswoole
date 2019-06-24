@@ -7,6 +7,7 @@ use EasySwoole\Http\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use WecarSwoole\Container;
+use WecarSwoole\Http\Controller;
 
 /**
  * 请求信息记录
@@ -16,19 +17,19 @@ class RequestRecordMiddleware implements IControllerMiddleware
 {
     protected $startTime;
 
-    public function before(Request $request, Response $response)
+    public function before(Controller $controller, Request $request, Response $response)
     {
         $this->startTime = time();
     }
 
-    public function after(Request $request, Response $response)
+    public function after(Controller $controller, Request $request, Response $response)
     {
         $duration = time() - $this->startTime;
         $uri = $request->getUri()->getPath() . '?' . $request->getUri()->getQuery();
         $context = [
             'params' => $request->getRequestParam(),
             'response' => (string)$response->getBody(),
-            'from' => $request->getRequestTarget(),
+            'from' => $request->getServerParams()['remote_addr']
         ];
 
         $this->log($duration, $uri, $context);
