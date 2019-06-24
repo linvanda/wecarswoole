@@ -9,7 +9,9 @@ use WecarSwoole\Exceptions\EmergencyErrorException;
 use WecarSwoole\Exceptions\CriticalErrorException;
 use WecarSwoole\Http\Middlewares\LockerMiddleware;
 use WecarSwoole\Http\Middlewares\RequestRecordMiddleware;
+use WecarSwoole\Http\Middlewares\RequestTimeMiddleware;
 use WecarSwoole\MiddlewareHelper;
+use WecarSwoole\RedisFactory;
 
 /**
  * 控制器基类
@@ -26,7 +28,13 @@ class Controller extends EsController
 
     public function __construct()
     {
-        $this->appendMiddlewares([new LockerMiddleware(), new RequestRecordMiddleware()]);
+        $this->appendMiddlewares(
+            [
+                new LockerMiddleware(),
+                new RequestTimeMiddleware(RedisFactory::build('main'), Container::get(LoggerInterface::class)),
+                new RequestRecordMiddleware()
+            ]
+        );
         parent::__construct();
     }
 

@@ -81,21 +81,6 @@ Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php')
 //
 //var_export($b);
 
-function t($a, $b)
-{
-    $start = microtime(true);
-    for ($i = 0; $i < 20000000; $i++) {
-        json_encode([$a, $b]);
-    }
 
-    return microtime(true) - $start;
-}
 
-$a = [123131311312, 1312122313];
-
-$i = 0;
-$sum = 0;
-while ($i++ < 5) {
-    $sum += t(123131311312, 1312122313);
-}
-echo $sum/5;
+var_export(swoole_get_local_ip());

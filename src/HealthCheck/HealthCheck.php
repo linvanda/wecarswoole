@@ -90,7 +90,8 @@ class HealthCheck
             $pid = $server->worker_id;
             $ptype = self::$processType ?? ($server->taskworker ? 'task进程' : 'work进程');
 
-            $errMsg .= "{$ptype}pid:{$pid}。内存峰值：" . self::$peakMemory;
+            $ip = array_values(swoole_get_local_ip())[0];
+            $errMsg = "ip:{$ip},{$ptype}pid:{$pid}。内存峰值：" . self::$peakMemory . "。$errMsg";
             self::log($errMsg);
         }
     }

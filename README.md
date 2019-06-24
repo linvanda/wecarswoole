@@ -769,6 +769,7 @@ EasySwooleEvent.php : 全局事件
 
 - `RequestRecordMiddleware`：记录请求信息。
 - `LockerMiddleware`：加并发锁。
+- `RequestTimeMiddleware`：请求超时告警中间件。
 
 > 注：不建议在控制器中进行鉴权（如 api 鉴权、登录验证等），因为这样的话控制器就只能局限于当前鉴权上下文使用（如只能在用户登录状态下使用）。建议将鉴权操作前置到路由层（通过路有中间件实现，这点同 Laravel），路由层如果鉴权通过后，将必要信息追加到请求参数中传递给控制器。
 

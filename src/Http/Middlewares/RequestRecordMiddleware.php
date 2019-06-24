@@ -51,16 +51,15 @@ class RequestRecordMiddleware implements IControllerMiddleware
             return;
         }
 
-        $duration = time() - $this->startTime;
         $uri = $request->getUri()->getPath() . '?' . $request->getUri()->getQuery();
         $context = [
             'params' => $request->getRequestParam(),
             'response' => (string)$response->getBody(),
             'from' => $request->getServerParams()['remote_addr'],
-            'use_time' => $duration
+            'use_time' => time() - $this->startTime
         ];
 
-        $this->log($duration, $uri, $context);
+        $this->log($uri, $context);
     }
 
     public function gc()
@@ -69,21 +68,8 @@ class RequestRecordMiddleware implements IControllerMiddleware
         $this->startTime = null;
     }
 
-    protected function log(int $duration, string $uri, array $context)
+    protected function log(string $uri, array $context)
     {
-        Container::get(LoggerInterface::class)->log($this->logLevel($duration), "请求信息:{$uri}", $context);
-    }
-
-    protected function logLevel(int $duration): string
-    {
-        if ($duration < 2) {
-            return LogLevel::INFO;
-        }
-
-        if ($duration < 6) {
-            return LogLevel::WARNING;
-        }
-
-        return LogLevel::CRITICAL;
+        Container::get(LoggerInterface::class)->log(LogLevel::INFO, "请求信息:{$uri}", $context);
     }
 }
