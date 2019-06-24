@@ -771,6 +771,37 @@ EasySwooleEvent.php : 全局事件
 - `LockerMiddleware`：加并发锁。
 - `RequestTimeMiddleware`：请求超时告警中间件。
 
+##### 请求并发锁：
+
+为了应对同一个请求在短时间内异常多次请求，造成数据错误，可以使用并发锁中间件`LockerMiddleware`。
+
+1. 在配置文件中配置：
+
+   ```php
+   'concurrent_locker' => [
+       'onoff' => 'on',
+       'redis' => 'main'
+   ],
+   ```
+
+2. 基类已经添加了此中间件，增加以上配置后，即自动使用并发锁。
+
+3. 自定义锁：
+
+   在业务控制器：
+
+   ```
+   public function lockers(): array
+   {
+       return [
+           'info' => ['phone'],
+           '__default' => 'default',
+       ];
+   }
+   ```
+
+
+
 > 注：不建议在控制器中进行鉴权（如 api 鉴权、登录验证等），因为这样的话控制器就只能局限于当前鉴权上下文使用（如只能在用户登录状态下使用）。建议将鉴权操作前置到路由层（通过路有中间件实现，这点同 Laravel），路由层如果鉴权通过后，将必要信息追加到请求参数中传递给控制器。
 
 
@@ -1521,6 +1552,8 @@ $this->mailer->send($message);
    $redis->set('testredis', 'abcdef');
    $result = $redis->get('testredis');
    ```
+
+> 注意：由于 Redis 使用的是 PHPredis 扩展自带的连接池技术，应用层不需要再实现连接池，每次使用直接调用 RedisFactory 创建即可。
 
 
 

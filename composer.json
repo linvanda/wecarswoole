@@ -41,5 +41,8 @@
             "WecarSwoole\\Test\\": "tests/"
         }
     },
-    "bin": ["bin/wecarswoole"]
+    "bin": ["bin/wecarswoole"],
+    "require-dev": {
+        "swoole/ide-helper": "dev-master"
+    }
 }

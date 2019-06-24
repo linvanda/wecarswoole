@@ -27,21 +27,19 @@ class CronTabUtil
             return;
         }
 
-        $redis = RedisFactory::build($conf['redis'] ?? 'main');
+        if (!self::willRunCrontab($conf)) {
+            return;
+        }
 
-        $flag = self::randomFlag();
-        if ($redis->setnx(self::key(), $flag)) {
-            $redis->expire(self::key(), 8);
+        self::$createdCron = true;
 
-            self::$flag = $flag;
-            self::$createdCron = true;
+        // 添加定时任务
+        foreach ($conf['tasks'] as $cronTab) {
+            Crontab::getInstance()->addTask($cronTab);
+        }
 
-            // 添加定时任务
-            foreach ($conf['tasks'] as $cronTab) {
-                Crontab::getInstance()->addTask($cronTab);
-            }
-
-            // 自定义进程进行 heartbeat
+        // 如果是 redis 分布式模式，需要设置 heartbeat
+        if (!$conf['ip']) {
             ServerManager::getInstance()->getSwooleServer()
                 ->addProcess((new CronHeartBeatProcess('crontab_heartbeat'))->getProcess());
         }
@@ -63,7 +61,10 @@ class CronTabUtil
     public static function key()
     {
         $conf = Config::getInstance()->getConf('cron_config');
-        return 'crontab_d48fd_' . $conf['name'] ?? '';
+        if (!$conf['name']) {
+            return '';
+        }
+        return 'crontab_d48fd_' . $conf['name'];
     }
 
     public static function flag()
@@ -74,6 +75,33 @@ class CronTabUtil
     public static function hasCreated()
     {
         return self::$createdCron;
+    }
+
+    /**
+     * @param array $conf
+     * @return bool
+     * @throws Exceptions\ConfigNotFoundException
+     */
+    private static function willRunCrontab(array $conf): bool
+    {
+        if ($conf['ip']) {
+            // ip 限制模式
+            if (!in_array($conf['ip'], array_values(swoole_get_local_ip()))) {
+                return false;
+            }
+            return true;
+        }
+
+        // redis 分布式模式
+        $redis = RedisFactory::build($conf['redis'] ?? 'main');
+        $flag = self::randomFlag();
+
+        if ($redis->set(self::key(), $flag, ['nx', 'ex' => 8])) {
+            self::$flag = $flag;
+            return true;
+        }
+
+        return false;
     }
 
     private static function randomFlag()

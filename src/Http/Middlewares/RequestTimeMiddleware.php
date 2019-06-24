@@ -91,7 +91,7 @@ class RequestTimeMiddleware implements IControllerMiddleware
 
         $this->logger->critical(
             "请求超时告警。url：" . $this->urlStr($request->getUri()) .
-            "5分钟内超过{$this->threshold}s的请求有{$stats['cnt']}条，占总请求" . (number_format($per * 100)) . "%"
+            " 5分钟内超过 {$this->threshold}s 的请求有 {$stats['cnt']} 条，占总请求 " . (number_format($per * 100)) . "%"
         );
     }
 
