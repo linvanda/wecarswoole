@@ -54,7 +54,7 @@ class Controller extends EsController
      *      '__default' => 'default'
      * ]
      */
-    public function lockers()
+    public function lockers(): array
     {
         return [
             '__default' => 'default'

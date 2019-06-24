@@ -84,7 +84,7 @@ class LockerMiddleware implements IControllerMiddleware
             return;
         }
 
-        $this->locker->unlock();
+        $this->locker && $this->locker->unlock();
     }
 
     public function gc()

@@ -15,6 +15,10 @@ $baseConfig = [
             'password' => 'Chechewei123'
         ]
     ],
+    'concurrent_locker' => [
+        'onoff' => 'on',
+        'redis' => 'main'
+    ],
     'wcc_private_key' => '-----BEGIN PRIVATE KEY-----
 MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEApFFwW79DIfUCw4t9
 0sww59XroXRYbLCDyab8zdR0rBZ1pDIxx8ABuqs8no5+Y0mZGkBdwqlH5/wFVgwX
