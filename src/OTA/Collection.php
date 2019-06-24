@@ -2,6 +2,11 @@
 
 namespace WecarSwoole\OTA;
 
+/**
+ * IExtractable 数据集合
+ * Class Collection
+ * @package WecarSwoole\OTA
+ */
 class Collection extends \ArrayIterator
 {
     /**

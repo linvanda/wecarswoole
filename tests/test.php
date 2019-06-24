@@ -18,39 +18,39 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-//class Address extends \WecarSwoole\Entity
-//{
-//    /**
-//     * @field city
-//     */
-//    public $cityName;
-//    public $area;
-//    public $country;
-//}
-//
-//class Td extends \WecarSwoole\Entity
-//{
-//    public $name;
-//    /**
-//     * @field gender
-//     * @mapping 1=>女,2=>男
-//     */
-//    public $sex;
-//    /**
-//     * @var Address
-//     */
-//    public $address;
-//    public $age;
-//}
-//
-//$arr = [
-//        new Td(['name'=>'李四', 'sex'=>1, 'address'=> ['city'=>'深圳','area'=>'落户']]),
-//        new Td(['name'=>'王五', 'sex'=>'男', 'address'=>['city'=>'广州', 'area'=>"百余"]]),
-//];
-//
-//$it = new \WecarSwoole\OTA\Collection($arr);
+class Address extends \WecarSwoole\DTO
+{
+    /**
+     * @field city
+     */
+    public $cityName;
+    public $area;
+    public $country;
+}
 
-//var_export($it->toArray());
+class Td extends \WecarSwoole\DTO
+{
+    public $name;
+    /**
+     * @field gender
+     * @mapping 1=>女,2=>男
+     */
+    public $sex;
+    /**
+     * @var Address
+     */
+    public $address;
+    public $age;
+}
+
+$arr = [
+        ['name'=>'李四', 'sex'=>1, 'address'=> ['city'=>'深圳','area'=>'落户']],
+        ['name'=>'王五', 'sex'=>'男', 'address'=>['city'=>'广州', 'area'=>"百余"]],
+];
+
+$it = new \WecarSwoole\OTA\DTOCollection(Td::class, $arr);
+
+var_export($it[0]->address->cityName);
 
 //$data = [
 //    'name' => '张三',
@@ -81,6 +81,3 @@ Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php')
 //
 //var_export($b);
 
-
-
-var_export(swoole_get_local_ip());

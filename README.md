@@ -1814,6 +1814,16 @@ array (
 2. 可使用 @field 和 @mapping 注解分别做字段和值映射；
 3. 在 toArray 过程中，如果属性是 DTO 类型，会递归解析；
 
+##### DTO 集合：
+
+有两种方式创建 DTO：
+
+`WecarSwoole\OTA\Collection` ：该集合接收 IExtractable 类型对象数组。
+
+`WecarSwoole\OTA\DTOCollection`：该集合接收两个参数：DTO子类型以及用于创建 DTO 的二维数组。
+
+两个类都提供了 toArray() 方法用于将 IExtractable 类型数组转为二维数组。
+
 
 
 ####依赖注入
@@ -1912,13 +1922,13 @@ array (
 
 ### 会话管理
 
-
+待定
 
 
 
 ### 锁
 
-待定
+可用 `dev/locker` 实现分布式锁。框架使用该锁实现了并发请求控制。
 
 
 
