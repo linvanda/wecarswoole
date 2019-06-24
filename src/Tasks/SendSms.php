@@ -3,7 +3,7 @@
 namespace WecarSwoole\Tasks;
 
 use EasySwoole\EasySwoole\Swoole\Task\AbstractAsyncTask;
-use WecarSwoole\Client\Client;
+use WecarSwoole\Client\API;
 
 /**
  * 短信发送异步任务
@@ -35,7 +35,7 @@ class SendSms extends AbstractAsyncTask
             $taskData['options'] ?? []
         );
 
-        return Client::call('weiche:sms.send', $data);
+        return API::call('weiche:sms.send', $data);
     }
 
     protected function finish($result, $task_id)

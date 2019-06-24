@@ -1,10 +1,10 @@
 <?php
 
 namespace WecarSwoole\HealthCheck;
+
 use EasySwoole\EasySwoole\ServerManager;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use WecarSwoole\Container;
 
 /**
  * 系统健康情况监测
@@ -24,8 +24,8 @@ class HealthCheck
     private static $memoryLimit;
     private static $memoryBuckets;
     private static $peakMemory = 0;
-    private static $currThreshold = 0.8;
-    private static $avgThreshold = 0.7;
+    private static $currThreshold;
+    private static $avgThreshold;
     private static $lastCriticalLogTime = 0;
     private static $lastEmergencyLogTime = 0;
     private static $processType;

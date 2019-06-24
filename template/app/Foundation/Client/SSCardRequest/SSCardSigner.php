@@ -3,7 +3,7 @@
 namespace App\Foundation\Client\SSCardRequest;
 
 use EasySwoole\EasySwoole\Config;
-use WecarSwoole\Client\Client;
+use WecarSwoole\Client\API;
 use WecarSwoole\Container;
 use WecarSwoole\Util\RSA;
 
@@ -67,7 +67,7 @@ class SSCardSigner
         ];
         $request_data = $this->encryptData($request_data, $add_key_id);
 
-        $res = Client::call('sscard:key.sync', $request_data);
+        $res = API::call('sscard:key.sync', $request_data);
 
 
         if ($res['status'] != 200) {
