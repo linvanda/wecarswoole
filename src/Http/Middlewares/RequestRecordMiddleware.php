@@ -56,7 +56,8 @@ class RequestRecordMiddleware implements IControllerMiddleware
         $context = [
             'params' => $request->getRequestParam(),
             'response' => (string)$response->getBody(),
-            'from' => $request->getServerParams()['remote_addr']
+            'from' => $request->getServerParams()['remote_addr'],
+            'use_time' => $duration
         ];
 
         $this->log($duration, $uri, $context);
