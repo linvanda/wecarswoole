@@ -25,11 +25,7 @@ class Controller extends EsController
 
     public function __construct()
     {
-        $this->setMiddlewares(
-            [
-              new LockerMiddleware()
-            ]
-        );
+        $this->appendMiddlewares([new LockerMiddleware()]);
         parent::__construct();
     }
 

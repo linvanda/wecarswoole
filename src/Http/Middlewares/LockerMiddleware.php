@@ -143,7 +143,7 @@ class LockerMiddleware implements IControllerMiddleware
         $requestInfo = [
             $serverInfo['remote_addr'],
             $serverInfo['path_info'],
-            $serverInfo['query_string'],
+            $serverInfo['query_string'] ?? '',
             json_encode($request->getParsedBody())
         ];
         sort($requestInfo);
