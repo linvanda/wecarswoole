@@ -93,7 +93,7 @@ class LockerMiddleware implements IControllerMiddleware
             return;
         }
 
-        unset($this->locker);
+        $this->locker = null;
     }
 
     /**

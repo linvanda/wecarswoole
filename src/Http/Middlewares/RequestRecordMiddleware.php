@@ -37,7 +37,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
 
     public function gc()
     {
-        unset($this->startTime);
+        $this->startTime = null;
     }
 
     protected function log(int $duration, string $uri, array $context)
