@@ -16,8 +16,7 @@ $baseConfig = [
         ]
     ],
     'concurrent_locker' => [
-        'onoff' => 'on',
-        'redis' => 'main'
+        'onoff' => 'off'
     ],
     'wcc_private_key' => '-----BEGIN PRIVATE KEY-----
 MIIBVQIBADANBgkqhkiG9w0BAQEFAASCAT8wggE7AgEAAkEApFFwW79DIfUCw4t9

@@ -29,6 +29,7 @@ class LockerMiddleware implements IControllerMiddleware
     }
 
     /**
+     * @param Controller $controller
      * @param Request $request
      * @param Response $response
      * @return bool
@@ -40,15 +41,17 @@ class LockerMiddleware implements IControllerMiddleware
             return true;
         }
 
-        $conf = Config::getInstance()->getConf('concurrent_locker');
-        if (!$conf || strtolower($conf['onoff']) == 'off' || !isset($conf['redis'])) {
-            self::$on = false;
-            return true;
-        }
+        if (self::$on !== true) {
+            $conf = Config::getInstance()->getConf('concurrent_locker');
+            if (!$conf || strtolower($conf['onoff']) == 'off' || !isset($conf['redis'])) {
+                self::$on = false;
+                return true;
+            }
 
-        if (!Config::getInstance()->getConf("redis." . $conf['redis'])) {
-            self::$on = false;
-            return true;
+            if (!Config::getInstance()->getConf("redis." . $conf['redis'])) {
+                self::$on = false;
+                return true;
+            }
         }
 
         try {
@@ -103,7 +106,7 @@ class LockerMiddleware implements IControllerMiddleware
     protected function key(Controller $controller, Request $request)
     {
         $lockerMap = $controller->lockers();
-        $action = basename($request->getRequestTarget());
+        $action = basename(explode('?', $request->getRequestTarget())[0]);
 
         if (!$lockerMap || (!isset($lockerMap[$action]) && !isset($lockerMap['__default']))) {
             return '';
