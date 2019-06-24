@@ -41,17 +41,15 @@ class LockerMiddleware implements IControllerMiddleware
             return true;
         }
 
-        if (self::$on !== true) {
-            $conf = Config::getInstance()->getConf('concurrent_locker');
-            if (!$conf || strtolower($conf['onoff']) == 'off' || !isset($conf['redis'])) {
-                self::$on = false;
-                return true;
-            }
+        $conf = Config::getInstance()->getConf('concurrent_locker');
+        if (!$conf || strtolower($conf['onoff']) == 'off' || !isset($conf['redis'])) {
+            self::$on = false;
+            return true;
+        }
 
-            if (!Config::getInstance()->getConf("redis." . $conf['redis'])) {
-                self::$on = false;
-                return true;
-            }
+        if (!Config::getInstance()->getConf("redis." . $conf['redis'])) {
+            self::$on = false;
+            return true;
         }
 
         try {
