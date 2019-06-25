@@ -93,31 +93,18 @@ Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php')
 //    echo "\n";
 //}
 
-$arr = [
-        'name' => '三',
-        'age' => 34,
-        'children' => [
-                [
-                        'name' => '四',
-                        'age' => 44,
-                        'children' => [
-                                [
-                                        'name' => '无',
-                                        'age' => 34
-                                ]
-                        ]
-                ]
-        ]
-];
+class A
+{
+    use \WecarSwoole\Util\AutoProperty;
 
-$arrIt = new RecursiveArrayIterator($arr);
-$it = new RecursiveIteratorIterator($arrIt);
-foreach ($arrIt as $k=>$item) {
-    var_export($item);
-    echo "\n==========\n";
+    public $name;
+    public $age;
+
+    public function __construct($name, $age = null)
+    {
+        $this->setProperties(func_get_args());
+    }
 }
-//foreach ($it as $k => $item) {
-//    echo "$k =>";
-//    var_export($item);
-//    echo "\n======\n";
-//}
+
+$a = new A("松林", 32);
+echo "{$a->name} == {$a->age}\n";

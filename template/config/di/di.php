@@ -1,10 +1,11 @@
 <?php
 
-use WecarSwoole\CacheFactory;
-use WecarSwoole\Logger;
 use Psr\SimpleCache\CacheInterface;
 use Psr\Log\LoggerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Container\ContainerInterface;
+use EasySwoole\Component\Di;
+use WecarSwoole\{CacheFactory, Logger};
 
 use function DI\{create, factory};
 
@@ -19,4 +20,8 @@ return [
     }),
     // 事件
     EventDispatcherInterface::class => create(\Symfony\Component\EventDispatcher\EventDispatcher::class),
+    // DI 容器
+    ContainerInterface::class => factory(function () {
+        return Di::getInstance()->get('di-container');
+    })
 ];

@@ -85,8 +85,9 @@ class CronTabUtil
     private static function willRunCrontab(array $conf): bool
     {
         if ($conf['ip']) {
+            $conf['ip'] = is_string($conf['ip']) ? [$conf['ip']] : $conf['ip'];
             // ip 限制模式
-            if (!in_array($conf['ip'], array_values(swoole_get_local_ip()))) {
+            if (!array_intersect($conf['ip'], array_values(swoole_get_local_ip()))) {
                 return false;
             }
             return true;

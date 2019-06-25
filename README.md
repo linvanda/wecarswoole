@@ -32,10 +32,10 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
        "description": "your project name",
        "type": "project",
        "require": {
-           "framework/wecarswoole": "dev-master"
+           "framework/wecarswoole": "^1.0.3"
        },
      	"require-dev": {
-           "swoole/ide-helper": "dev-master"
+           "swoole/ide-helper": "@dev"
        },
      	"autoload": {
            "psr-4": {
