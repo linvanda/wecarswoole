@@ -4,7 +4,6 @@ namespace WecarSwoole\Http\Middlewares;
 
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
-use WecarSwoole\Http\Controller;
 
 /**
  * Http 控制器中间件
@@ -15,21 +14,19 @@ interface IControllerMiddleware
     /**
      * 请求前
      * 返回 false 则停止后续执行（包括控制器 action）
-     * @param Controller $controller
      * @param Request $request
      * @param Response $response
      * @return mixed
      */
-    public function before(Controller $controller, Request $request, Response $response);
+    public function before(Request $request, Response $response);
 
     /**
      * 请求后
-     * @param Controller $controller
      * @param Request $request
      * @param Response $response
      * @return mixed
      */
-    public function after(Controller $controller, Request $request, Response $response);
+    public function after(Request $request, Response $response);
 
     /**
      * 请求结束前的回收。因为控制器使用的是对象池，因而控制器中间件会被多次请求共用，

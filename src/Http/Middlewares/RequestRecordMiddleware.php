@@ -8,7 +8,6 @@ use EasySwoole\Http\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use WecarSwoole\Container;
-use WecarSwoole\Http\Controller;
 
 /**
  * 请求信息记录
@@ -20,7 +19,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
     protected $logTheRequest;
     protected $startTime;
 
-    public function before(Controller $controller, Request $request, Response $response)
+    public function before(Request $request, Response $response)
     {
         if (self::$on === false) {
             return true;
@@ -45,7 +44,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
         return true;
     }
 
-    public function after(Controller $controller, Request $request, Response $response)
+    public function after(Request $request, Response $response)
     {
         if (self::$on === false || !$this->logTheRequest) {
             return;

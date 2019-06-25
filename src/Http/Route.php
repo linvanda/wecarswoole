@@ -2,7 +2,7 @@
 
 namespace WecarSwoole\Http;
 
-use WecarSwoole\MiddlewareHelper;
+use WecarSwoole\Middleware\MiddlewareHelper;
 use WecarSwoole\IRouteMiddleware;
 use FastRoute\RouteCollector;
 use EasySwoole\Http\Request;

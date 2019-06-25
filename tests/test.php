@@ -93,18 +93,82 @@ Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php')
 //    echo "\n";
 //}
 
-class A
+class EmptyObject
 {
-    use \WecarSwoole\Util\AutoProperty;
+    private $newThis;
+    private $func;
 
-    public $name;
-    public $age;
-
-    public function __construct($name, $age = null)
+    public function __construct()
     {
-        $this->setProperties(func_get_args());
+        $this->func = function ($name, ...$arguments) {
+            if (method_exists($this, $name)) {
+                return $this->$name(...$arguments);
+            } elseif (property_exists($this, $name)) {
+                return $this->{$name};
+            }
+        };
+    }
+
+    public function __call($name, $arguments)
+    {
+        return $this->func->call($this->newThis, $name, $arguments);
+    }
+
+    public function __get($name)
+    {
+        return $this->func->call($this->newThis, $name);
+    }
+
+    public function setObject($obj)
+    {
+        $this->newThis = $obj;
     }
 }
 
-$a = new A("松林", 32);
-echo "{$a->name} == {$a->age}\n";
+class Middleware
+{
+    private $proxy;
+
+    public function __construct()
+    {
+        $this->proxy = new EmptyObject();
+    }
+
+    public function __invoke($method, $newThis = null, ...$args)
+    {
+        $this->proxy->setObject($newThis);
+        return $this->$method(...$args);
+    }
+
+    public function before()
+    {
+        return $this->name;
+    }
+
+    public function __call($name, $args)
+    {
+        return $this->proxy->{$name}($args);
+    }
+
+    public function __get($name)
+    {
+        return $this->proxy->{$name};
+    }
+}
+
+
+class B
+{
+    private $name = "BBB";
+    private $age = 34;
+    private $cars = ['2323423', 'asdfsa'];
+
+    public function getVars($vars)
+    {
+        return $vars;
+    }
+}
+
+$b = new B();
+$proxy = new \WecarSwoole\Proxy(new B);
+//var_export($proxy->getVars([90,89]));

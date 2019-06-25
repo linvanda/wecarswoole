@@ -11,7 +11,7 @@ use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
 use WecarSwoole\Client\Contract\IResponseParser;
 use WecarSwoole\Client\Response;
-use WecarSwoole\MiddlewareHelper;
+use WecarSwoole\Middleware\MiddlewareHelper;
 use WecarSwoole\Util\Url;
 use Swlib\Http\Uri;
 use Swlib\Saber;

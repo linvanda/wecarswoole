@@ -7,6 +7,7 @@ use EasySwoole\EasySwoole\Config;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use WecarSwoole\Http\Controller;
+use WecarSwoole\Middleware\Middleware;
 use WecarSwoole\RedisFactory;
 
 /**
@@ -15,7 +16,7 @@ use WecarSwoole\RedisFactory;
  * Class LockerMiddleware
  * @package WecarSwoole\Http\Middlewares
  */
-class LockerMiddleware implements IControllerMiddleware
+class LockerMiddleware extends Middleware implements IControllerMiddleware
 {
     private static $on;
     private static $redisBuildErrNum = 0;
@@ -23,19 +24,19 @@ class LockerMiddleware implements IControllerMiddleware
     private $locker;
     private $timeout;
 
-    public function __construct(int $timeout = 5)
+    public function __construct(Controller $controller, int $timeout = 5)
     {
         $this->timeout = $timeout;
+        parent::__construct($controller);
     }
 
     /**
-     * @param Controller $controller
      * @param Request $request
      * @param Response $response
      * @return bool
      * @throws \Exception
      */
-    public function before(Controller $controller, Request $request, Response $response)
+    public function before(Request $request, Response $response)
     {
         if (self::$on === false) {
             return true;
@@ -66,7 +67,7 @@ class LockerMiddleware implements IControllerMiddleware
 
         self::$on = true;
 
-        if (!($key = $this->key($controller, $request))) {
+        if (!($key = $this->key($request))) {
             return true;
         }
 
@@ -79,7 +80,7 @@ class LockerMiddleware implements IControllerMiddleware
         return true;
     }
 
-    public function after(Controller $controller, Request $request, Response $response)
+    public function after(Request $request, Response $response)
     {
         if (is_bool(self::$on) && !self::$on) {
             return;
@@ -101,9 +102,9 @@ class LockerMiddleware implements IControllerMiddleware
      * 根据请求信息（请求url、参数、客户端ip）计算key
      * @return string
      */
-    protected function key(Controller $controller, Request $request)
+    protected function key(Request $request)
     {
-        $lockerMap = $controller->lockers();
+        $lockerMap = $this->proxy->lockerRules();
         $action = basename(explode('?', $request->getRequestTarget())[0]);
 
         if (!$lockerMap || (!isset($lockerMap[$action]) && !isset($lockerMap['__default']))) {

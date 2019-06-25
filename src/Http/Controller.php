@@ -2,16 +2,13 @@
 
 namespace WecarSwoole\Http;
 
-use EasySwoole\Http\AbstractInterface\Controller as EsController;
 use Psr\Log\LoggerInterface;
+use EasySwoole\Http\AbstractInterface\Controller as EsController;
 use WecarSwoole\Container;
-use WecarSwoole\Exceptions\EmergencyErrorException;
-use WecarSwoole\Exceptions\CriticalErrorException;
-use WecarSwoole\Http\Middlewares\LockerMiddleware;
-use WecarSwoole\Http\Middlewares\RequestRecordMiddleware;
-use WecarSwoole\Http\Middlewares\RequestTimeMiddleware;
-use WecarSwoole\MiddlewareHelper;
 use WecarSwoole\RedisFactory;
+use WecarSwoole\Middleware\MiddlewareHelper;
+use WecarSwoole\Exceptions\{EmergencyErrorException, CriticalErrorException};
+use WecarSwoole\Http\Middlewares\{LockerMiddleware, RequestRecordMiddleware, RequestTimeMiddleware, ValidateMiddleware};
 
 /**
  * 控制器基类
@@ -26,15 +23,21 @@ class Controller extends EsController
 
     protected $responseData;
 
+    /**
+     * Controller constructor.
+     * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
+     */
     public function __construct()
     {
         $this->appendMiddlewares(
             [
-                new LockerMiddleware(),
+                new LockerMiddleware($this),
+                new ValidateMiddleware($this),
                 new RequestTimeMiddleware(RedisFactory::build('main'), Container::get(LoggerInterface::class)),
                 new RequestRecordMiddleware()
             ]
         );
+
         parent::__construct();
     }
 
@@ -59,11 +62,34 @@ class Controller extends EsController
      *      '__default' => 'default'
      * ]
      */
-    public function lockers(): array
+    protected function lockerRules(): array
     {
         return [
             '__default' => 'default'
         ];
+    }
+
+    /**
+     * 验证器规则定义
+     * 格式同 easyswoole 的格式定义，如
+     * [
+     *      // action
+     *      'addUser' => [
+     *          // param-name => rules
+     *          'user_flag' => ['alpha', 'between' => [10, 20], 'length' => ['arg' => 12, 'msg' => '长度必须为12位']],
+     *       ],
+     * ]
+     * 即：
+     *      如果仅提供了字符串型（key是整型），则认为 arg 和 msg 都是空
+     *      如果提供了整型下表数组，则认为改数组是 arg，msg 为空
+     *      完全形式是如上面 length 的定义
+     *
+     * @see http://www.easyswoole.com/Manual/3.x/Cn/_book/Components/validate.html
+     * @return array
+     */
+    protected function validateRules(): array
+    {
+        return [];
     }
 
     public function index()

@@ -1,11 +1,11 @@
 <?php
 
-namespace WecarSwoole;
+namespace WecarSwoole\Middleware;
 
 /**
  * 中间件操作助手
  * Trait MiddlewareHelper
- * @package WecarSwoole
+ * @package WecarSwoole\Middleware
  */
 trait MiddlewareHelper
 {
