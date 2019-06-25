@@ -18,39 +18,39 @@ if (file_exists($file)) {
 
 Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
 
-class Address extends \WecarSwoole\DTO
-{
-    /**
-     * @field city
-     */
-    public $cityName;
-    public $area;
-    public $country;
-}
-
-class Td extends \WecarSwoole\DTO
-{
-    public $name;
-    /**
-     * @field gender
-     * @mapping 1=>女,2=>男
-     */
-    public $sex;
-    /**
-     * @var Address
-     */
-    public $address;
-    public $age;
-}
-
-$arr = [
-        ['name'=>'李四', 'sex'=>1, 'address'=> ['city'=>'深圳','area'=>'落户']],
-        ['name'=>'王五', 'sex'=>'男', 'address'=>['city'=>'广州', 'area'=>"百余"]],
-];
-
-$it = new \WecarSwoole\OTA\DTOCollection(Td::class, $arr);
-
-var_export($it[0]->address->cityName);
+//class Address extends \WecarSwoole\DTO
+//{
+//    /**
+//     * @field city
+//     */
+//    public $cityName;
+//    public $area;
+//    public $country;
+//}
+//
+//class Td extends \WecarSwoole\DTO
+//{
+//    public $name;
+//    /**
+//     * @field gender
+//     * @mapping 1=>女,2=>男
+//     */
+//    public $sex;
+//    /**
+//     * @var Address
+//     */
+//    public $address;
+//    public $age;
+//}
+//
+//$arr = [
+//        ['name'=>'李四', 'sex'=>1, 'address'=> ['city'=>'深圳','area'=>'落户']],
+//        ['name'=>'王五', 'sex'=>'男', 'address'=>['city'=>'广州', 'area'=>"百余"]],
+//];
+//
+//$it = new \WecarSwoole\OTA\DTOCollection(Td::class, $arr);
+//
+//var_export($it[0]->address->cityName);
 
 //$data = [
 //    'name' => '张三',
@@ -81,3 +81,43 @@ var_export($it[0]->address->cityName);
 //
 //var_export($b);
 
+//set_exception_handler(function ($e) {
+//    echo "hahah---";
+//});
+//
+//$dirIterator = new \RecursiveDirectoryIterator("/Users/linvanda");
+//$iterator = new \RecursiveIteratorIterator($dirIterator);
+//
+//foreach ($iterator as $file) {
+//    echo $file->getBaseName();
+//    echo "\n";
+//}
+
+$arr = [
+        'name' => '三',
+        'age' => 34,
+        'children' => [
+                [
+                        'name' => '四',
+                        'age' => 44,
+                        'children' => [
+                                [
+                                        'name' => '无',
+                                        'age' => 34
+                                ]
+                        ]
+                ]
+        ]
+];
+
+$arrIt = new RecursiveArrayIterator($arr);
+$it = new RecursiveIteratorIterator($arrIt);
+foreach ($arrIt as $k=>$item) {
+    var_export($item);
+    echo "\n==========\n";
+}
+//foreach ($it as $k => $item) {
+//    echo "$k =>";
+//    var_export($item);
+//    echo "\n======\n";
+//}

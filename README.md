@@ -70,11 +70,13 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 5. 修改配置文件
 
-6. 启动：`php easyswoole start d --env=dev` (—env : dev、test、preview、produce，d 表示后台运行)
+6. 启动：`php easyswoole start -d --env=dev` (—env : dev、test、preview、produce，-d 表示后台运行)
 
-7. 停止：`php easyswoole stop`
+7. 以调试模式启动：`php easyswoole start --env=dev --debug`
 
-8. 其他指令参见 easyswoole 官网
+8. 停止：`php easyswoole stop`
+
+9. 其他指令参见 easyswoole 官网
 
 **注意**
 

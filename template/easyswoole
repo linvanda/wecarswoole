@@ -47,6 +47,10 @@ if (!defined('ENVIRON')) {
     $args[] = $serverEnv;
 }
 
+if (in_array('-d', $args)) {
+    $args[] = 'd';
+}
+
 // 是否调试模式
 !defined('DEBUG_MODEL') && define('DEBUG_MODEL', !in_array('d', $args) && in_array('--debug', $args));
 

@@ -15,7 +15,7 @@ class DTOCollection extends Collection
     /**
      * 通过传入二维数组自动创建 DTO 对象
      * DTOCollection constructor.
-     * @param string $class DTO 具体的类型
+     * @param string $class DTO子类
      * @param array $array 可构建 DTO 对象的二维数组
      * @throws \Exception
      */
