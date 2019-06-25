@@ -105,7 +105,7 @@ class Controller extends EsController
      */
     protected function onRequest(?string $action): ?bool
     {
-        if (!$this->execMiddlewares('before', $this, $this->request(), $this->response())) {
+        if (!$this->execMiddlewares('before', $this->request(), $this->response())) {
             return false;
         }
 
@@ -125,7 +125,7 @@ class Controller extends EsController
             );
         }
 
-        $this->execMiddlewares('after', $this, $this->request(), $this->response());
+        $this->execMiddlewares('after', $this->request(), $this->response());
     }
 
     protected function gc()
