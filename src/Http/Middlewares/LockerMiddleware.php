@@ -117,11 +117,11 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
             }
 
             return $this->generateKeyFromParams($lockerMap[$action], $request);
-        } else {
-            // 走 default
-            if ($lockerMap['__default'] === 'default') {
-                return $this->generateKeyFromRequest($request);
-            }
+        }
+
+        // 走 default
+        if ($lockerMap['__default'] === 'default') {
+            return $this->generateKeyFromRequest($request);
         }
 
         return '';

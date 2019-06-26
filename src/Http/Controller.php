@@ -9,6 +9,7 @@ use WecarSwoole\RedisFactory;
 use WecarSwoole\Middleware\MiddlewareHelper;
 use WecarSwoole\Exceptions\{EmergencyErrorException, CriticalErrorException};
 use WecarSwoole\Http\Middlewares\{LockerMiddleware, RequestRecordMiddleware, RequestTimeMiddleware, ValidateMiddleware};
+use Dev\MySQL\Exception\DBException;
 
 /**
  * 控制器基类
@@ -81,7 +82,7 @@ class Controller extends EsController
      * ]
      * 即：
      *      如果仅提供了字符串型（key是整型），则认为 arg 和 msg 都是空
-     *      如果提供了整型下表数组，则认为改数组是 arg，msg 为空
+     *      如果提供了整型下标数组，则认为改数组是 arg，msg 为空
      *      完全形式是如上面 length 的定义
      *
      * @see http://www.easyswoole.com/Manual/3.x/Cn/_book/Components/validate.html
@@ -141,10 +142,16 @@ class Controller extends EsController
     protected function onException(\Throwable $throwable): void
     {
         $logger = Container::get(LoggerInterface::class);
-        $message = $throwable->getMessage();
+        $displayMsg = $message = $throwable->getMessage();
         $context = ['trace' => $throwable->getTraceAsString()];
 
-        if ($throwable instanceof CriticalErrorException) {
+        if ($throwable instanceof DBException) {
+            // 数据库错误，需要隐藏详情
+            $errFlag = mt_rand(10000, 1000000) . mt_rand(10000, 10000000);
+            $displayMsg = "数据库错误，错误标识：{$errFlag}";
+            $context['db_err_flag'] = $errFlag;
+            $logger->critical($message, $context);
+        } elseif ($throwable instanceof CriticalErrorException) {
             $logger->critical($message, $context);
         } elseif ($throwable instanceof EmergencyErrorException) {
             $logger->emergency($message, $context);
@@ -152,7 +159,7 @@ class Controller extends EsController
             $logger->error($message, $context);
         }
 
-        $this->return([], $throwable->getCode() ?: 500, $throwable->getMessage());
+        $this->return([], $throwable->getCode() ?: 500, $displayMsg);
     }
 
     /**

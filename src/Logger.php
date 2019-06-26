@@ -63,7 +63,7 @@ class Logger extends AbstractLogger
             $minLevel = 'error';
         }
 
-        $logger = new MonoLogger('app');
+        $logger = new MonoLogger(Config::getInstance()->getConf('app_flag') ?? 'app');
 
         foreach (self::handlers($minLevel) as $handler) {
             $logger->pushHandler($handler);
