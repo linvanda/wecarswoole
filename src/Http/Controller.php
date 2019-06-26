@@ -121,8 +121,9 @@ class Controller extends EsController
     {
         if ($this->responseData) {
             $this->response()->write(
-                is_string($this->responseData)
-                    ? $this->responseData : json_encode($this->responseData, JSON_UNESCAPED_UNICODE)
+                is_array($this->responseData)
+                    ? json_encode($this->responseData, JSON_UNESCAPED_UNICODE)
+                    : (string)$this->responseData
             );
         }
 

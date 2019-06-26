@@ -852,7 +852,8 @@ EasySwooleEvent.php : 全局事件
         return [
             'info' => [
                 'user_flag' => ['required'],
-                'flag_type' => ['required', 'integer']
+                'flag_type' => ['required', 'integer'],
+              	'partner_type' => ['integer', 'optional'],// optional 表示该字段可选
             ]
         ];
     }

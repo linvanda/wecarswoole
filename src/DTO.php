@@ -22,4 +22,9 @@ class DTO implements IExtractable, IArrayBuildable
     {
         $this->buildFromArray($data, $strict);
     }
+
+    public function __toString()
+    {
+        return json_encode($this->toArray(), JSON_UNESCAPED_UNICODE);
+    }
 }
