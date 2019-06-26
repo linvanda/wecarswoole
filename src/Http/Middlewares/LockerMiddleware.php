@@ -116,7 +116,7 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
                 return '';
             }
 
-            return $this->generateKeyFromParams($lockerMap[$action], $request->getRequestParam());
+            return $this->generateKeyFromParams($lockerMap[$action], $request);
         } else {
             // 走 default
             if ($lockerMap['__default'] === 'default') {
@@ -127,8 +127,9 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
         return '';
     }
 
-    private function generateKeyFromParams(array $fields, array $params): string
+    private function generateKeyFromParams(array $fields, Request $request): string
     {
+        $params = $request->getRequestParam();
         $theParam = [];
         foreach ($fields as $field) {
             if (!isset($params[$field])) {
@@ -141,6 +142,8 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
             return '';
         }
 
+        // 需要加入 path_info
+        $theParam[] = $request->getServerParams()['path_info'];
         sort($theParam);
 
         return md5(implode('-', $theParam));
