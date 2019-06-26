@@ -129,21 +129,21 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
 
     private function generateKeyFromParams(array $fields, array $params): string
     {
-        $p = [];
+        $theParam = [];
         foreach ($fields as $field) {
             if (!isset($params[$field])) {
                 continue;
             }
-            $p[] = is_array($params[$field]) ? json_encode($params[$field]) : ($params[$field] ?? '');
+            $theParam[] = "{$field}==" . (is_array($params[$field]) ? json_encode($params[$field]) : ($params[$field] ?? ''));
         }
 
-        if (!$p) {
+        if (!$theParam) {
             return '';
         }
 
-        sort($p);
+        sort($theParam);
 
-        return md5(implode('-', $p));
+        return md5(implode('-', $theParam));
     }
 
     private function generateKeyFromRequest(Request $request): string

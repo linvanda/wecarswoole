@@ -772,6 +772,7 @@ EasySwooleEvent.php : 全局事件
 - `RequestRecordMiddleware`：记录请求信息。
 - `LockerMiddleware`：加并发锁。
 - `RequestTimeMiddleware`：请求超时告警中间件。
+- `ValidateMiddleware`：验证器。
 
 ##### 请求并发锁：
 
@@ -792,15 +793,70 @@ EasySwooleEvent.php : 全局事件
 
    在业务控制器：
 
+   ```php
+       /**
+        * 并发锁定义，定义用哪些请求信息生成锁的 key。默认采用"客户端 ip + 请求url + 请求数据"生成 key
+        * 格式：[请求action=>[请求字段数组]]。
+        * 注意，如果提供了该方法，默认是严格按照该方法的定义实现锁的，即如果请求action没有出现在该方法中，就不会加锁，
+        * 除非加上 '__default' => 'default'，表示如果没有出现在该方法中，就使用默认策略加锁（客户端 ip + 请求url + 请求数据）。
+        * 例：
+        * // 只有 addUser 会加锁：
+        * [
+        *      'addUser' => ['phone', 'parter_id']
+        * ]
+        * // addUser 按照指定策略加锁，其它 action 按照默认策略加锁
+        * [
+        *      'addUser' => ['phone', 'parter_id'],
+        *      '__default' => 'default'
+        * ]
+        * // addUser 不加锁，其它按照默认策略加锁
+        * [
+        *      'addUser' => 'none',
+        *      '__default' => 'default'
+        * ]
+        */
+       protected function lockerRules(): array
+       {
+           return [
+             	'info' => ['phone'],
+               '__default' => 'default'
+           ];
+       }
    ```
-   public function lockers(): array
-   {
-       return [
-           'info' => ['phone'],
-           '__default' => 'default',
-       ];
-   }
-   ```
+
+##### 验证器：
+
+基类已经添加了验证器中间件，业务控制器增加以下代码使用验证器：
+
+```php
+    /**
+     * 验证器规则定义
+     * 格式同 easyswoole 的格式定义，如
+     * [
+     *      // action
+     *      'addUser' => [
+     *          // param-name => rules
+     *          'user_flag' => ['alpha', 'between' => [10, 20], 'length' => ['arg' => 12, 'msg' => '长度必须为12位']],
+     *       ],
+     * ]
+     * 即：
+     *      如果仅提供了字符串型（key是整型），则认为 arg 和 msg 都是空
+     *      如果提供了整型下表数组，则认为改数组是 arg，msg 为空
+     *      完全形式是如上面 length 的定义
+     *
+     * @see http://www.easyswoole.com/Manual/3.x/Cn/_book/Components/validate.html
+     * @return array
+     */
+    protected function validateRules(): array
+    {
+        return [
+            'info' => [
+                'user_flag' => ['required'],
+                'flag_type' => ['required', 'integer']
+            ]
+        ];
+    }
+```
 
 
 
