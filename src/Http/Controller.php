@@ -131,6 +131,7 @@ class Controller extends EsController
     protected function gc()
     {
         $this->execMiddlewares('gc');
+        $this->responseData = null;
     }
 
     /**
