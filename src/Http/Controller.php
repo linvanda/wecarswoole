@@ -7,7 +7,9 @@ use EasySwoole\Http\AbstractInterface\Controller as EsController;
 use WecarSwoole\Container;
 use WecarSwoole\RedisFactory;
 use WecarSwoole\Middleware\MiddlewareHelper;
-use WecarSwoole\Exceptions\{EmergencyErrorException, CriticalErrorException};
+use WecarSwoole\Exceptions\{
+    EmergencyErrorException, CriticalErrorException, Exception
+};
 use WecarSwoole\Http\Middlewares\{LockerMiddleware, RequestRecordMiddleware, RequestTimeMiddleware, ValidateMiddleware};
 use Dev\MySQL\Exception\DBException;
 
@@ -145,6 +147,7 @@ class Controller extends EsController
         $logger = Container::get(LoggerInterface::class);
         $displayMsg = $message = $throwable->getMessage();
         $context = ['trace' => $throwable->getTraceAsString()];
+        $retry = 0;
 
         if ($throwable instanceof DBException) {
             // 数据库错误，需要隐藏详情
@@ -160,7 +163,11 @@ class Controller extends EsController
             $logger->error($message, $context);
         }
 
-        $this->return([], $throwable->getCode() ?: 500, $displayMsg);
+        if ($throwable instanceof Exception) {
+            $retry = (int)$throwable->shouldRetry();
+        }
+
+        $this->return([], $throwable->getCode() ?: 500, $displayMsg, $retry);
     }
 
     /**
@@ -183,9 +190,10 @@ class Controller extends EsController
      * @param array $data
      * @param int $status
      * @param string $msg
+     * @param int $retry 告诉客户端是否需要重试
      */
-    protected function return($data = [], int $status = 200, string $msg = ''): void
+    protected function return($data = [], int $status = 200, string $msg = '', int $retry = 0): void
     {
-        $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data ?? []];
+        $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data ?? [], 'retry' => $retry];
     }
 }

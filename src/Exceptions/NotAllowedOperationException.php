@@ -2,7 +2,7 @@
 
 namespace WecarSwoole\Exceptions;
 
-class NotAllowedOperationException extends \Exception
+class NotAllowedOperationException extends Exception
 {
     //
 }

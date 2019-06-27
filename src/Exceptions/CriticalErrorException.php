@@ -7,7 +7,7 @@ namespace WecarSwoole\Exceptions;
  * Class CriticalErrorException
  * @package WecarSwoole\Exceptions
  */
-class CriticalErrorException extends \Exception
+class CriticalErrorException extends Exception
 {
 
 }

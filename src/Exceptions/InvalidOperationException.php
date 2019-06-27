@@ -2,7 +2,7 @@
 
 namespace WecarSwoole\Exceptions;
 
-class InvalidOperationException extends \Exception
+class InvalidOperationException extends Exception
 {
     // nothing
 }

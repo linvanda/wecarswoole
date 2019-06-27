@@ -7,7 +7,7 @@ namespace WecarSwoole\Exceptions;
  * Class EmergencyErrorException
  * @package WecarSwoole\Exceptions
  */
-class EmergencyErrorException extends \Exception
+class EmergencyErrorException extends Exception
 {
     //
 }

@@ -4,7 +4,7 @@ namespace WecarSwoole\Exceptions;
 
 use Throwable;
 
-class ConfigNotFoundException extends \Exception
+class ConfigNotFoundException extends Exception
 {
     public function __construct(string $configName = "", int $code = 0, Throwable $previous = null)
     {

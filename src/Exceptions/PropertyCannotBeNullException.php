@@ -4,7 +4,7 @@ namespace WecarSwoole\Exceptions;
 
 use Throwable;
 
-class PropertyCannotBeNullException extends \Exception
+class PropertyCannotBeNullException extends Exception
 {
     public function __construct(string $className, string $propertyName, int $code = 0, Throwable $previous = null)
     {

@@ -2,6 +2,6 @@
 
 namespace WecarSwoole\Exceptions;
 
-class ValidateException extends \Exception
+class ValidateException extends Exception
 {
 }

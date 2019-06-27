@@ -4,7 +4,7 @@ namespace WecarSwoole\Exceptions;
 
 use Throwable;
 
-class MethodNotFoundException extends \Exception
+class MethodNotFoundException extends Exception
 {
     /**
      * 如果是类方法，则需要提供类名+方法名
