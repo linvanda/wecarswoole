@@ -1,6 +1,7 @@
 <?php
 
-namespace WecarSwoole\OTA;
+namespace WecarSwoole\Collection;
+
 use WecarSwoole\DTO;
 
 /**
@@ -8,7 +9,7 @@ use WecarSwoole\DTO;
  * Class DTOCollection
  * @package WecarSwoole\OTA
  */
-class DTOCollection extends Collection
+class DTOCollection extends ExtractableCollection
 {
     private $class;
 

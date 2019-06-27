@@ -1,13 +1,13 @@
 <?php
 
-namespace WecarSwoole\OTA;
+namespace WecarSwoole\Collection;
+
+use WecarSwoole\OTA\IExtractable;
 
 /**
  * IExtractable 数据集合
- * Class Collection
- * @package WecarSwoole\OTA
  */
-class Collection extends \ArrayIterator
+class ExtractableCollection extends \ArrayIterator
 {
     /**
      * Collection constructor.
