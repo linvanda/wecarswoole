@@ -4,9 +4,10 @@ namespace WecarSwoole;
 
 use WecarSwoole\ATO\ArrayToObject;
 use WecarSwoole\ATO\IArrayBuildable;
-use WecarSwoole\Exceptions\PropertyNotFoundException;
 use WecarSwoole\OTA\IExtractable;
 use WecarSwoole\OTA\ObjectToArray;
+use WecarSwoole\Util\AutoProperty;
+use WecarSwoole\Util\GetterSetter;
 
 /**
  * 实体基类
@@ -16,33 +17,5 @@ use WecarSwoole\OTA\ObjectToArray;
  */
 class Entity implements IExtractable, IArrayBuildable
 {
-    use ObjectToArray, ArrayToObject;
-
-    /**
-     * @param $name
-     * @return mixed
-     * @throws PropertyNotFoundException
-     */
-    public function __get($name)
-    {
-        if (!property_exists($this, $name)) {
-            throw new PropertyNotFoundException(get_called_class(), $name);
-        }
-
-        return $this->$name;
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     * @throws PropertyNotFoundException
-     */
-    public function __set($name, $value)
-    {
-        if (!property_exists($this, $name)) {
-            throw new PropertyNotFoundException(get_called_class(), $name);
-        }
-
-        $this->$name = $value;
-    }
+    use ObjectToArray, ArrayToObject, AutoProperty, GetterSetter;
 }
