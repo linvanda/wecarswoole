@@ -9,7 +9,7 @@ use WecarSwoole\Exceptions\Exception;
  * Class KVCollection
  * @package AWecarSwoole\Collection
  */
-class KVCollection implements \Iterator, \ArrayAccess
+class KVCollection implements \Iterator, \ArrayAccess, \Countable
 {
     private $values = [];
     private $keys = [];
@@ -118,5 +118,10 @@ class KVCollection implements \Iterator, \ArrayAccess
     public function getArrayCopy(): array
     {
         return array_combine($this->keys, $this->values);
+    }
+    
+    public function count()
+    {
+        return $this->count;
     }
 }
