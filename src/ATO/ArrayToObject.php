@@ -20,33 +20,35 @@ trait ArrayToObject
     /**
      * @param array $data
      * @param bool $strict 当 true 时，表示除非 $data 中指定了相关属性的值，否则不会进行深层对象解析
+     * @param bool $mapping 是否解析 mapping 注解
      */
-    public function buildFromArray(array $data, bool $strict = true)
+    public function buildFromArray(array $data, bool $strict = true, bool $mapping = true)
     {
-        foreach ($this->map($data, $strict) as $field => $value) {
+        foreach ($this->map($data, $strict, $mapping) as $field => $value) {
             if (property_exists($this, $field)) {
                 $this->$field = $value;
             }
         }
     }
 
-    protected function map(array $data, bool $strict): array
+    protected function map(array $data, bool $strict, bool $mapping = true): array
     {
-        return $this->valueMapping($this->fieldMapping($data), $strict);
+        return $this->valueMapping($this->fieldMapping($data), $strict, $mapping);
     }
 
     /**
      * 处理值映射：mapping 注解、var 注解
      * @param array $data
+     * @param bool $mapping 是否解析 mapping 注解
      * @return array
      */
-    protected function valueMapping(array $data, bool $strict): array
+    protected function valueMapping(array $data, bool $strict, bool $mapping = true): array
     {
         $anno = AnnotationAnalyser::getPropertyAnnotations(get_called_class(), ['mapping', 'var']);
 
         foreach ($anno as $propertyName => $annoInfo) {
             // mapping 注解
-            if (isset($annoInfo['mapping'])) {
+            if ($mapping && isset($annoInfo['mapping'])) {
                 self::valueMappingByMapping(
                     $propertyName,
                     AnnotationAnalyser::mappingToArray($annoInfo['mapping']),

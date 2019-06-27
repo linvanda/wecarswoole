@@ -186,6 +186,6 @@ class Controller extends EsController
      */
     protected function return($data = [], int $status = 200, string $msg = ''): void
     {
-        $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data];
+        $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data ?? []];
     }
 }
