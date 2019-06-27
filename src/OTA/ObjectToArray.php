@@ -16,11 +16,16 @@ trait ObjectToArray
      * @param bool $withNull 是否包含 null 属性
      * @param bool $zip 是否将多维压成一维，如
      *              ['age'=>12,'address'=>['city'=>'深圳','area'=>'福田']] 会变成 ['age'=>12,'city'=>'深圳','area'=>'福田']
+     * @param array $exFields 需要排除的字段
      * @return array
      */
-    public function toArray(bool $camelToSnake = true, bool $withNull = true, bool $zip = false): array
-    {
-        $data = $this->getPropertiesValue($withNull);
+    public function toArray(
+        bool $camelToSnake = true,
+        bool $withNull = true,
+        bool $zip = false,
+        array $exFields = []
+    ): array {
+        $data = $this->getPropertiesValue($withNull, $exFields);
 
         if (!$camelToSnake && !$zip) {
             return $data;
@@ -39,7 +44,7 @@ trait ObjectToArray
         return $data;
     }
 
-    protected function getPropertiesValue(bool $withNull): array
+    protected function getPropertiesValue(bool $withNull, array $exFields = []): array
     {
         $values = get_object_vars($this);
 
@@ -50,6 +55,11 @@ trait ObjectToArray
         }
 
         foreach ($values as $propName => &$propValue) {
+            if (in_array($propValue, $exFields)) {
+                unset($values[$propName]);
+                continue;
+            }
+
             if (is_bool($propValue)) {
                 $propValue = intval($propValue);
             } elseif ($propValue instanceof IExtractable) {
