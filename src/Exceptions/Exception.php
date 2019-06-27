@@ -11,14 +11,17 @@ use Throwable;
 class Exception extends \Exception
 {
     protected $shouldRetry;
+    protected $context;
 
     public function __construct(
         string $message = "",
         int $code = 0,
+        array $context = [],
         Throwable $previous = null,
         bool $shouldRetry = false
     ) {
         $this->shouldRetry = $shouldRetry;
+        $this->context = $context;
         parent::__construct($message, $code, $previous);
     }
 
@@ -31,5 +34,10 @@ class Exception extends \Exception
     public function shouldRetry(): bool
     {
         return $this->shouldRetry;
+    }
+
+    public function context(): array
+    {
+        return $this->context;
     }
 }

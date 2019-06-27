@@ -149,6 +149,11 @@ class Controller extends EsController
         $context = ['trace' => $throwable->getTraceAsString()];
         $retry = 0;
 
+        if ($throwable instanceof Exception) {
+            $context = array_merge($context, $throwable->context());
+            $retry = (int)$throwable->shouldRetry();
+        }
+
         if ($throwable instanceof DBException) {
             // 数据库错误，需要隐藏详情
             $errFlag = mt_rand(10000, 1000000) . mt_rand(10000, 10000000);
@@ -161,10 +166,6 @@ class Controller extends EsController
             $logger->emergency($message, $context);
         } else {
             $logger->error($message, $context);
-        }
-
-        if ($throwable instanceof Exception) {
-            $retry = (int)$throwable->shouldRetry();
         }
 
         $this->return([], $throwable->getCode() ?: 500, $displayMsg, $retry);
