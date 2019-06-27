@@ -119,7 +119,7 @@ class KVCollection implements \Iterator, \ArrayAccess, \Countable
     {
         return array_combine($this->keys, $this->values);
     }
-    
+
     public function count()
     {
         return $this->count;
