@@ -194,11 +194,6 @@ class Controller extends EsController
      */
     protected function return($data = [], int $status = 200, string $msg = '', int $retry = 0): void
     {
-        $this->responseData = [
-            'status' => $status,
-            'msg' => $msg,
-            'data' => $data ? (is_array($data) ? json_encode($data, JSON_UNESCAPED_UNICODE) : (string)$data) : [],
-            'retry' => $retry
-        ];
+        $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data ?? [], 'retry' => $retry];
     }
 }

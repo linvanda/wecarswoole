@@ -100,5 +100,5 @@ $a = [
 $kv = new \WecarSwoole\Collection\KVCollection($a);
 $kv['sex'] = '男';
 $kv['user'] = '43d';
-//unset($kv['user']);
+
 echo count($kv);
