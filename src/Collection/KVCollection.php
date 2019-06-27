@@ -124,4 +124,9 @@ class KVCollection implements \Iterator, \ArrayAccess, \Countable
     {
         return $this->count;
     }
+
+    public function first()
+    {
+        return $this->values[0];
+    }
 }
