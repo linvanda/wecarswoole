@@ -97,7 +97,7 @@ $a = [
         'name' => 'dsas',
 ];
 
-$kv = new \WecarSwoole\Collection\KVCollection($a);
+$kv = new \WecarSwoole\Collection\Map($a);
 $kv['sex'] = '男';
 $kv['user'] = '43d';
 

@@ -5,11 +5,10 @@ namespace WecarSwoole\Collection;
 use WecarSwoole\Exceptions\Exception;
 
 /**
- * k => v 集合，可以通过 k 获取 v
- * Class KVCollection
- * @package AWecarSwoole\Collection
+ * Class Map
+ * @package WecarSwoole\Collection
  */
-class KVCollection implements \Iterator, \ArrayAccess, \Countable
+class Map implements \Iterator, \ArrayAccess, \Countable
 {
     private $values = [];
     private $keys = [];
@@ -127,6 +126,14 @@ class KVCollection implements \Iterator, \ArrayAccess, \Countable
 
     public function first()
     {
-        return $this->values[0];
+        return $this->values[0] ?? null;
+    }
+
+    public function last()
+    {
+        if (!$this->count) {
+            return null;
+        }
+        return $this->values[$this->count - 1];
     }
 }
