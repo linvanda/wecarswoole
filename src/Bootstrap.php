@@ -6,7 +6,6 @@ use DI\ContainerBuilder;
 use EasySwoole\Component\Di;
 use EasySwoole\EasySwoole\Config;
 use Psr\Log\LoggerInterface;
-use \Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use WecarSwoole\HealthCheck\HealthCheck;
 use WecarSwoole\Util\File;
@@ -49,7 +48,7 @@ class Bootstrap
 
     protected static function registerSubscriber()
     {
-        $dispatcher = Container::get(EventDispatcher::class);
+        $dispatcher = Container::get('SymfonyEventDispatcher');
         foreach (Config::getInstance()->getConf('subscriber') ?? [] as $subscriber) {
             $subCls = new \ReflectionClass($subscriber);
             if ($subCls->isSubclassOf(EventSubscriberInterface::class)) {

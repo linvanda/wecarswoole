@@ -26,6 +26,7 @@ return [
     EventDispatcherInterface::class => function () {
         return new EventDispatcher();
     },
+    'SymfonyEventDispatcher' => EventDispatcherInterface::class,
     // DI 容器
     ContainerInterface::class => function () {
         return Di::getInstance()->get('di-container');

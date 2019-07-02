@@ -35,7 +35,9 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
            "framework/wecarswoole": "^1.0.3"
        },
      	"require-dev": {
-           "swoole/ide-helper": "@dev"
+           "phpunit/phpunit": "^7.0",
+           "phpunit/php-invoker": "*",
+           "swoole/ide-helper": "dev-master"
        },
      	"autoload": {
            "psr-4": {
@@ -77,6 +79,8 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 8. 停止：`php easyswoole stop`
 
 9. 其他指令参见 easyswoole 官网
+
+> 生产环境请使用 `composer install --no-dev`，其它环境请使用 `composer install`，因为非生产环境以后可能会加单元测试流程。
 
 **注意**
 
@@ -1993,7 +1997,24 @@ array (
 
 ### 单元测试
 
-待定
+参见 [中文文档](https://phpunit.readthedocs.io/zh_CN/latest/)
+
+##### 引入单元测试库
+
+框架已经默认为项目的 composer.json 加入了单元测试库，安装即可。
+
+##### 编写单元测试
+
+- 在项目根目录下的 tests/ 目录下编写单元测试类；
+- 单元测试类的目录层次和 app/ 中的相同（即 tests/ 对应 app/）;
+- 单元测试类命名：className + Test 命名，如 User 类的测试类叫 UserTest；
+- 测试类继承 `\PHPUnit\Framework\TestCase`；
+- 测试方法统一叫 test*，方法名能反映测试目的，如 testAddUserWhenPhoneExists()；
+
+##### 执行单元测试
+
+1. `cd $project_root_dir`;
+2. `vendor/bin/phpunit -c phpunit.xml`
 
 
 
