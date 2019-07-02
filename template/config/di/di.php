@@ -9,7 +9,7 @@ use EasySwoole\Component\Di;
 use WecarSwoole\CacheFactory;
 use WecarSwoole\Logger;
 
-use function DI\{autowire};
+use function DI\{autowire, get};
 
 return [
     // 仓储
@@ -26,7 +26,7 @@ return [
     EventDispatcherInterface::class => function () {
         return new EventDispatcher();
     },
-    'SymfonyEventDispatcher' => EventDispatcherInterface::class,
+    'SymfonyEventDispatcher' =>  get(EventDispatcherInterface::class),
     // DI 容器
     ContainerInterface::class => function () {
         return Di::getInstance()->get('di-container');
