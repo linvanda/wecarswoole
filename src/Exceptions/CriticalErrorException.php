@@ -9,5 +9,5 @@ namespace WecarSwoole\Exceptions;
  */
 class CriticalErrorException extends Exception
 {
-
+    //
 }

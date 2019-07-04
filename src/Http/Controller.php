@@ -148,10 +148,15 @@ class Controller extends EsController
         $displayMsg = $message = $throwable->getMessage();
         $context = ['trace' => $throwable->getTraceAsString()];
         $retry = 0;
+        $data = [];
 
         if ($throwable instanceof Exception) {
-            $context = array_merge($context, $throwable->context());
-            $retry = (int)$throwable->shouldRetry();
+            $context = array_merge($context, $throwable->getContext());
+            $retry = (int)$throwable->isShouldRetry();
+
+            if (($data = $throwable->getData()) && !isset($context['data'])) {
+                $context['data'] = $data;
+            }
         }
 
         if ($throwable instanceof DBException) {
@@ -168,7 +173,7 @@ class Controller extends EsController
             $logger->error($message, $context);
         }
 
-        $this->return([], $throwable->getCode() ?: 500, $displayMsg, $retry);
+        $this->return($data, $throwable->getCode() ?: 500, $displayMsg, $retry);
     }
 
     /**

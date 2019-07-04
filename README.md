@@ -1411,6 +1411,7 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
 
 框架提供的异常类：
 
+- Exception 异常基类
 - AuthException	授权异常
 - ConfigNotFoundException 配置信息获取失败
 - InvalidOperationException 非法操作
@@ -1420,6 +1421,17 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
 - PropertyNotFoundException 属性不存在
 - CriticalErrorException 严重异常。如果用的框架默认配置，该异常会记录文件日志并发送邮件告警
 - EmergencyErrorException 比 CriticalErrorException 还严重的异常。如果用的框架默认配置，该异常会记录文件日志并发送邮件和短信告警
+- ValidateException 数据验证异常
+
+#### 框架异常基类
+
+框架提供了异常基类 `WecarSwoole\Exceptions`，扩展了以下功能：
+
+- 创建异常时可通过构造函数提供 context、data、shouldRetry 参数，其中 context 会保存到日志中，data 会返回给客户端（对应 data 字段），shouldRetry 会返回客户端（对应 retry 字段，0/1，表示客户端是否需要重试）。
+
+- 提供 shouldRetry()、withData(array $data)、withContext(array \$context) 方法供设置以上属性，这些方法可链式调用：
+
+  
 
 
 
@@ -2010,6 +2022,7 @@ array (
 - 单元测试类命名：className + Test 命名，如 User 类的测试类叫 UserTest；
 - 测试类继承 `\PHPUnit\Framework\TestCase`；
 - 测试方法统一叫 test*，方法名能反映测试目的，如 testAddUserWhenPhoneExists()；
+- 单元测试详细写法参见官网文档；
 
 ##### 执行单元测试
 

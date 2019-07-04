@@ -15,6 +15,6 @@ class MethodNotFoundException extends Exception
      */
     public function __construct(string $methodName = "", int $code = 0, Throwable $previous = null)
     {
-        parent::__construct("方法不存在：{$methodName}", $code, $previous);
+        parent::__construct("方法不存在：{$methodName}", $code, [], [], false, $previous);
     }
 }
