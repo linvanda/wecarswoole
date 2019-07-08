@@ -7,14 +7,12 @@ class Response
     protected $body;
     protected $message;
     protected $status;
-    protected $isFromMock;
 
-    public function __construct($body = [], $status = 500, $message = '请求出错', bool $isFromMock = false)
+    public function __construct($body = [], $status = 500, $message = '请求出错')
     {
         $this->body = $body;
         $this->status = $status;
         $this->message = $message;
-        $this->isFromMock = $isFromMock;
     }
 
     public function getMessage()
@@ -51,18 +49,12 @@ class Response
         $this->body = $body;
     }
 
-    public function isMock(): bool
-    {
-        return $this->isFromMock;
-    }
-
     public function __toString()
     {
         return json_encode([
             'http_code' => $this->status,
             'message' => $this->message,
             'body' => $this->body,
-            'is_mock' => $this->isFromMock
         ]);
     }
 }

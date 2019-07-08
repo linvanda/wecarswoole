@@ -100,10 +100,8 @@ class HttpClient implements IClient
         }
 
         // 执行
-        $isMock = true;
         $response = $this->execMiddlewares('before', $this->config, $requestBean);
         if (!$response instanceof ResponseInterface) {
-            $isMock = false;
             $response = $saber->exec()->recv();
         }
         $this->execMiddlewares('after', $this->config, $requestBean, $response);
@@ -115,8 +113,7 @@ class HttpClient implements IClient
             new Response(
                 $response->getBody()->read($response->getBody()->getSize()),
                 $response->getStatusCode(),
-                $response->getReasonPhrase(),
-                $isMock
+                $response->getReasonPhrase()
             )
         );
     }
