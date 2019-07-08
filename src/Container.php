@@ -2,7 +2,6 @@
 
 namespace WecarSwoole;
 
-use EasySwoole\EasySwoole\SysConst;
 use EasySwoole\Component\Di;
 
 /**
@@ -16,6 +15,7 @@ class Container
      * 从容器获取对象。单例模式，只会实例化对象一次
      * @param $name
      * @return mixed
+     * @throws \Throwable
      */
     public static function get($name)
     {
@@ -27,6 +27,7 @@ class Container
      * @param $name
      * @param array $parameters
      * @return mixed
+     * @throws \Throwable
      */
     public static function make($name, array $parameters = [])
     {
@@ -38,12 +39,18 @@ class Container
      * @param $name
      * @param $value
      * @return mixed
+     * @throws \Throwable
      */
     public static function set($name, $value)
     {
         return Di::getInstance()->get("di-container")->set($name, $value);
     }
 
+    /**
+     * @param $name
+     * @return mixed
+     * @throws \Throwable
+     */
     public static function has($name)
     {
         return Di::getInstance()->get("di-container")->has($name);

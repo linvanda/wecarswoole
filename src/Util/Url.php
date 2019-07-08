@@ -3,9 +3,22 @@
 namespace WecarSwoole\Util;
 
 use WecarSwoole\Exceptions\ParamsCannotBeNullException;
+use EasySwoole\EasySwoole\Config as ESConfig;
 
 class Url
 {
+    /**
+     * @param string $path
+     * @param array $queryParams
+     * @param array $flagParams
+     * @return string
+     * @throws ParamsCannotBeNullException
+     */
+    public static function realUrl(string $path, array $queryParams = [], array $flagParams = [])
+    {
+        return self::assemble($path, self::isCompleteUrl($path) ? '' : self::baseUrl(), $queryParams, $flagParams);
+    }
+
     /**
      * 组装 url
      * @param string $uri uri 的 path 部分或者整个 uri，可以使用占位符如 {uid}，{?group_id}（?表示可选参数）
@@ -15,11 +28,15 @@ class Url
      * @return string
      * @throws ParamsCannotBeNullException
      */
-    public static function assemble(string $uri, string $base = '', array $queryParams = [], array $flagParams = []): string
-    {
+    public static function assemble(
+        string $uri,
+        string $base = '',
+        array $queryParams = [],
+        array $flagParams = []
+    ): string {
         $uri = self::replaceFlag($uri, $flagParams);
 
-        if (strpos($uri, 'https:') !== 0 && strpos($uri, 'http:') !== 0 && $base) {
+        if (!self::isCompleteUrl($uri) && $base) {
             $uri = implode('/', [rtrim($base, '/'), ltrim($uri, '/')]);
         }
 
@@ -95,5 +112,21 @@ class Url
         }
 
         return implode('/', array_filter(explode('/', $uri)));
+    }
+
+    private static function baseUrl(): string
+    {
+        return ESConfig::getInstance()->getConf('base_url') ?? self::defaultDomain();
+    }
+
+    private static function defaultDomain()
+    {
+        $schema = $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ? 'https' : 'http';
+        return $schema . '://' . $_SERVER['HTTP_HOST'];
+    }
+
+    private static function isCompleteUrl(string $uri): bool
+    {
+        return strpos($uri, 'https:') === 0 || strpos($uri, 'http:') === 0;
     }
 }

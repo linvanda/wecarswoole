@@ -15,6 +15,7 @@ class CacheFactory
 
     /**
      * @return CacheInterface
+     * @throws Exceptions\ConfigNotFoundException
      */
     public static function build(): CacheInterface
     {
