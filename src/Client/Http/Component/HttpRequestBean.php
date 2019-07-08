@@ -71,6 +71,11 @@ class HttpRequestBean implements IHttpRequestBean
         $this->body = $body;
     }
 
+    public function getParams(): array
+    {
+        return array_merge($this->getFlagParams(), $this->getQueryParams(), $this->getBody());
+    }
+
     /**
      * 请求头数组
      * @return array

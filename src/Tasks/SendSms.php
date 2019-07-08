@@ -18,6 +18,7 @@ class SendSms extends AbstractAsyncTask
      * @param $fromWorkerId
      * @param null $flags
      * @return mixed
+     * @throws \Exception
      */
     protected function run($taskData, $taskId, $fromWorkerId, $flags = null)
     {
@@ -35,7 +36,7 @@ class SendSms extends AbstractAsyncTask
             $taskData['options'] ?? []
         );
 
-        return API::call('weiche:sms.send', $data);
+        return API::invoke('weiche:sms.send', $data);
     }
 
     protected function finish($result, $task_id)

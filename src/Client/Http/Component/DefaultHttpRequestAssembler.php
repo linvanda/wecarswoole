@@ -5,7 +5,6 @@ namespace WecarSwoole\Client\Http\Component;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
-use WecarSwoole\Client\Contract\IHttpServerParser;
 
 /**
  * 默认请求组装器
@@ -71,14 +70,14 @@ class DefaultHttpRequestAssembler implements IHttpRequestAssembler
             return [];
         }
 
-        $p = self::isSimpleStructure($params) ? $params : ($params['body'] ?? []);
+        $param = self::isSimpleStructure($params) ? $params : ($params['body'] ?? []);
 
-        if (!$p) {
+        if (!$param) {
             return [];
         }
 
         // 剔除 flag params
-        return array_diff_key($p, $this->parseFlagParams($params));
+        return array_diff_key($param, $this->parseFlagParams($params));
     }
 
     protected function parseQueryParams(array $params): array
@@ -88,17 +87,17 @@ class DefaultHttpRequestAssembler implements IHttpRequestAssembler
                 return [];
             }
 
-            $p = $params;
+            $param = $params;
         } else {
             if ($this->config->method == 'GET') {
                 // 合并 query_params 和 body
-                $p = $params['query_params'] + $params['body'];
+                $param = $params['query_params'] + $params['body'];
             } else {
-                $p = $params['query_params'] ?? [];
+                $param = $params['query_params'] ?? [];
             }
         }
 
-        return array_diff_key($p, $this->parseFlagParams($params));
+        return array_diff_key($param, $this->parseFlagParams($params));
     }
 
     protected function parseHeaders(array $params): array

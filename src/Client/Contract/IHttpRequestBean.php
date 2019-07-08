@@ -28,15 +28,13 @@ interface IHttpRequestBean
     public function getBody(): array;
 
     /**
-     * 请求头数组
+     * 获取请求参数信息，包括了 flag_params、query_params 和 body
      * @return array
      */
+    public function getParams(): array;
+
     public function headers(): array;
 
-    /**
-     * cookie 数组
-     * @return array
-     */
     public function cookies(): array;
 
     public function setFlagParams(array $params);
