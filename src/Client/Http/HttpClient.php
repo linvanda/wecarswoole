@@ -100,35 +100,53 @@ class HttpClient implements IClient
         }
 
         // 执行
+        $isMock = true;
         $response = $this->execMiddlewares('before', $this->config, $requestBean);
         if (!$response instanceof ResponseInterface) {
+            $isMock = false;
             $response = $saber->exec()->recv();
         }
         $this->execMiddlewares('after', $this->config, $requestBean, $response);
 
-        // 非 20X 是否需要抛异常
-        if ($this->config->throwException && $response->getStatusCode() >= 300) {
-            throw (
-                new APIInvokeException(
-                    "接口{$this->config->apiName}调用错误：" . $response->getReasonPhrase(),
-                    $response->getStatusCode()
-                )
-            )->withContext(
-                [
-                    'uri' => $saber->getUri(),
-                    'params' => $requestBean->getParams()
-                ]
-            );
-        }
+        $this->dealBadResponse($response, $requestBean);
 
         // 解析响应数据
         return $this->responseParser->parser(
             new Response(
                 $response->getBody()->read($response->getBody()->getSize()),
                 $response->getStatusCode(),
-                $response->getReasonPhrase()
+                $response->getReasonPhrase(),
+                $isMock
             )
         );
+    }
+
+    /**
+     * @param ResponseInterface $response
+     * @throws \WecarSwoole\Exceptions\Exception
+     */
+    private function dealBadResponse(ResponseInterface $response, IHttpRequestBean $requestBean)
+    {
+        // 非 20X 是否需要抛异常
+        if ($this->config->throwException && $response->getStatusCode() >= 300) {
+            $exception = (
+                new APIInvokeException(
+                    "接口{$this->config->apiName}调用错误：" . $response->getReasonPhrase(),
+                    $response->getStatusCode()
+                )
+            )->withContext(
+                [
+                    'uri' => $requestBean->baseUri(),
+                    'params' => $requestBean->getParams()
+                ]
+            );
+
+            if ($response->getStatusCode() === 504) {
+                $exception->shouldRetry();
+            }
+
+            throw $exception;
+        }
     }
 
     private function headers(array $headers): array
