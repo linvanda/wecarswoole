@@ -116,13 +116,7 @@ class Url
 
     private static function baseUrl(): string
     {
-        return ESConfig::getInstance()->getConf('base_url') ?? self::defaultDomain();
-    }
-
-    private static function defaultDomain()
-    {
-        $schema = $_SERVER['HTTPS'] == 'on' || $_SERVER['HTTP_X_FORWARDED_PROTO'] == 'https' ? 'https' : 'http';
-        return $schema . '://' . $_SERVER['HTTP_HOST'];
+        return ESConfig::getInstance()->getConf('base_url') ?? '';
     }
 
     private static function isCompleteUrl(string $uri): bool
