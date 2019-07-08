@@ -52,22 +52,37 @@ class HotReload extends AbstractProcess
 
     private function runComparisions()
     {
+        $inodeList = [];
+        $doReload = false;
         foreach ($this->monitorDirs as $dir) {
-            $this->runComparison($dir);
+            $doReload = $this->runComparison($dir, $inodeList);
+        }
+
+        if (!$doReload) {
+            foreach ($this->table as $inode => $value) {
+                // 迭代table寻找需要删除的inode
+                if (!in_array(intval($inode), $inodeList)) {
+                    $this->table->del($inode);
+                    $doReload = true;
+                }
+            }
+        }
+
+        if ($doReload) {
+            $this->reload();
         }
     }
 
     /**
      * 扫描文件变更
      */
-    private function runComparison(string $dir)
+    private function runComparison(string $dir, &$inodeList)
     {
         $startTime = microtime(true);
         $doReload = false;
 
         $dirIterator = new \RecursiveDirectoryIterator($dir);
         $iterator = new \RecursiveIteratorIterator($dirIterator);
-        $inodeList = array();
 
         // 迭代目录全部文件进行检查
         foreach ($iterator as $file) {
@@ -95,27 +110,23 @@ class HotReload extends AbstractProcess
             }
         }
 
-        foreach ($this->table as $inode => $value) {
-            // 迭代table寻找需要删除的inode
-            if (!in_array(intval($inode), $inodeList)) {
-                $this->table->del($inode);
-                $doReload = true;
-            }
-        }
+        return $doReload;
+    }
 
-        if ($doReload) {
-            $count = $this->table->count();
-            $time = date('Y-m-d H:i:s');
-            $usage = round(microtime(true) - $startTime, 3);
-            if (!$this->isReady == false) {
-                // 监测到需要进行热重启
-                echo "severReload at {$time} use : {$usage} s total: {$count} files\n";
-                ServerManager::getInstance()->getSwooleServer()->reload();
-            } else {
-                // 首次扫描不需要进行重启操作
-                echo "hot reload ready at {$time} use : {$usage} s total: {$count} files\n";
-                $this->isReady = true;
-            }
+    private function reload()
+    {
+        $startTime = microtime(true);
+        $count = $this->table->count();
+        $time = date('Y-m-d H:i:s');
+        $usage = round(microtime(true) - $startTime, 3);
+        if (!$this->isReady == false) {
+            // 监测到需要进行热重启
+            echo "severReload at {$time} use : {$usage} s total: {$count} files\n";
+            ServerManager::getInstance()->getSwooleServer()->reload();
+        } else {
+            // 首次扫描不需要进行重启操作
+            echo "hot reload ready at {$time} use : {$usage} s total: {$count} files\n";
+            $this->isReady = true;
         }
     }
 
