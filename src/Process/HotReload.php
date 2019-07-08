@@ -55,16 +55,14 @@ class HotReload extends AbstractProcess
         $inodeList = [];
         $doReload = false;
         foreach ($this->monitorDirs as $dir) {
-            $doReload = $this->runComparison($dir, $inodeList);
+            $doReload |= $this->runComparison($dir, $inodeList);
         }
 
-        if (!$doReload) {
-            foreach ($this->table as $inode => $value) {
-                // 迭代table寻找需要删除的inode
-                if (!in_array(intval($inode), $inodeList)) {
-                    $this->table->del($inode);
-                    $doReload = true;
-                }
+        foreach ($this->table as $inode => $value) {
+            // 迭代table寻找需要删除的inode
+            if (!in_array(intval($inode), $inodeList)) {
+                $this->table->del($inode);
+                $doReload = true;
             }
         }
 
@@ -78,7 +76,6 @@ class HotReload extends AbstractProcess
      */
     private function runComparison(string $dir, &$inodeList)
     {
-        $startTime = microtime(true);
         $doReload = false;
 
         $dirIterator = new \RecursiveDirectoryIterator($dir);
