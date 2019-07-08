@@ -24,7 +24,7 @@ class LogRequestMiddleware implements IRequestMiddleware
         $this->logger = $logger;
     }
 
-    public function before(Next $next, HttpConfig $config, IHttpRequestBean $request): bool
+    public function before(Next $next, HttpConfig $config, IHttpRequestBean $request)
     {
         $this->startTime = time();
 

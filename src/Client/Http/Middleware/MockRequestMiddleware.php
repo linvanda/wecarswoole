@@ -62,7 +62,7 @@ class MockRequestMiddleware implements IRequestMiddleware
 
     private function formatMockResult($mockResult)
     {
-        if (!is_array($mockResult) || !$mockResult['http_code'] || !$mockResult['body']) {
+        if (!is_array($mockResult) || !isset($mockResult['http_code']) || !isset($mockResult['body'])) {
             $mockResult = [
                 'http_code' => 200,
                 'body' => $mockResult,
