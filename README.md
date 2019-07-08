@@ -1321,6 +1321,7 @@ return [
             'middlewares' => [
                 LogRequestMiddleware::class
             ],
+          	'throw_exception' => true, // 当返回非 20X 时是否抛异常
             // https ssl 相关配置
             'ssl' => [
                 // CA 文件路径
@@ -1378,9 +1379,9 @@ return [
 3. 调用：
 
 ```php
-use WecarSwoole\Client\Client;
+use WecarSwoole\Client\API;
 ...
-$result = Client::call('wc:users.add', $reqData);
+$result = API::invoke('wc:users.add', $reqData, $config); // $config 提供调用级别配置，结构同 api.php 中的配置
 var_export($result->getBody());
 ```
 
@@ -1426,13 +1427,63 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
      ];
      ```
 
+5. Mock:
 
+   很多时候需要跟第三方合作开发时，对方的接口尚未开发完毕，此时我们只能干等。
 
-**有待实现：**
+   框架提供了 mock 功能，模拟外部 API 数据。
 
-- 请求前后拦截器；
-- 请求重试与告警机制；
-- 支持异步（task投递）请求；
+   - 在项目根目录下的 mock/http/ 中创建 mock 文件（可按照需要命名），其中写 mock 数据：
+
+   ```php
+   use WecarSwoole\Util\Mock;
+   use WecarSwoole\Client\Config\HttpConfig;
+   use WecarSwoole\Client\Contract\IHttpRequestBean;
+   use Swoole\Coroutine as Co;
+   
+   $mock = new Mock();
+   
+   return [
+       /**
+        * 完整返回格式(完整格式必须至少同时有 http_code 和 body)：
+        *      [
+        *          'http_code' => 200, // http code
+        *          'body' => ... // http body，数组或者字符串，或者其他实现了 __toString() 的对象
+        *          'headers' => [], // http 响应头
+        *          'activate' => 1, // 激活，0表示不再使用该 mock 数据，将请求真实数据
+        *      ]
+        * 注意：如果直接返回数组，则多次使用的是同一份模拟数据，如果想每次都随机生成不同的，需要使用匿名函数
+        *
+        */
+       'weiche:oil.info' => function (HttpConfig $config, IHttpRequestBean $request) use ($mock) {
+           // 此处模拟响应延迟
+           Co::sleep(5);
+   
+           return [
+               'http_code' => 200,
+               'body' => [
+                   'status' => 200,
+                   'data' => [
+                       'id' => $mock->number('100-10000'),
+                       'name' => $request->getParams()['name'],
+                       'age' => $mock->number('10-20'),
+                   ]
+               ],
+               'activate' => true
+           ];
+       },
+       // 直接返回数据
+       'weiche:user.add' => [
+           'status' => 200,
+           'msg' => 'ok',
+           'data' => [
+               'uid' => 123122
+           ]
+       ]
+   ];
+   ```
+
+   
 
 > 注：实际使用中，一般会将对外部系统的调用封装成服务类（Service），服务类调用具体接口并返回相应的数据（基本数据类型或者自定义类型）。
 
