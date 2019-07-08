@@ -35,7 +35,10 @@ class EasySwooleEvent implements Event
         // 热重启(仅用在非生产环境)
         if (Core::getInstance()->isDev()) {
             ServerManager::getInstance()->getSwooleServer()->addProcess(
-                (new HotReload('HotReload', ['disableInotify' => true]))->getProcess()
+                (new HotReload(
+                    'HotReload',
+                    ['disableInotify' => true, 'monitorDirs' => [EASYSWOOLE_ROOT . '/app', EASYSWOOLE_ROOT . '/mock']]
+                ))->getProcess()
             );
         }
 

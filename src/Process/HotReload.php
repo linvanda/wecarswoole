@@ -19,7 +19,7 @@ class HotReload extends AbstractProcess
     protected $table;
     protected $isReady = false;
 
-    protected $monitorDir; // 需要监控的目录
+    protected $monitorDirs; // 需要监控的目录
     protected $monitorExt; // 需要监控的后缀
 
     /**
@@ -28,7 +28,7 @@ class HotReload extends AbstractProcess
     public function run($arg)
     {
         // 此处指定需要监视的目录 建议只监视App目录下的文件变更
-        $this->monitorDir = !empty($arg['monitorDir']) ? $arg['monitorDir'] : EASYSWOOLE_ROOT . '/app';
+        $this->monitorDirs = !empty($arg['monitorDirs']) ? $arg['monitorDirs'] : [EASYSWOOLE_ROOT . '/app'];
 
         // 指定需要监控的扩展名 不属于指定类型的的文件 无视变更 不重启
         $this->monitorExt = !empty($arg['monitorExt']) && is_array($arg['monitorExt']) ? $arg['monitorExt'] : ['php'];
@@ -42,23 +42,30 @@ class HotReload extends AbstractProcess
             $this->table = new Table(512);
             $this->table->column('mtime', Table::TYPE_INT, 4);
             $this->table->create();
-            $this->runComparison();
+            $this->runComparisons();
             Timer::tick(1000, function () {
-                $this->runComparison();
+                $this->runComparisions();
             });
             echo "server hot reload start : use timer tick comparison\n";
+        }
+    }
+
+    private function runComparisions()
+    {
+        foreach ($this->monitorDirs as $dir) {
+            $this->runComparison($dir);
         }
     }
 
     /**
      * 扫描文件变更
      */
-    private function runComparison()
+    private function runComparison(string $dir)
     {
         $startTime = microtime(true);
         $doReload = false;
 
-        $dirIterator = new \RecursiveDirectoryIterator($this->monitorDir);
+        $dirIterator = new \RecursiveDirectoryIterator($dir);
         $iterator = new \RecursiveIteratorIterator($dirIterator);
         $inodeList = array();
 
@@ -123,8 +130,11 @@ class HotReload extends AbstractProcess
         global $inotifyResource;
 
         $lastReloadTime = 0;
-        $files = File::scanDirectory(EASYSWOOLE_ROOT . '/app');
-        $files = array_merge($files['files'], $files['dirs']);
+        $files = [];
+        foreach ($this->monitorDirs as $dir) {
+            $tmpFiles = File::scanDirectory($dir);
+            $files = array_merge($files, $tmpFiles['files'], $tmpFiles['dirs']);
+        }
 
         $inotifyResource = inotify_init();
 
