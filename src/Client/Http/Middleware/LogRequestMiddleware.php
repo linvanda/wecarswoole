@@ -45,7 +45,7 @@ class LogRequestMiddleware implements IRequestMiddleware
     protected function logLevel(ResponseInterface $response): string
     {
         return $response->getStatusCode() >= 200 && $response->getStatusCode() < 400 ?
-            LogLevel::INFO : LogLevel::EMERGENCY;
+            LogLevel::INFO : LogLevel::CRITICAL;
     }
 
     protected function logContext(HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response): array
