@@ -66,11 +66,12 @@ class MockRequestMiddleware implements IRequestMiddleware
             $mockResult = [
                 'http_code' => 200,
                 'body' => $mockResult,
-                'activate' => 1,
             ];
         }
 
         $mockResult['activate'] = $mockResult['activate'] ?? 1;
+        $mockResult['headers'] = $mockResult['headers'] ?? [];
+
         if (is_array($mockResult['body'])) {
             $mockResult['body'] = json_encode($mockResult['body']);
         } elseif (!is_string($mockResult['body']) &&
