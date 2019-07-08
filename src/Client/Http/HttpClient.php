@@ -106,10 +106,17 @@ class HttpClient implements IClient
         }
         $this->execMiddlewares('after', $this->config, $requestBean, $response);
 
+        // 非 20X 是否需要抛异常
         if ($this->config->throwException && $response->getStatusCode() >= 300) {
-            throw (new APIInvokeException($response->getReasonPhrase(), $response->getStatusCode()))->withContext(
+            throw (
+                new APIInvokeException(
+                    "接口{$this->config->apiName}调用错误：" . $response->getReasonPhrase(),
+                    $response->getStatusCode()
+                )
+            )->withContext(
                 [
-                    'uri' => $saber->getUri()
+                    'uri' => $saber->getUri(),
+                    'params' => $requestBean->getParams()
                 ]
             );
         }
