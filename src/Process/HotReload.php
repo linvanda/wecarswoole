@@ -42,7 +42,7 @@ class HotReload extends AbstractProcess
             $this->table = new Table(512);
             $this->table->column('mtime', Table::TYPE_INT, 4);
             $this->table->create();
-            $this->runComparisons();
+            $this->runComparisions();
             Timer::tick(1000, function () {
                 $this->runComparisions();
             });
