@@ -8,7 +8,7 @@ use Psr\Http\Message\ResponseInterface;
 use WecarSwoole\Middleware\Next;
 
 /**
- * 请求装饰器
+ * 请求中间件
  * Interface IRequestMiddleware
  * @package WecarSwoole\Client\Http\Hook
  */

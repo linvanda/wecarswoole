@@ -7,6 +7,7 @@ use EasySwoole\EasySwoole\Config as EsConfig;
 
 class Config
 {
+    public $apiName;
     /**
      * 请求协议
      * @var string
@@ -46,6 +47,7 @@ class Config
     {
         $this->protocol = $apiConf['protocol'] ?: 'http';
         $this->appId = $apiConf['app_id'];
+        $this->apiName = $apiConf['api_name'] ?? '';
         $this->requestAssembler = $apiConf['request_assembler'];
         $this->responseParser = $apiConf['response_parser'];
 

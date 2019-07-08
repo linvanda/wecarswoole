@@ -99,10 +99,10 @@ class HttpClient implements IClient
         }
 
         // 执行
-        if (!$this->execMiddlewares('before', $this->config, $requestBean)) {
-            return new Response();
+        $response = $this->execMiddlewares('before', $this->config, $requestBean);
+        if (!$response instanceof ResponseInterface) {
+            $response = $saber->exec()->recv();
         }
-        $response = $saber->exec()->recv();
         $this->execMiddlewares('after', $this->config, $requestBean, $response);
 
         // 解析响应数据

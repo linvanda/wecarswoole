@@ -32,6 +32,8 @@ class ClientFactory
             throw new \Exception("当前项目没有配置合法的app_id");
         }
 
+        $config['api_name'] = $api;
+
         switch (strtolower($config['protocol'])) {
             case 'http':
             case 'https':

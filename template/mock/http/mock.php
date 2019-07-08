@@ -8,11 +8,11 @@ $mock = new Mock();
 
 return [
     /**
-     * 直接返回数组或者字符串，或者其他实现了 __toString() 的对象
-     * 支持返回完整格式：
+     * 支持返回完整格式(完整格式必须至少同时有 http_code 和 body)：
      *      [
-     *          'code' => 200, // http code
-     *          'body' => ... // http body，格式同前面说明
+     *          'http_code' => 200, // http code
+     *          'body' => ... // http body，数组或者字符串，或者其他实现了 __toString() 的对象
+     *          'headers' => [], // http 响应头
      *          'activate' => 1, // 激活，0表示不再使用该 mock 数据，将请求真实数据
      *      ]
      */
