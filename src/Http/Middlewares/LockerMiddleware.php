@@ -83,13 +83,14 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
         return $next($request, $response);
     }
 
-    public function after(Request $request, Response $response)
+    public function after(Next $next, Request $request, Response $response)
     {
         if (is_bool(self::$on) && !self::$on) {
-            return;
+            return $next($request, $response);
         }
 
         $this->locker && $this->locker->unlock();
+        return $next($request, $response);
     }
 
     public function gc(Next $next)
