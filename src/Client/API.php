@@ -13,11 +13,12 @@ class API
     /**
      * @param string $api
      * @param array $params
+     * @param array $config
      * @return Response
      * @throws \Exception
      */
-    public static function invoke(string $api, array $params = []): Response
+    public static function invoke(string $api, array $params = [], array $config = []): Response
     {
-        return ClientFactory::build($api)->call($params);
+        return ClientFactory::build($api, $config)->call($params);
     }
 }

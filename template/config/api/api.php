@@ -25,6 +25,7 @@ return [
                 LogRequestMiddleware::class,
                 MockRequestMiddleware::class
             ],
+            'throw_exception' => true, // 当返回不是 20X 时是否抛出异常
             // https ssl 相关配置
             'ssl' => [
                 // CA 文件路径

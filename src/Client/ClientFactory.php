@@ -16,12 +16,14 @@ class ClientFactory
 {
     /**
      * @param string $api
+     * @param array $config
      * @return IClient
      * @throws \Exception
+     * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
      */
-    public static function build(string $api): IClient
+    public static function build(string $api, array $config): IClient
     {
-        $config = Config::load($api);
+        $config = array_merge(Config::load($api), $config);
 
         // 当前项目的 app_id
         if (!isset($config['app_id']) && ($serverFlag = EsConfig::getInstance()->getConf('app_flag'))) {

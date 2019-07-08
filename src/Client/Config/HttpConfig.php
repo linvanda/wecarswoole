@@ -13,6 +13,7 @@ class HttpConfig extends Config
     public $sslVerifyPeer;
     public $sslAllowSelfSigned;
     public $middlewares;
+    public $throwException;
 
     /**
      * HttpConfig constructor.
@@ -31,6 +32,7 @@ class HttpConfig extends Config
         $this->path = $apiConf['path'];
         $this->method = $apiConf['method'] ? strtoupper($apiConf['method']) : 'POST';
         $this->middlewares = $apiConf['middlewares'] ?? [];
+        $this->throwException = $apiConf['throw_exception'] ?? true;
 
         if (isset($apiConf['content_type'])) {
             $this->contentType = $apiConf['content_type'];

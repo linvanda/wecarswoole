@@ -11,6 +11,7 @@ use WecarSwoole\Client\Contract\IHttpRequestAssembler;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
 use WecarSwoole\Client\Contract\IResponseParser;
 use WecarSwoole\Client\Response;
+use WecarSwoole\Exceptions\APIInvokeException;
 use WecarSwoole\Middleware\MiddlewareHelper;
 use WecarSwoole\Util\Url;
 use Swlib\Http\Uri;
@@ -44,6 +45,7 @@ class HttpClient implements IClient
      * @param array $params
      * @return Response
      * @throws \WecarSwoole\Exceptions\ParamsCannotBeNullException
+     * @throws \WecarSwoole\Exceptions\Exception
      */
     public function call(array $params): Response
     {
@@ -67,7 +69,6 @@ class HttpClient implements IClient
 
         $saber = Saber::create($saberConf)->psr();
         $saber->setExceptionReport(HttpExceptionMask::E_NONE);
-
         $saber->withMethod($this->config->method);
 
         // 设置 uri
@@ -104,6 +105,14 @@ class HttpClient implements IClient
             $response = $saber->exec()->recv();
         }
         $this->execMiddlewares('after', $this->config, $requestBean, $response);
+
+        if ($this->config->throwException && $response->getStatusCode() >= 300) {
+            throw (new APIInvokeException($response->getReasonPhrase(), $response->getStatusCode()))->withContext(
+                [
+                    'uri' => $saber->getUri()
+                ]
+            );
+        }
 
         // 解析响应数据
         return $this->responseParser->parser(

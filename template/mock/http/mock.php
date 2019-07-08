@@ -1,6 +1,6 @@
 <?php
 
-use WecarSwoole\Client\Mock;
+use WecarSwoole\Util\Mock;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace WecarSwoole\Client;
+namespace WecarSwoole\Util;
 
 /**
  * 生成模拟数据
