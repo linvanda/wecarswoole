@@ -6,7 +6,8 @@ use WecarSwoole\Proxy;
 
 /**
  * 该中间件提供了对 relObject 私有成员的代理访问能力，针对一些需要获取相关对象私有成员的（对象临时绑定）
- * 如果不需要此功能，可以不继承此类
+ * 中间件的所有 handler 方法的第一个参数都是 Next 对象，每个中间件方法最后都要调用 $next(...)，否则后续中间件
+ * 不会被调用。
  * Class Middleware
  */
 class Middleware

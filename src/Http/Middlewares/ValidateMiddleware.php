@@ -8,6 +8,7 @@ use EasySwoole\Validate\Validate;
 use WecarSwoole\Exceptions\ValidateException;
 use WecarSwoole\Http\Controller;
 use WecarSwoole\Middleware\Middleware;
+use WecarSwoole\Middleware\Next;
 
 /**
  * 验证器中间件
@@ -27,15 +28,15 @@ class ValidateMiddleware extends Middleware implements IControllerMiddleware
      * @return bool|mixed
      * @throws ValidateException
      */
-    public function before(Request $request, Response $response)
+    public function before(Next $next, Request $request, Response $response)
     {
         if (!($rules = $this->proxy->validateRules())) {
-            return true;
+            goto last;
         }
 
         $action = basename(explode('?', $request->getRequestTarget())[0]);
         if (!array_key_exists($action, $rules)) {
-            return true;
+            goto last;
         }
 
         $validate = new Validate();
@@ -54,17 +55,18 @@ class ValidateMiddleware extends Middleware implements IControllerMiddleware
             throw new ValidateException($validate->getError()->getErrorRuleMsg());
         }
 
-        return true;
+        last:
+        return $next($request, $response);
     }
 
-    public function after(Request $request, Response $response)
+    public function after(Next $next, Request $request, Response $response)
     {
-        // do nothing
+        return $next($request, $response);
     }
 
-    public function gc()
+    public function gc(Next $next)
     {
-        // do nothing
+        return $next();
     }
 
     private function formatRules(array $rules): array

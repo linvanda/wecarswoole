@@ -1,0 +1,33 @@
+<?php
+
+use WecarSwoole\Client\Mock;
+use WecarSwoole\Client\Config\HttpConfig;
+use WecarSwoole\Client\Contract\IHttpRequestBean;
+
+$mock = new Mock();
+
+return [
+    /**
+     * 直接返回数组或者字符串，或者其他实现了 __toString() 的对象
+     * 支持返回完整格式：
+     *      [
+     *          'code' => 200, // http code
+     *          'body' => ... // http body，格式同前面说明
+     *          'activate' => 1, // 激活，0表示不再使用该 mock 数据，将请求真实数据
+     *      ]
+     */
+    'weicar:user.info' => [
+        'uid' => $mock->number('100-10000'),
+        'name' => $mock->cnName()
+    ],
+    /**
+     * 返回闭包
+     * 闭包中可以做复杂的处理，比如模拟慢请求，返回 http 错误码等
+     * 返回格式同上面
+     */
+    'weicar:coupon.info' => function (HttpConfig $config, IHttpRequestBean $requestBean) use ($mock) {
+        return [
+            'cid' => $mock->number('1000, 1000000')
+        ];
+    }
+];

@@ -7,6 +7,7 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpRequestBean;
+use WecarSwoole\Middleware\Next;
 
 /**
  * 记录请求日志
@@ -23,18 +24,22 @@ class LogRequestMiddleware implements IRequestMiddleware
         $this->logger = $logger;
     }
 
-    public function before(HttpConfig $config, IHttpRequestBean $request): bool
+    public function before(Next $next, HttpConfig $config, IHttpRequestBean $request): bool
     {
         $this->startTime = time();
-        return true;
+
+        return $next($config, $request);
     }
 
-    public function after(HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response)
+    public function after(Next $next, HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response)
     {
-        $level = $this->logLevel($response);
-        $context = $this->logContext($config, $request, $response);
+        $this->logger->log(
+            $this->logLevel($response),
+            'API 调用信息',
+            $this->logContext($config, $request, $response)
+        );
 
-        $this->logger->log($level, 'API 调用信息', $context);
+        return $next($config, $request, $response);
     }
 
     protected function logLevel(ResponseInterface $response): string

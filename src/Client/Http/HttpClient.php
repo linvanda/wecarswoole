@@ -43,6 +43,7 @@ class HttpClient implements IClient
     /**
      * @param array $params
      * @return Response
+     * @throws \WecarSwoole\Exceptions\ParamsCannotBeNullException
      */
     public function call(array $params): Response
     {
@@ -137,10 +138,9 @@ class HttpClient implements IClient
 
     private static function formatHeaderKey(string $key): string
     {
-        $k = explode('-', $key);
         $k = array_map(function ($item) {
             return ucfirst($item);
-        }, $k);
+        }, explode('-', $key));
 
         return implode('-', $k);
     }

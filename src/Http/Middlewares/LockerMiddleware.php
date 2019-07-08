@@ -8,6 +8,7 @@ use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use WecarSwoole\Http\Controller;
 use WecarSwoole\Middleware\Middleware;
+use WecarSwoole\Middleware\Next;
 use WecarSwoole\RedisFactory;
 
 /**
@@ -31,26 +32,27 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
     }
 
     /**
+     * @param Next $next
      * @param Request $request
      * @param Response $response
-     * @return bool
+     * @return mixed
      * @throws \Exception
      */
-    public function before(Request $request, Response $response)
+    public function before(Next $next, Request $request, Response $response)
     {
         if (self::$on === false) {
-            return true;
+            goto last;
         }
 
         $conf = Config::getInstance()->getConf('concurrent_locker');
         if (!$conf || strtolower($conf['onoff']) == 'off' || !isset($conf['redis'])) {
             self::$on = false;
-            return true;
+            goto last;
         }
 
         if (!Config::getInstance()->getConf("redis." . $conf['redis'])) {
             self::$on = false;
-            return true;
+            goto last;
         }
 
         try {
@@ -62,13 +64,13 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
                 self::$on = false;
             }
 
-            return true;
+            goto last;
         }
 
         self::$on = true;
 
         if (!($key = $this->key($request))) {
-            return true;
+            goto last;
         }
 
         $this->locker = new Locker($redis, $key, $this->timeout);
@@ -77,7 +79,8 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
             throw new \Exception("获取并发锁失败，请不要频繁请求");
         }
 
-        return true;
+        last:
+        return $next($request, $response);
     }
 
     public function after(Request $request, Response $response)
@@ -89,13 +92,14 @@ class LockerMiddleware extends Middleware implements IControllerMiddleware
         $this->locker && $this->locker->unlock();
     }
 
-    public function gc()
+    public function gc(Next $next)
     {
         if (is_bool(self::$on) && !self::$on) {
-            return;
+            return $next();
         }
 
         $this->locker = null;
+        return $next();
     }
 
     /**

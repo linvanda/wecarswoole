@@ -8,6 +8,7 @@ use EasySwoole\Http\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use WecarSwoole\Container;
+use WecarSwoole\Middleware\Next;
 
 /**
  * 请求信息记录
@@ -19,35 +20,42 @@ class RequestRecordMiddleware implements IControllerMiddleware
     protected $logTheRequest;
     protected $startTime;
 
-    public function before(Request $request, Response $response)
+    /**
+     * @param Next $next
+     * @param Request $request
+     * @param Response $response
+     * @return bool|mixed
+     */
+    public function before(Next $next, Request $request, Response $response)
     {
         if (self::$on === false) {
-            return true;
+            goto last;
         }
 
         $conf = Config::getInstance()->getConf('request_log');
         if (!$conf || !isset($conf['onoff']) || $conf['onoff'] == 'off' || !$conf['methods']) {
             self::$on = false;
-            return true;
+            goto last;
         }
 
         self::$on = true;
 
         if (!in_array(strtoupper($request->getMethod()), array_map(function ($item) {return strtoupper($item);}, $conf['methods']))) {
             $this->logTheRequest = false;
-            return true;
+            goto last;
         }
 
         $this->logTheRequest = true;
         $this->startTime = time();
 
-        return true;
+        last:
+        return $next($request, $response);
     }
 
-    public function after(Request $request, Response $response)
+    public function after(Next $next, Request $request, Response $response)
     {
         if (self::$on === false || !$this->logTheRequest) {
-            return;
+            return $next($request, $response);
         }
 
         $uri = $request->getUri()->getPath() . '?' . $request->getUri()->getQuery();
@@ -59,12 +67,15 @@ class RequestRecordMiddleware implements IControllerMiddleware
         ];
 
         $this->log($uri, $context);
+
+        return $next($request, $response);
     }
 
-    public function gc()
+    public function gc(Next $next)
     {
         $this->logTheRequest = null;
         $this->startTime = null;
+        return $next();
     }
 
     protected function log(string $uri, array $context)

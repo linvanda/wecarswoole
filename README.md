@@ -60,7 +60,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
            },
            "packagist": {
                "type": "composer",
-               "url": "https://packagist.laravel-china.org"
+               "url": "https://mirrors.aliyun.com/composer/"
            }
        }
    }
@@ -122,6 +122,41 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 4. 开发完成，发布；
 
 > 注意：不要执行 `composer update` 一次更新所有包，要更新哪个就更新哪个。
+
+
+
+### 移除不需要的包
+
+两种方式：
+
+- `composer remove $package-name`；
+- 从 composer.json 中手动删除不需要的包，然后执行`composer update $package-name`；
+
+
+
+### 更改命名空间
+
+在 composer.json 中添加或修改了 autoload 项后，需执行 `composer dump-autoload` 更新自动加载；
+
+
+
+### 更换国内镜像源
+
+目前用的 composer 镜像是阿里云的，万一今后不可用，需要更换成其他镜像源，请按照以下步骤执行：
+
+1. 修改项目根目录下的 composer.json 文件，更换源：
+
+   ```json
+   "repositories": {
+     	...
+       "packagist": {
+           "type": "composer",
+           "url": "https://mirrors.aliyun.com/composer/"
+       }
+   }
+   ```
+
+2. 执行命令更新 composer.lock 文件使用新源：`composer update nothing`
 
 
 
@@ -1431,7 +1466,9 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
 
 - 提供 shouldRetry()、withData(array $data)、withContext(array \$context) 方法供设置以上属性，这些方法可链式调用：
 
-  
+  ```php
+  throw (new Exception("该手机号已经存在", 301))->withContext([...])->withData([...])->shouldRetry();
+  ```
 
 
 

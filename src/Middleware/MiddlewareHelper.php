@@ -43,21 +43,33 @@ trait MiddlewareHelper
      * 如果执行返回 false 则停止后续执行
      * @param string $method
      * @param array ...$params
-     * @return bool
+     * @return mixed
      */
-    protected function execMiddlewares(string $method, ...$params): bool
+    protected function execMiddlewares(string $method, ...$params)
     {
-        foreach ($this->getMiddlewares() as $middleware) {
-            if (!method_exists($middleware, $method)) {
-                continue;
-            }
+        $middlewares = $this->getMiddlewares();
 
-            if (call_user_func([$middleware, $method], ...$params) === false) {
-                return false;
-            }
+        if (!$middlewares) {
+            return true;
         }
 
-        return true;
+        // 第一个
+        $first = $prev = new Next([array_shift($middlewares), $method]);
+
+        foreach ($middlewares as $middleware) {
+            $next = new Next([$middleware, $method]);
+            $prev->addNext($next);
+            $prev = $next;
+        }
+
+        // 最后一个
+        $prev->addNext(
+            new Next(function () {
+                return true;
+            })
+        );
+
+        return $first(...$params);
     }
 
     private function buildMiddlewares($middlewares): array

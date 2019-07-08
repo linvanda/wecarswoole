@@ -6,6 +6,7 @@
  use EasySwoole\Http\Response;
  use EasySwoole\Http\Message\Uri;
  use Psr\Log\LoggerInterface;
+ use WecarSwoole\Middleware\Next;
 
  /**
   * 接口请求超时预警
@@ -35,14 +36,14 @@ class RequestTimeMiddleware implements IControllerMiddleware
         $this->logger = $logger;
     }
 
-    public function before(Request $request, Response $response)
+    public function before(Next $next, Request $request, Response $response)
     {
         $this->startTime = time();
         $this->requestId = $this->requestKey($request);
-        return true;
+        return $next($request, $response);
     }
 
-    public function after(Request $request, Response $response)
+    public function after(Next $next, Request $request, Response $response)
     {
         $stats = $this->redis->get($this->requestId);
 
@@ -64,12 +65,15 @@ class RequestTimeMiddleware implements IControllerMiddleware
         $stats['total']++;
 
         $this->redis->set($this->requestId, json_encode($stats), 60 * 10);
+
+        return $next($request, $response);
     }
 
-    public function gc()
+    public function gc(Next $next)
     {
         $this->startTime = null;
         $this->requestId = null;
+        return $next();
     }
 
     private function requestKey(Request $request)
