@@ -20,7 +20,8 @@ class MockRequestMiddleware implements IRequestMiddleware
 
     public function before(Next $next, HttpConfig $config, IHttpRequestBean $request)
     {
-        if (($mockData = $this->getMockConfig($config, $request)) && $mockData['activate']) {
+        // 仅 dev 环境才 mock
+        if (ENVIRON === 'dev' && ($mockData = $this->getMockData($config, $request)) && $mockData['activate']) {
             // 返回前先执行 next
             $next($config, $request);
 
@@ -36,7 +37,7 @@ class MockRequestMiddleware implements IRequestMiddleware
         return $next($config, $request, $response);
     }
 
-    private function getMockConfig(HttpConfig $config, IHttpRequestBean $request)
+    private function getMockData(HttpConfig $config, IHttpRequestBean $request)
     {
         $mockConf = $this->loadConfig();
 
