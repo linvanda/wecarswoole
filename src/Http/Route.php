@@ -3,7 +3,6 @@
 namespace WecarSwoole\Http;
 
 use WecarSwoole\Middleware\MiddlewareHelper;
-use WecarSwoole\IRouteMiddleware;
 use FastRoute\RouteCollector;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
