@@ -21,6 +21,8 @@ abstract class Route
     use MiddlewareHelper;
 
     protected $routeCollector;
+    // 路由前缀
+    protected $prefix;
 
     public function __construct(RouteCollector $collector)
     {
@@ -51,7 +53,7 @@ abstract class Route
     {
         $this->routeCollector->addRoute(
             $methods,
-            $routePattern,
+            $this->prefix ? implode('/', [rtrim($this->prefix, '/'), ltrim($routePattern, '/')]) : $routePattern,
             function (Request $request, Response $response) use ($handler) {
                 // 执行中间件
                 try {
