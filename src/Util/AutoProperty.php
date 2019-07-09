@@ -16,8 +16,8 @@ trait AutoProperty
         foreach ($params as $param) {
             if (property_exists($this, $param->getName()) && isset($args[$index])) {
                 $this->{$param->getName()} = $args[$index];
-                $index++;
             }
+            $index++;
         }
     }
 }
