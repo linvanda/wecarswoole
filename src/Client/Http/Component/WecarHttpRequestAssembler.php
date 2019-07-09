@@ -2,6 +2,7 @@
 
 namespace WecarSwoole\Client\Http\Component;
 
+use WecarSwoole\Exceptions\Exception;
 use WecarSwoole\Signer\WecarSigner;
 use WecarSwoole\Util\Config as UtilConfig;
 
@@ -12,8 +13,19 @@ use WecarSwoole\Util\Config as UtilConfig;
  */
 class WecarHttpRequestAssembler extends DefaultHttpRequestAssembler
 {
+    /**
+     * @param array $flagParams
+     * @param array $queryParams
+     * @param array $body
+     * @return array
+     * @throws Exception
+     */
     protected function reassemble(array $flagParams, array $queryParams, array $body): array
     {
+        if (!isset($this->config->appId)) {
+            throw new Exception("当前项目没有配置合法的app_id");
+        }
+
         // 签名器
         $signer = new WecarSigner();
         $currentServerInfo = UtilConfig::getServerInfoByAppId($this->config->appId);
