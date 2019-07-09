@@ -26,7 +26,7 @@ class Map implements \Iterator, \ArrayAccess, \Countable
         if ($class) {
             // 有类型限制，检查类型
             foreach ($array as $item) {
-                if (!is_subclass_of($item, $class)) {
+                if (!is_a($item, $class)) {
                     throw new Exception("array item must be subclass of $class");
                 }
             }
