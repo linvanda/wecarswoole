@@ -98,12 +98,11 @@ class Map implements \Iterator, \ArrayAccess, \Countable
             // 不存在，则在末尾追加
             $this->keys[] = $offset;
             $this->values[] = $value;
+            $this->count++;
         } else {
             $this->keys[$index] = $offset;
             $this->values[$index] = $value;
         }
-
-        $this->count++;
     }
 
     public function offsetUnset($offset)
