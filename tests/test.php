@@ -17,11 +17,4 @@ class A
     }
 }
 
-$a = new A(null);
-$a->setWhenNull([
-   'name' => '张三',
-   'age' => 34,
-   'loverMan' => '松林'
-]);
-
-echo \WecarSwoole\Util\Random::str(100);
+echo in_array(0, [null, '', []], true);

@@ -14,6 +14,8 @@ if (file_exists($file)) {
     die("include composer autoload.php fail\n");
 }
 
+include_once EASYSWOOLE_ROOT . '/constant.php';
+
 $args = $argv;
 array_shift($args);
 
