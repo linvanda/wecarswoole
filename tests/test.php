@@ -17,4 +17,7 @@ class A
     }
 }
 
-echo in_array(0, [null, '', []], true);
+$a = new A('三');
+$b = clone $a;
+$b->name = '四';
+echo $a->name;

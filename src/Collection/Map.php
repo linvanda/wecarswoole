@@ -90,7 +90,7 @@ class Map implements \Iterator, \ArrayAccess, \Countable
             return;
         }
 
-        if ($this->class && !is_subclass_of($value, $this->class)) {
+        if ($this->class && !is_a($value, $this->class)) {
             throw new Exception("value must be subclass of {$this->class}");
         }
 
