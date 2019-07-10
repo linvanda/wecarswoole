@@ -24,8 +24,4 @@ $a->setWhenNull([
    'loverMan' => '松林'
 ]);
 
-echo $a->name;
-echo "\n";
-echo $a->age;
-echo "\n";
-echo $a->loverMan;
+echo \WecarSwoole\Util\Random::str(100);
