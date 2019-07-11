@@ -147,7 +147,7 @@ class Map implements \Iterator, \ArrayAccess, \Countable
 
         foreach ($this->keys as $key) {
             if ($map[$key] && $map[$key] == $this->offsetGet($key)) {
-                $resultArr[] = $this->offsetGet($key);
+                $resultArr[$key] = $this->offsetGet($key);
             }
         }
 
