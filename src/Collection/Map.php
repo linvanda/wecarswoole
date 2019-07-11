@@ -135,4 +135,22 @@ class Map implements \Iterator, \ArrayAccess, \Countable
         }
         return $this->values[$this->count - 1];
     }
+
+    /**
+     * 取两个 Map 的交集：key 和 value 都相等
+     * @param Map $map
+     * @return Map
+     */
+    public function intersect(Map $map): ?Map
+    {
+        $resultArr = [];
+
+        foreach ($this->keys as $key) {
+            if ($map[$key] && $map[$key] == $this->offsetGet($key)) {
+                $resultArr[] = $this->offsetGet($key);
+            }
+        }
+
+        return empty($resultArr) ? null : new Map($resultArr);
+    }
 }
