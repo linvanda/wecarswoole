@@ -1008,6 +1008,8 @@ EasySwooleEvent.php : 全局事件
 
 框架默认使用的是 MySQL 实现，在 `config/di.php` 中定义：   `'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository')`，这里要求接口所在的目录结构和Foundation/Repository/ 目录结构一致，且命名需符合规范（将 I 替换成 MySQL，其它不变）。如果需要更改实现，需在此处配置（注意放到这条之前，否则不会用到。具体参见 [PHP-DI](http://php-di.org)）。
 
+
+
 **MySQL 版仓储不允许跨库。**
 
 - 仓储接口定义：一般直接放在 app/Domain/$module/ 下面（对于复杂的模块也可以定义专门子目录）：
@@ -1076,8 +1078,8 @@ EasySwooleEvent.php : 全局事件
   }
   ```
 
-- 仓储方法入参可接收类型：Entity 类型、基本数据类型；
-- 仓储方法返回参数：Entity 类型、基本数据类型、DTO；
+  
+
 
 > 注：为何要分开仓储接口定义和仓储实现？
 >
@@ -1376,7 +1378,14 @@ return [
 ];
 ```
 
-3. 调用：
+> 配置的四个级别：
+>
+> - 全局，在 api.php 中配置的；
+> - 组级别，在各组中配置的；
+> - api 级别，在单个 api 中配置的；
+> - 调用级别，在调用时传入；
+
+1. 调用：
 
 ```php
 use WecarSwoole\Client\API;
@@ -1482,8 +1491,6 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
        ]
    ];
    ```
-
-   
 
 > 注：实际使用中，一般会将对外部系统的调用封装成服务类（Service），服务类调用具体接口并返回相应的数据（基本数据类型或者自定义类型）。
 
