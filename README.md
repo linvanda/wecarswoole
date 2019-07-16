@@ -1,6 +1,14 @@
 WecarSwoole
 ----
-### 简介
+#### 目录
+
+[简介](#brief)
+
+[领域](#domain)
+
+
+
+<h3 id="brief">简介</h3>
 
 WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开发框架。
 
@@ -32,7 +40,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
        "description": "your project name",
        "type": "project",
        "require": {
-           "framework/wecarswoole": "^1.0.3"
+           "framework/wecarswoole": "^1.0"
        },
      	"require-dev": {
            "phpunit/phpunit": "^7.0",
@@ -70,11 +78,11 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
 4. 执行 `php vendor/bin/wecarswoole install` 安装 WecarSwoole 框架
 
-5. 修改配置文件
+5. 修改配置文件（参见后面配置文件说明）
 
 6. 启动：`php easyswoole start -d --env=dev` (—env : dev、test、preview、produce，-d 表示后台运行)
 
-7. 以调试模式启动：`php easyswoole start --env=dev --debug`
+7. 以调试模式启动：`php easyswoole start --env=dev --debug`（调试模式下会打印所有的日志到屏幕）
 
 8. 停止：`php easyswoole stop`
 
@@ -88,10 +96,9 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 > 2. 当搭建了私有 composer 仓库后，可以删掉这些 `vcs`  配置，只需将 `packagist` 项改成我们自己的私有仓库地址即可；
 > 4. 当执行 composer 命令出错时（如 install、update 等），请在后面加 -vvv 查看详细信息（如 composer install -vvv）；
 > 5. 项目不要提交 vendor 目录到 git 中；
-> 6. 关于国内镜像： https://packagist.phpcomposer.com 没人维护了，现在用了 https://packagist.laravel-china.org，虽然 Laravel China 声称会长期维护，不过不可保证，可考虑搭建内部 composer 库；
 > 6. 全局修改 composer 源：
 >    1. 查看现在用的源：`composer config -lg`；
->    2. 修改源：`composer config -g repo.packagist composer https://packagist.laravel-china.org`
+>    2. 修改源：`composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/`
 
 
 
@@ -291,6 +298,8 @@ vendor/ : 第三方库
 
 tests/ : 单元测试
 
+mock/：(api请求)数据模拟
+
 dev.php : 开发环境（包括开发、测试、预发布）swoole_server 配置
 
 produce.php : 生产环境 swoole_server 配置
@@ -339,7 +348,7 @@ EasySwooleEvent.php : 全局事件
 
   （以下仅作为概念阐述，不了解没关系）
 
-  - Service（服务)。全称是**领域服务**(相对于应用服务)。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当保持简单（即自己不实现业务细节，而是通过调用、组织其他类来实现功能），而且是**无状态的**（即 Service 不能在属性中保存业务状态信息）。
+  - Service（服务)。全称是**领域服务**(相对于应用服务)。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当是**无状态的**（即 Service 不能在属性中保存业务状态信息）。
 
     另一个常见的 Service 是外部接口调用，如调用外部的积分系统，此时一般我们会创建一个单独的 Service 封装接口调用。
 
@@ -357,7 +366,7 @@ EasySwooleEvent.php : 全局事件
 
     不熟悉 DDD 甚至是面向对象设计的话，上面的概念会难以理解，实际操作中可以作如下简化：
 
-    - Service（服务）。同上。服务主要起协调、组合的作用，其本身不应提供具体的业务实现；
+    - Service（服务）。同上。服务主要起协调、组合功能的作用；
     - Entity（实体）。我们将上面的 Entity、Value Object、Aggregation 不做区分统一看作 实体。每个实体类都不大，负责的功能比较单一，多个实体组合/聚合完成一项完整的功能。总之，你可以把这里的实体看作类似之前的 Logic，不过是进行了职责划分的多个类的有机组合；
     - Domain Event（领域事件）。相当于钩子，采用的是观察者模式，实现复杂业务解耦；
     - Repository（仓储）。同上。
@@ -386,6 +395,7 @@ EasySwooleEvent.php : 全局事件
 - Service 可以调用另一个 Service；
 - Service 可以调用实体 Entity 来实现功能；
 - Service 可以调用仓储获得 Entity；
+- Service 可以发布领域事件；
 - Entity 可以调用其它 Entity；
 - Entity 可以调用 Service；
 - Entity 可以发布事件供外围程序处理；
@@ -417,7 +427,7 @@ EasySwooleEvent.php : 全局事件
     	// 具体应用请修改
     	'app_name' => '应用名称',
       'app_flag' => 'SY', // 应用标识
-      // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）
+      // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）、sms
       'logger' => [
           'debug' => [
               'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
@@ -439,7 +449,20 @@ EasySwooleEvent.php : 全局事件
                   ]
               ],
               'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
-          ]
+          ],
+        	'emergency' => [
+            'mailer' => [
+                'driver' => 'default',
+                'subject' => '喂车告警',
+                'to' => [
+                    // 邮箱列表，格式：'songlin.zhang@weicheche.cn' => '张松林'
+                ]
+            ],
+            'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+            'sms' => [
+                // 手机号列表，格式：'18987674848' => '张松林'
+            ]
+        ],
       ],
       // 邮件。可以配多个
       'mailer' => [
@@ -468,7 +491,8 @@ EasySwooleEvent.php : 全局事件
   return [
       // 定时任务项目名，同名的多台服务器只会有一台启动定时任务，请务必给不同项目起不同的名字，否则会相互影响
       'name' => 'user-center-platform',
-      // crontab 需要 redis
+      // 实际项目中 ip 和 redis 配置一个
+    	'ip' => ['192.168.0.23'], // 指定 这台服务器执行 crontab，ip 优先于 redis
       'redis' => 'main',
       'tasks' => [
           \App\Cron\Test::class
@@ -494,24 +518,28 @@ EasySwooleEvent.php : 全局事件
   <?php
   
   use App\Foundation\CacheFactory;
-  use Psr\SimpleCache\CacheInterface;
-  use Psr\Log\LoggerInterface;
-  use Psr\EventDispatcher\EventDispatcherInterface;
+  ...
   
   return [
-      /**
-       * 仓储依赖注入配置
-       * 默认取 Foundation\Repository 下同模块的 MySQL*Repository
-       * 如果有自定义的，要放到默认配置的前面，否则不会生效
-       */
-      'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository'),
+      // 仓储
+      'App\Domain\*\I*Repository' => autowire('\App\Foundation\Repository\*\MySQL*Repository'),
       // 缓存
-      CacheInterface::class => \DI\factory([CacheFactory::class, 'build']),
+      CacheInterface::class => function () {
+          return CacheFactory::build();
+      },
       // 日志
-      LoggerInterface::class => \DI\create(\WecarSwoole\Logger::class),
+      LoggerInterface::class => function () {
+          return Logger::getInstance();
+      },
       // 事件
-      EventDispatcherInterface::class => \DI\create(\Symfony\Component\EventDispatcher\EventDispatcher::class),
-      'SymfonyEventDispatcher' => \DI\get(EventDispatcherInterface::class),
+      EventDispatcherInterface::class => function () {
+          return new EventDispatcher();
+      },
+      'SymfonyEventDispatcher' =>  get(EventDispatcherInterface::class),
+      // DI 容器
+      ContainerInterface::class => function () {
+          return Di::getInstance()->get('di-container');
+      }
   ];
   ```
 
@@ -611,45 +639,36 @@ EasySwooleEvent.php : 全局事件
   /**
    * 路由基类
    * 中间件的注册方式：
-   *  1. 类全局注册：在子类的$middleware数组中配置中间件类名，则此类中定义的所有路由共用该中间件
-   *  2. 路由注册：在设置路由时于参数中指定中间件类名，则仅用于该路由
+   *  在子类的构造函数中调用 $this->appendMiddlewares(...)
    * 中间件执行顺序取决于注册顺序，类全局的先于特定路由的
    */
   abstract class Route
   {
       use MiddlewareHelper;
+    
+    	...
   
-      protected $routeCollector;
-  
-      public function __construct(RouteCollector $collector)
-      {
-          $this->routeCollector = $collector;
-      }
-  
-      public function get(string $routePattern, string $handler, array $middleware = [])
-      {
-          $this->addRoute(['GET'], $routePattern, $handler, $middleware);
-      }
-  
-      public function post(string $routePattern, string $handler, array $middleware = [])
-      {
-          $this->addRoute(['POST'], $routePattern, $handler, $middleware);
-      }
-  
-      public function put(string $routePattern, string $handler, array $middleware = [])
-      {
-          $this->addRoute(['PUT'], $routePattern, $handler, $middleware);
-      }
-  
-      public function delete(string $routePattern, string $handler, array $middleware = [])
-      {
-          $this->addRoute(['DELETE'], $routePattern, $handler, $middleware);
-      }
-  
-      public function addRoute(array $methods, string  $routePattern, string $handler, array $middleware = [])
+      public function get(string $routePattern, string $handler)
       {
           ...
       }
+  
+      public function post(string $routePattern, string $handler)
+      {
+          ...
+      }
+  
+      public function put(string $routePattern, string $handler)
+      {
+          ...
+      }
+  
+      public function delete(string $routePattern, string $handler)
+      {
+          ...
+      }
+    
+    	...
   
       /**
        * 子类在此处添加路由
@@ -658,71 +677,7 @@ EasySwooleEvent.php : 全局事件
       abstract function map();
   }
   ```
-
-  MiddlewareHelper 提供了以下方法用于添加中间件：
-
-  ```php
-  <?php
   
-  namespace WecarSwoole;
-  
-  /**
-   * 中间件操作助手
-   * Trait MiddlewareHelper
-   * @package WecarSwoole
-   */
-  trait MiddlewareHelper
-  {
-      private $middleware = [];
-      private $middlewareObjects = [];
-  
-      /**
-       * 设置中间件列表，该方法会重置之前设置过的值
-       * @param array $middlewareNameList
-       */
-      public function setMiddleware(array $middlewareNameList)
-      {
-          $this->middleware = $middlewareNameList;
-      }
-  
-      /**
-       * 返回中间件类名数组
-       * @return array
-       */
-      public function getMiddleware()
-      {
-          return $this->middleware;
-      }
-  
-      /**
-       * 追加中间件
-       * @param string|array $middlewareName
-       */
-      public function appendMiddleware($middlewareName)
-      {
-          if (is_string($middlewareName)) {
-              $this->middleware[] = $middlewareName;
-          } else {
-              $this->middleware = array_merge($this->middleware, $middlewareName);
-          }
-      }
-  
-      /**
-       * 删除中间件
-       * @param string $middlewareName
-       */
-      public function removeMiddleware(string $middlewareName)
-      {
-          $index = array_search($middlewareName, $this->middleware);
-          if ($index !== false) {
-              unset($this->middleware[$index]);
-          }
-      }
-     
-      ...
-  }
-  ```
-
 - 路由类需继承 `WecarSwoole\Http\Route` 抽象类并实现 map() 方法定义具体路由，使用 get、post、put、delete 定义 RESTful API 接口；
 
   例：
@@ -904,7 +859,7 @@ EasySwooleEvent.php : 全局事件
 
 
 
-#### 领域
+<h3 id="domain">领域</h3>
 
 ##### 领域事件
 
@@ -1527,6 +1482,12 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
   ```php
   throw (new Exception("该手机号已经存在", 301))->withContext([...])->withData([...])->shouldRetry();
   ```
+
+
+
+#### 中间件
+
+待完善。
 
 
 
