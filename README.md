@@ -1008,7 +1008,7 @@ EasySwooleEvent.php : 全局事件
 
 框架默认使用的是 MySQL 实现，在 `config/di.php` 中定义：   `'App\Domain\*\I*Repository' => \DI\create('\App\Foundation\Repository\*\MySQL*Repository')`，这里要求接口所在的目录结构和Foundation/Repository/ 目录结构一致，且命名需符合规范（将 I 替换成 MySQL，其它不变）。如果需要更改实现，需在此处配置（注意放到这条之前，否则不会用到。具体参见 [PHP-DI](http://php-di.org)）。
 
-
+**仓储里面不要写业务逻辑，仅仅实现存储**。如不应该在仓储里面进行用户存在性判断。
 
 **MySQL 版仓储不允许跨库。**
 
@@ -2203,14 +2203,3 @@ Http/Controller 是系统最主要的对外 API，API 一旦定义则很难做�
 参见[中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines)。
 
 
-
-### 待实现：
-
-- webSocket 使用规范；
-- 单元测试引入；
-- 消息队列；
-- 接口调用：智能决定重试次数、熔断等（后面视具体情况是否需要）；
-- 服务健康状态监控；
-- 请求执行日志；
-- 异步事件订阅；
-- 防止重复请求
