@@ -4,56 +4,18 @@
 
 ### 配置
 
-- config/config.php 配置入口文件（修改改文件后需要 stop & start 服务）
+- config/config.php 配置入口文件（修改文件后需要 stop & start 服务）
 
   实际项目请修改 app_name 和 app_flag 项。
 
   ```php
   <?php
   
-  use \WecarSwoole\Util\File;
-  
   $baseConfig = [
-    	// 具体应用请修改
-    	'app_name' => '应用名称',
-      'app_flag' => 'SY', // 应用标识
-      // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）、sms
-      'logger' => [
-          'debug' => [
-              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
-          ],
-          'info' => [
-              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
-          ],
-          'warning' => [
-              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/warning.log'),
-          ],
-          'error' => [
-              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
-          ],
-          'critical' => [
-              'mailer' => [
-                  'driver' => 'default',
-                  'subject' => '喂车邮件告警',
-                  'to' => [
-                  ]
-              ],
-              'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
-          ],
-        	'emergency' => [
-            'mailer' => [
-                'driver' => 'default',
-                'subject' => '喂车告警',
-                'to' => [
-                    // 邮箱列表，格式：'songlin.zhang@weicheche.cn' => '张松林'
-                ]
-            ],
-            'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
-            'sms' => [
-                // 手机号列表，格式：'18987674848' => '张松林'
-            ]
-        ],
-      ],
+      'app_name' => '用户系统',
+      // 应用标识
+      'app_flag' => 'YH',
+      'logger' => include_once __DIR__ . '/logger.php',
       // 邮件。可以配多个
       'mailer' => [
           'default' => [
@@ -62,15 +24,71 @@
               'password' => 'Chechewei123'
           ]
       ],
+      // 并发锁配置
+      'concurrent_locker' => [
+          'onoff' => 'on',
+          'redis' => 'main'
+      ],
+      // 请求日志配置。默认是关闭的，如果项目需要开启，则自行修改为 on
+      'request_log' => [
+          'onoff' => 'off',
+          // 记录哪些请求类型的日志
+          'methods' => ['POST', 'GET', 'PUT', 'DELETE']
+      ],
   ];
   
   return array_merge(
       $baseConfig,
       ['cron_config' => require_once __DIR__ . '/cron.php'],
-      ['api' => require_once __DIR__ . '/api/api.php'],
-      ['subscriber' => require_once __DIR__ . '/subscriber/subscriber.php'],
       require_once __DIR__ . '/env/' . ENVIRON . '.php'
   );
+  
+  ```
+  
+- config/logger.php 日志配置文件（修改改文件后需要 stop & start 服务）
+
+  ```php
+  <?php
+  
+  use WecarSwoole\Util\File;
+  
+  return [
+      'debug' => [
+          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/info.log'),
+      ],
+      'info' => [
+          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/info.log'),
+      ],
+      'warning' => [
+          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/warning.log'),
+      ],
+      'error' => [
+          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+      ],
+      'critical' => [
+          'mailer' => [
+              'driver' => 'default',
+              'subject' => '喂车告警',
+              'to' => [
+                  'songlin.zhang@weicheche.cn' => '张松林'
+              ]
+          ],
+          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+      ],
+      'emergency' => [
+          'mailer' => [
+              'driver' => 'default',
+              'subject' => '喂车告警',
+              'to' => [
+                  'songlin.zhang@weicheche.cn' => '张松林'
+              ]
+          ],
+          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+          'sms' => [
+              '18588495955' => '张松林'
+          ]
+      ],
+  ];
   ```
 
 - config/cron.php 定时任务配置文件（修改改文件后需要 stop & start 服务）
@@ -96,11 +114,11 @@
   <?php
   
   return [
-      \App\Subscribers\User::class,
+      \App\Subscribers\UserSubscriber::class
   ];
   ```
 
-- config/api/api.php 外部 api 配置，详情见后文说明（修改后 reload 服务即可）
+- config/api/api.php 外部 api 配置，[详情](./invoke.md)
 
 - config/di/di.php 依赖注入配置（修改后 reload 服务即可）
 
@@ -208,5 +226,10 @@
       ],
       // 最低记录级别：debug, info, warning, error, critical, off
       'log_level' => 'debug',
+    	'base_url' => 'https://wx.weicheche.cn/v2/refuel',
+    	'server' => require_once __DIR__ . '/dev_server.php'
   ];
   ```
+  
+
+[返回](../README.md)

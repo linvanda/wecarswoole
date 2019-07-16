@@ -1,39 +1,158 @@
 ### Entity
 
-创建类继承 `\WecarSwoole\Entity`：
+Entity 一般和数据库记录对应（但不代表说必须要和数据表一一对应），具有唯一标识，是领域对象的核心。两个 Entity 相等的充要条件是两者的 id 相等。
+
+Entity 属于领域构建中的小粒度单元，不应当和其他对象存在过于复杂的依赖关系——如果出现过于复杂的依赖关系，说明 Entity 需要拆分，或者某些逻辑实现需要提取成 Service。
+
+Entity 不应当对基础设施有任何依赖——框架属于典型的基础设施。对基础设施的任何依赖都应当转变成对接口的依赖，并通过依赖注入提供依赖的具体实现。换句话说，一个 Entity 类可以不加修改地迁移到其他地方（如其他框架中）。
+
+继承 `\WecarSwoole\Entity`：
 
 ```php
-class Id extends \WecarSwoole\Entity
-{
-    protected $id;
-    protected $type;
+<?php
 
-    public function __construct(string $id, string $type)
-    {
-        $this->id = $id;
-        $this->type = $type;
-    }
-  	...
-}
+namespace App\Domain\User;
 
-class User extends \WecarSwoole\Entity
+use App\DTO\User\UserDTO;
+...
+
+class User extends Entity
 {
+    public const GENDER_MALE = 1;
+    public const GENDER_FEMAIL = 2;
+    public const GENDER_UNKNOW = 0;
+
+    public const UPDATE_NONE = 1;
+    public const UPDATE_ONLY_NULL = 2;
+    public const UPDATE_NEW = 3;
+
+    /** @var UserId $userId 是内部标识，不应当对外暴露*/
+    protected $userId;
     protected $name;
-    protected $age;
-    protected $sex;
-    protected $id;
+    protected $nickname;
+    protected $gender;
+    protected $birthday;
+    /** @var string */
+    protected $regtime;
+    protected $headurl;
+    protected $tinyHeadurl;
+    /**
+     * 用户来源
+     * @var string
+     */
+    protected $registerFrom;
+    /**
+     * 车牌号列表
+     * @var array
+     */
+    protected $carNumbers = [];
+    /**
+     * 生日修改次数
+     * @var int
+     */
+    protected $birthdayChange = 0;
+    /**
+     * 邀请码
+     * @var string
+     */
+    protected $inviteCode;
 
-    public function __construct($name, $age, $sex, $idArr)
+    public function __construct(UserDTO $userDTO = null)
     {
-        $this->name = $name;
-        $this->age = $age;
-        $this->sex = $sex;
-        $this->id = new Id($idArr['id'], $idArr['type']);
+        if ($userDTO) {
+            // 从 DTO 创建 User 对象
+            $this->buildFromArray($userDTO->toArray());
+        }
+
+        // 组装 user 标识
+        $this->userId = new UserId($userDTO->uid, $userDTO->phone, $userDTO->relUids ?? [], $userDTO->partners);
+
+        // 邀请码
+        if (!$this->inviteCode) {
+            $this->inviteCode = Random::str(12);
+        }
+
+        $this->regtime = $this->regtime ?: date('Y-m-d H:i:s');
     }
+
+    public function uid(): int
+    {
+        return $this->userId->getUid();
+    }
+
+    public function setUid(int $uid)
+    {
+        $this->userId->setUid($uid);
+    }
+
+    public function partners(): PartnerMap
+    {
+        return $this->userId->getPartners();
+    }
+
+    public function addPartner(Partner $partner)
+    {
+        $this->userId->addPartner($partner);
+    }
+
+    /**
+     * @param int $type
+     * @param $flag
+     * @return Partner|null
+     * @throws \WecarSwoole\Exceptions\InvalidOperationException
+     */
+    public function getPartner(int $type, $flag = null): ?Partner
+    {
+        return $this->userId->getPartner($type, $flag);
+    }
+
+    public function relUids(): array
+    {
+        return $this->userId->getRelUids();
+    }
+
+    public function phone()
+    {
+        return $this->userId->getPhone();
+    }
+
+    public function equal(User $user): bool
+    {
+        return $user && $user->userId->getUid() === $this->userId->getUid();
+    }
+
+    /**
+     * 基于 DTO 信息更新自身信息
+     * @param UserDTO $userDTO
+     * @param IUserRepository $userRepository
+     * @param int $updateStrategy 更新策略
+     * @param bool $forceChangePhone 是否强制修改手机号，如果需要修改手机号，必须设置为 true
+     * @throws BirthdayException
+     * @throws Exception
+     * @throws InvalidPhoneException
+     * @throws PartnerException
+     */
+    public function updateFromDTO(
+        UserDTO $userDTO,
+        IUserRepository $userRepository,
+        int $updateStrategy = self::UPDATE_ONLY_NULL,
+        $forceChangePhone = false
+    ) {
+        if ($updateStrategy === self::UPDATE_NONE) {
+            return;
+        }
+
+        $this->validateDataFormat($userDTO);
+
+        if ($updateStrategy === self::UPDATE_ONLY_NULL) {
+            $this->updateIfNull($userDTO);
+        } elseif ($updateStrategy === self::UPDATE_NEW) {
+            $this->updateToNew($userDTO, $userRepository, $forceChangePhone);
+        }
+    }
+
   	...
 }
-
-$user = new User("张三", 12, '男', ['id' => '2342112213', 'type' => '身份证']);
 ```
 
 同 DTO，Entity 也可以调用 toArray() 将对象转成数组，方便对外输出：
@@ -63,3 +182,7 @@ array (
 ```
 
 Entity 可以调用 buildFromArray($array) 从数组构建对象。
+
+> 注：虽然 Entity 和 DTO 一样实现了 `IExtractable` 和 `IArrayBuildable` 接口，可以基于数组构建对象，以及将对象转成数组，不过在实践中要慎用此功能，表面上便捷的功能却造成了系统设计上的不稳定性，它们会造成跨层对象/数据结构之间的耦合。软件设计没有银弹。
+
+[返回](../README.md)

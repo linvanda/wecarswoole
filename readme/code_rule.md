@@ -37,3 +37,5 @@ phpmd 用来检测代码坏味道(如类大小、命名规范等)。
    2. 点击 Editor->Inspections，展开点击右侧的 PHP，勾选 PHP Mess Detector Validation，将相关 options 都选上，确定；
    3. 当写的代码不符合 phpmd 规范，则会有波浪线提示。
 
+
+[返回](../README.md)

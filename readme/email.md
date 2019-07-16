@@ -44,3 +44,6 @@ $message = new \Swift_Message("测试邮件", "<span style='color:red;'>邮件�
 $message->setFrom(['robot@weicheche.cn' => '喂车测试邮件'])->setTo('songlin.zhang@weicheche.cn')->setContentType('text/html');
 $this->mailer->send($message);
 ```
+
+
+[返回](../README.md)

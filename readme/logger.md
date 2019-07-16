@@ -11,10 +11,10 @@
   'log_level' => 'debug',
   ```
 
-  config/config.php 中配置每个级别的 handler，目前支持的有 file 和 mailer，file 对应的配置日志文件名，mailer 对应的是邮件配置。如果某个级别没配置，则使用低级别的配置。可以配置多个 handler：
+  config/logger.php 中配置每个级别的 handler，目前支持的有 file、mailer、sms，file 对应的配置日志文件名，mailer 对应的是邮件配置。如果某个级别没配置，则使用低级别的配置。可以配置多个 handler：
 
   ```php
-  // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）
+  // 日志配置，可配置：file（后面对应目录），mailer（后面对应邮件配置）、sms
   'logger' => [
       'debug' => [
           'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/debug_info.log'),
@@ -36,6 +36,19 @@
               ]
           ],
           'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+      ],
+    	    'emergency' => [
+          'mailer' => [
+              'driver' => 'default',
+              'subject' => '喂车告警',
+              'to' => [
+                  'songlin.zhang@weicheche.cn' => '张松林'
+              ]
+          ],
+          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+          'sms' => [
+              '18588495955' => '张松林'
+          ]
       ]
   ],
   ```
@@ -61,3 +74,6 @@
 > 所有 error 及以下的日志都是记录文件，critical 记录文件并发邮件，emergency 记录文件并发送邮件和短信。
 >
 > 在项目中抛出 CriticalErrorException 会记录 critical 级别日志，抛出 EmergencyErrorException 会记录 emergency 级别日志。
+
+
+[返回](../README.md)

@@ -73,4 +73,9 @@
 
 **禁止在 Domain 中直接使用 Container 获取依赖（这样会造成 Domain 对 Container 的依赖），应当通过参数传递依赖**。
 
+**最佳实践**：在 Controller 等处理程序中使用 Container::get/make 获取依赖，然后通过参数传递到其他层对象中。
+
 > 注意：easyswoole 属于常驻进程，除非重启，否则多次请求的 `$container` 都是同一个，因而 `$container->get("ClassName")` 在整个进程生命周期获取到的都是同一个对象实例，因而 `$container->get()` 只能用来获取单例（如 Cache、Logger 等）或者无状态对象，如果不然，则要用 `$container->make()`，否则会造成数据混乱。
+
+
+[返回](../README.md)

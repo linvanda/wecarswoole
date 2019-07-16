@@ -31,7 +31,7 @@
 
   （以下仅作为概念阐述，不了解没关系）
 
-  - Service（服务)。全称是**领域服务**(相对于应用服务)。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当是**无状态的**（即 Service 不能在属性中保存业务状态信息）。
+  - Service（服务)。领域服务。Service 是用来组织其他实体类或其他 Service 实现业务逻辑的。外界（如 Controller）一般调用 Service 完成任务。Service 应当是**无状态的**（即 Service 不能在属性中保存业务状态信息）。
 
     另一个常见的 Service 是外部接口调用，如调用外部的积分系统，此时一般我们会创建一个单独的 Service 封装接口调用。
 
@@ -82,3 +82,5 @@
 - Entity 可以调用其它 Entity；
 - Entity 可以调用 Service；
 - Entity 可以发布事件供外围程序处理；
+
+[返回](../README.md)

@@ -16,8 +16,8 @@
 use WecarSwoole\Transaction;
 ...
 
-$repos1 = Container::make(IUserRepository::class);
-$repos2 = Container::make(IMerchantRepository::class);
+$repos1 = Container::get(IUserRepository::class);
+$repos2 = Container::get(IMerchantRepository::class);
 
 $trans = Transaction::begin([$repos1, $repos2]);
 $res1 = $repos1->add(new User('13909094444'));
@@ -31,3 +31,5 @@ if ($res1 && $res2) {
     $trans->rollback();
 }
 ```
+
+[返回](../README.md)

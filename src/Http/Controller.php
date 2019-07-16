@@ -28,6 +28,7 @@ class Controller extends EsController
 
     /**
      * Controller constructor.
+     * @throws \Throwable
      * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
      */
     public function __construct()

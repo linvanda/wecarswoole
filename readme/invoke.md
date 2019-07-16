@@ -1,10 +1,10 @@
 ### 外部 API 调用
 
-对外部系统的 api 调用主要是通过配置来实现的，最简单的只需要配置 server 和 path信息即可，复杂的可以配置请求协议（目前仅支持 http(s)）、请求参数组装器、服务器地址解析器、响应参数解析器、拦截器等，实现定制化调用。配置好后在程序中调用 `\WecarSwoole\Client\Client::call($apiName, $requestData)` 即可。
+对外部系统的 API 调用主要是通过配置来实现的，最简单的只需要配置 server 和 path信息即可，复杂的可以配置请求协议（目前仅支持 http(s)）、请求参数组装器、响应参数解析器、中间件等，实现定制化调用。配置好后在程序中调用 `\WecarSwoole\Client\API::invoke($apiName, $requestData, $config)` 即可。
 
-其中 $apiName 是 api 别名而不是 uri，这样做的好处是当需要修改 uri 时仅需修改配置文件即可。
+其中 $apiName 是 api 别名而不是 uri。
 
-api 是分组配置的，最佳实践是同一个接口提供方的 api 放在一组，而不同的提供方往往其请求参数组装方式、响应参数解析方式甚至是协议都不同，一般放到不同分组中。喂车内部接口（OS的例外）由于遵循相同的处理方式，可放到一组。 
+API 是分组配置的，最佳实践是同一个接口提供方的 API 放在一组，而不同的提供方往往其请求参数组装方式、响应参数解析方式甚至是协议都不同，一般放到不同分组中。喂车内部接口（OS的例外）由于遵循相同的处理方式，可放到一组。 
 
 1. 配置 Server。在 config/env/$env.php 中定义（实际中应该使用配置中心）：
 
@@ -51,9 +51,11 @@ return [
             'response_parser' => JsonResponseParser::class,
             // 请求中间件，必须实现 \WecarSwoole\Client\Http\Middleware\IRequestMiddleware 接口
             'middlewares' => [
-                LogRequestMiddleware::class
+                LogRequestMiddleware::class,
+                MockRequestMiddleware::class
             ],
-          	'throw_exception' => true, // 当返回非 20X 时是否抛异常
+          	// 当返回非 20X 时是否抛异常
+          	'throw_exception' => true,
             // https ssl 相关配置
             'ssl' => [
                 // CA 文件路径
@@ -115,7 +117,7 @@ return [
 > - api 级别，在单个 api 中配置的；
 > - 调用级别，在调用时传入；
 
-1. 调用：
+3. 调用：
 
 ```php
 use WecarSwoole\Client\API;
@@ -124,17 +126,17 @@ $result = API::invoke('wc:users.add', $reqData, $config); // $config 提供调�
 var_export($result->getBody());
 ```
 
-Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议），api 具体用的什么协议是在配置文件中配置的，调用的时候不用管。
+API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议），api 具体用的什么协议是在配置文件中配置的，调用的时候不用管。
 
-支持针对不同的分组或者单个 api 配置不同的请求参数组装器和响应参数解析器，这对于和第三方合作是很有用的，比如我们可以针对不同的第三方配置不同的分组，这些分组有各自的组装器和解析器实现。
+支持针对不同的分组或者单个 API 配置不同的请求参数组装器和响应参数解析器，这对于和第三方合作是很有用的，比如我们可以针对不同的第三方配置不同的分组，这些分组有各自的组装器和解析器实现。
 
-系统对自身的 api 调用也需要在此处配置。
+系统对自身的 API 调用也需要在此处配置。
 
 4. 默认实现：
 
-   框架默认提供了 `\WecarSwoole\Client\Http\Component\DefaultHttpRequestAssembler`、`\DefaultHttpServerParser\DefaultHttpServerParser` 和 `WecarSwoole\Client\Http\Component\JsonResponseParser` 作为请求参数、服务器、响应参数的解析器，项目可以实现自己的。
+   框架默认提供了 `DefaultHttpRequestAssembler`、`WecarHttpRequestAssembler`、`WecarWithNoZipHttpRequestAssembler`、 `JsonResponseParser` 作为请求参数、响应参数的解析器，项目可以实现自己的。
 
-   - `DefaultHttpRequestAssembler`：使用此请求解析器时，Client::call() 传参格式：
+   - `DefaultHttpRequestAssembler`：使用此请求解析器时，API::invoke传参格式：
 
      ```php
      $params = [
@@ -166,11 +168,15 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
      ];
      ```
 
-5. Mock:
+5. 中间件：
+
+   实现 `WecarSwoole\Client\Http\Middleware\IRequestMiddleware` 接口，然后在配置文件中使用。
+
+6. Mock:
 
    很多时候需要跟第三方合作开发时，对方的接口尚未开发完毕，此时我们只能干等。
 
-   框架提供了 mock 功能，模拟外部 API 数据。
+   框架通过中间件提供了 Mock 功能，模拟外部 API 数据。
 
    - 在项目根目录下的 mock/http/ 中创建 mock 文件（可按照需要命名），其中写 mock 数据：
 
@@ -224,3 +230,5 @@ Client 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协�
 
 > 注：实际使用中，一般会将对外部系统的调用封装成服务类（Service），服务类调用具体接口并返回相应的数据（基本数据类型或者自定义类型）。
 
+
+[返回](../README.md)

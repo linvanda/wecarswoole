@@ -32,3 +32,11 @@ Http/Controller 是系统最主要的对外 API，API 一旦定义则很难做�
 ##### readme 文案书写规范
 
 参见[中文文案排版指北](https://github.com/sparanoid/chinese-copywriting-guidelines)。
+
+
+
+另外，easyswoole 目前更新较快，建议大家可去看下里面提供的其他有用的功能。
+
+
+
+[返回](../README.md)
