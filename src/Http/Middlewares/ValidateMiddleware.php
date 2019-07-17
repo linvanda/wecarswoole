@@ -83,10 +83,15 @@ class ValidateMiddleware extends Middleware implements IControllerMiddleware
     {
         $pRules = [];
         foreach ($paramRules as $k => $v) {
-            if (is_int($k) && is_string($v)) {
-                $pRules[$v] = [null, null];
+            if (!is_array($v)) {
+                if (is_int($k)) {
+                    $pRules[$v] = [null, null];
+                } else {
+                    $pRules[$k] = [$v];
+                }
                 continue;
             }
+
 
             $pRules[$k] = $this->formatRuleOptions($k, $v);
         }
