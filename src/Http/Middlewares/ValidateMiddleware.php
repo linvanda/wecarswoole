@@ -110,7 +110,7 @@ class ValidateMiddleware extends Middleware implements IControllerMiddleware
             return is_array($ruleOpts) ? $ruleOpts : [$ruleOpts];
         }
 
-        $rtn = $ruleOpts['arg'] ?? [];
+        $rtn = isset($ruleOpts['arg']) ? [$ruleOpts['arg']] : [];
         if ($ruleOpts['msg']) {
             $rtn[] = $ruleOpts['msg'];
         }
