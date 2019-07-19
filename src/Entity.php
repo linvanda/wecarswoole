@@ -12,6 +12,7 @@ use WecarSwoole\Util\GetterSetter;
 /**
  * 实体基类
  * 虽然实体一般都需要存储，但设计原则是实体不要知晓存储的任何信息，实体存储相关的事情应全部交给仓储处理
+ * 从设计的稳定性考虑，建议不要使用其 buildFromArray() 方法
  * Class Entity
  * @package WecarSwoole
  */

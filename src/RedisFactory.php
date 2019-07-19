@@ -25,7 +25,7 @@ class RedisFactory
         }
 
         $redis = new \Redis();
-        $redis->pconnect($redisConf['host'], $redisConf['port'], 3);
+        $redis->connect($redisConf['host'], $redisConf['port'], 3, null, 5000);
         if ($redisConf['auth']) {
             $redis->auth($redisConf['auth']);
         }
