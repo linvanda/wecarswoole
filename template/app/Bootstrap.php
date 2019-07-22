@@ -17,7 +17,7 @@ class Bootstrap extends BaseBootstrap
      * @param $workerId
      * @throws \Throwable
      */
-    public static function boot(Server $server, $workerId)
+    public static function boot(Server $server = null, $workerId = null)
     {
         parent::boot($server, $workerId);
         // 可以在此处添加自己项目的 boot 脚本

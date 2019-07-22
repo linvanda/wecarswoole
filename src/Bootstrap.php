@@ -3,8 +3,11 @@
 namespace WecarSwoole;
 
 use DI\ContainerBuilder;
+use EasySwoole\ApolloConfig\Apollo;
 use EasySwoole\Component\Di;
+use EasySwoole\Component\Timer;
 use EasySwoole\EasySwoole\Config;
+use EasySwoole\ApolloConfig\Server as ApolloServer;
 use Psr\Log\LoggerInterface;
 use Swoole\Server;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -22,7 +25,7 @@ class Bootstrap
     /**
      * @throws \Throwable
      */
-    public static function boot(Server $server, $workerId)
+    public static function boot(Server $server = null, $workerId = null)
     {
         // 注册 apollo 配置中心客户端
         static::registerApolloClient($workerId);
@@ -66,6 +69,29 @@ class Bootstrap
 
     protected static function registerApolloClient($workerId)
     {
-
+        if ($workerId == 0) {
+            Timer::getInstance()->loop(10000, function () {
+                    $server = new Server([
+                        'server' => 'http://106.12.25.204:8080',
+                        'appId'  => 'easyswoole',
+                    ]);
+                    $config = new Apollo();
+                    $config->setNameSpace([
+                        'mysql'
+                    ]);
+                    $config->setServer($server);
+                    $releaseKey = Config::getInstance()->getConf('releaseKey_mysql');
+                    $config->sync();
+                    //获得原先的config配置项,加载到新的配置项中
+                    Config::getInstance()->merge($config->getConf());
+                    $oldConfig = Config::getInstance()->getConf();
+                    Config::getInstance()->storageHandler($config)->load($oldConfig);
+                    //配置版本号不同,则重启框架
+                    if ($releaseKey!=null&&$releaseKey!=$config->getReleaseKey('mysql')){
+                        (new Reload())->exec(['all',Core::getInstance()->isDev()?'dev':'produce']);
+                        Logger::getInstance()->console('重启成功');
+                    }
+                });
+        }
     }
 }
