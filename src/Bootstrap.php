@@ -6,6 +6,7 @@ use DI\ContainerBuilder;
 use EasySwoole\Component\Di;
 use EasySwoole\EasySwoole\Config;
 use Psr\Log\LoggerInterface;
+use Swoole\Server;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use WecarSwoole\HealthCheck\HealthCheck;
 use WecarSwoole\Util\File;
@@ -18,8 +19,14 @@ use WecarSwoole\Util\File;
  */
 class Bootstrap
 {
-    public static function boot()
+    /**
+     * @throws \Throwable
+     */
+    public static function boot(Server $server, $workerId)
     {
+        // 注册 apollo 配置中心客户端
+        static::registerApolloClient($workerId);
+
         // 加载配置
         static::loadConfig();
 
@@ -55,5 +62,10 @@ class Bootstrap
                 $dispatcher->addSubscriber($subCls->newInstance());
             }
         }
+    }
+
+    protected static function registerApolloClient($workerId)
+    {
+
     }
 }

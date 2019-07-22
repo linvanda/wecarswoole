@@ -3,6 +3,7 @@
 namespace EasySwoole\EasySwoole;
 
 use App\Bootstrap;
+use Swoole\Server;
 use WecarSwoole\CronTabUtil;
 use WecarSwoole\Util\File;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
@@ -42,8 +43,8 @@ class EasySwooleEvent implements Event
             );
         }
 
-        $register->add(EventRegister::onWorkerStart, function () {
-            Bootstrap::boot();
+        $register->add(EventRegister::onWorkerStart, function (Server $server, $workerId) {
+            Bootstrap::boot($server, $workerId);
         });
 
         // 加载定时任务

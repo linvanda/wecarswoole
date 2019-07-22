@@ -36,9 +36,9 @@ class Controller extends EsController
         $this->appendMiddlewares(
             [
                 new LockerMiddleware($this),
+                new RequestRecordMiddleware(),
                 new ValidateMiddleware($this),
                 new RequestTimeMiddleware(RedisFactory::build('main'), Container::get(LoggerInterface::class)),
-                new RequestRecordMiddleware()
             ]
         );
 
