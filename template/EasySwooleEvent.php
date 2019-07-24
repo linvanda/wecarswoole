@@ -29,7 +29,8 @@ class EasySwooleEvent implements Event
          * easyswoole 默认使用 swoole table 存储，而其设置的字段大小为 1024，加之其存储的实现方式，
          * 有可能会导致 value 超过长度而存储失败
          */
-        Config::getInstance()->storageHandler(new WecarConfig())->load(Config::getInstance()->getConf());
+        $oldConfig = Config::getInstance()->getConf();
+        Config::getInstance()->storageHandler(new WecarConfig())->load($oldConfig);
     }
 
     /**
@@ -49,8 +50,8 @@ class EasySwooleEvent implements Event
         }
 
         // worker 进程启动脚本
-        $register->add(EventRegister::onWorkerStart, function (Server $server, $workerId) {
-            Bootstrap::boot($server, $workerId);
+        $register->add(EventRegister::onWorkerStart, function () {
+            Bootstrap::boot();
         });
 
         // 定时任务

@@ -13,10 +13,5 @@ return [
     // 需要监听的 namespace
     'namespaces' => [
         'application',
-        'fw.mysql.weicheche.rw',
-        'fw.mysql.fw_coupon.ro',
-        'fw.mysql.invoice_db.rw',
-        'fw.mysql.dw.ro',
-        'fw.redis.01'
     ]
 ];

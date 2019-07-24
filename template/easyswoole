@@ -2,12 +2,11 @@
 <?php
 
 use EasySwoole\EasySwoole\Command\CommandRunner;
+use WecarSwoole\Util\File;
 
 defined('IN_PHAR') or define('IN_PHAR', boolval(\Phar::running(false)));
 defined('RUNNING_ROOT') or define('RUNNING_ROOT', realpath(getcwd()));
 defined('EASYSWOOLE_ROOT') or define('EASYSWOOLE_ROOT', IN_PHAR ? \Phar::running() : realpath(getcwd()));
-defined('STORAGE_ROOT') or define('STORAGE_ROOT', \WecarSwoole\Util\File::join(EASYSWOOLE_ROOT, 'storage'));
-defined('CONFIG_ROOT') or define('CONFIG_ROOT', \WecarSwoole\Util\File::join(EASYSWOOLE_ROOT, 'config'));
 
 $file = EASYSWOOLE_ROOT.'/vendor/autoload.php';
 if (file_exists($file)) {
@@ -16,6 +15,10 @@ if (file_exists($file)) {
     die("include composer autoload.php fail\n");
 }
 
+defined('STORAGE_ROOT') or define('STORAGE_ROOT', File::join(EASYSWOOLE_ROOT, 'storage'));
+defined('CONFIG_ROOT') or define('CONFIG_ROOT', File::join(EASYSWOOLE_ROOT, 'config'));
+
+// 应用的常量定义
 include_once EASYSWOOLE_ROOT . '/constant.php';
 
 $args = $argv;

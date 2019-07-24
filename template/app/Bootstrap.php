@@ -2,8 +2,7 @@
 
 namespace App;
 
-use Swoole\Server;
-use \WecarSwoole\Bootstrap as BaseBootstrap;
+use WecarSwoole\Bootstrap as BaseBootstrap;
 
 /**
  * bootstrap 启动脚本会在 work/task 进程启动时执行
@@ -13,13 +12,11 @@ use \WecarSwoole\Bootstrap as BaseBootstrap;
 class Bootstrap extends BaseBootstrap
 {
     /**
-     * @param Server $server
-     * @param $workerId
      * @throws \Throwable
      */
-    public static function boot(Server $server = null, $workerId = null)
+    public static function boot()
     {
-        parent::boot($server, $workerId);
+        parent::boot();
         // 可以在此处添加自己项目的 boot 脚本
     }
 }
