@@ -33,7 +33,14 @@ class EasySwooleEvent implements Event
             ServerManager::getInstance()->getSwooleServer()->addProcess(
                 (new HotReload(
                     'HotReload',
-                    ['disableInotify' => true, 'monitorDirs' => [EASYSWOOLE_ROOT . '/app', EASYSWOOLE_ROOT . '/mock']]
+                    [
+                        'disableInotify' => true,
+                        'monitorDirs' => [
+                            EASYSWOOLE_ROOT . '/app',
+                            EASYSWOOLE_ROOT . '/mock',
+                            CONFIG_ROOT
+                        ]
+                    ]
                 ))->getProcess()
             );
         }

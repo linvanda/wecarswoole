@@ -84,7 +84,7 @@ class Config extends SplArrayConfig
 /**
  * 助手方法：获取 apollo 配置中心的配置信息
  */
-if (!function_exists('\WecarSwoole\Config')) {
+if (!function_exists('\WecarSwoole\Config\apollo')) {
     function apollo($namespace, $key = null)
     {
         $nsConf = EsConfig::getInstance()->getConf(Config::getKeyByNamespace($namespace));

@@ -14,6 +14,7 @@ use WecarSwoole\Config\Config as WecarConfig;
 /**
  * worker 进程启动脚本
  * 没当 work/task 进程启动时，执行此脚本的 boot 方法
+ * 也可以在自定义进程中执行此方法，让自定义进程上下文和 Worker 进程相同
  * Class Bootstrap
  * @package WecarSwoole
  */
