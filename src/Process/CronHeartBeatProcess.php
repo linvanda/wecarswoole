@@ -7,6 +7,7 @@ use EasySwoole\Component\Timer;
 use EasySwoole\EasySwoole\Config;
 use WecarSwoole\RedisFactory;
 use WecarSwoole\CronTabUtil;
+use WecarSwoole\Util\File;
 
 class CronHeartBeatProcess extends AbstractProcess
 {
@@ -20,7 +21,8 @@ class CronHeartBeatProcess extends AbstractProcess
             return;
         }
 
-        $conf = Config::getInstance()->getConf('cron_config');
+        Config::getInstance()->loadFile(File::join(CONFIG_ROOT, 'cron.php'), false);
+        $conf = Config::getInstance()->getConf('cron');
         $redis = RedisFactory::build($conf['redis'] ?? 'main');
         // 定时设置 redis 锁，防止其它服务器启动定时任务
         Timer::getInstance()->loop(5 * 1000, function () use ($redis) {
@@ -45,6 +47,9 @@ class CronHeartBeatProcess extends AbstractProcess
         }, 'crontab_heartbeat');
     }
 
+    /**
+     * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
+     */
     public function onShutDown()
     {
         CronTabUtil::clean();

@@ -1,3 +1,14 @@
 /vendor/
 /storage/*
-!/storage/app/
+
+/storage/apollo/*
+!/storage/apollo/.gitkeep
+
+/storage/app/*
+!/storage/app/.gitkeep
+
+/storage/temp/*
+!/storage/temp/.gitkeep
+
+/storage/logs/*
+!/storage/logs/.gitkeep

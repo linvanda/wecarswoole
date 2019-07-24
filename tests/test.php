@@ -2,29 +2,16 @@
 
 include_once './base.php';
 
-class A
-{
-    public $name;
+use Swlib\SaberGM;
 
-    public function __construct($name)
-    {
-        $this->name = $name;
-    }
+//go(function () {
+//    $res = SaberGM::get("http://www.weicheche.cn");
+//    var_export($res->getStatusCode());
+//});
+
+$file = "/tmp/test/wel/test.log";
+$dir = dirname($file);
+if (!file_exists($dir)) {
+    mkdir($dir, 0755, true);
 }
-
-$a1 = new A('a');
-$a2 = new A('b');
-$a3 = new A('a');
-$a4 = new A('c');
-$a5 = new A('a');
-$a6 = new A('b');
-
-$map1 = new \WecarSwoole\Collection\Map(['a' => $a1, 'c' => $a2]);
-$map2 = new \WecarSwoole\Collection\Map(['a' => $a3, 'b' => $a6]);
-
-$r = $map1->intersect($map2);
-
-echo "count:".count($r)."\n";
-foreach ($r as $k => $v) {
-    echo "k:$k -- v:{$v->name}\n";
-}
+file_put_contents($file, "test hello");

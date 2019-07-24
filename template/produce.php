@@ -18,7 +18,9 @@ return [
             'task_max_request' => 10000,
             'dispatch_mode' => 1,
             'enable_reuse_port' => 1,
-            'pid_file' => \WecarSwoole\Util\File::join(EASYSWOOLE_ROOT, 'storage/temp/master.pid')
+            'task_ipc_mode' => 3,
+            'message_queue_key' => mt_rand(10000, 100000000),
+            'pid_file' => \WecarSwoole\Util\File::join(STORAGE_ROOT, 'temp/master.pid')
         ],
     ],
     'TEMP_DIR' => 'storage/temp',

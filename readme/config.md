@@ -2,9 +2,25 @@
 
 目前有四个环境：dev、test、preview、produce
 
+
+
+> 注意：由于所有的应用配置都是在 onWorkerStart 中载入的，而用户自定义进程启动不会触发该回调函数，因而这些配置无法在自定义进程中使用。
+>
+> 如果要在自定义进程中使用配置，则需要在自定义进程中单独用 `Config::getInstance()->loadFile` 载入。
+>
+> 另外，reload 指令不会对自定义进程生效，如果改了自定义进程相关代码或配置，必须 stop & start 服务。
+
+
+
+### 配置的修改
+
+- 一些公共的配置（比如 MySQL、Redis 的配置等）以及可能会比较频繁变化的要放到配置中心，其他不怎么变的私有配置可放在配置文件中；
+- 放在配置中心的，配置文件中使用 apollo() 助手方法使用；
+- 所有配置修改后需要 reload 服务，除了 config/cron.php，此配置修改后需要 stop & start 服务；
+
 ### 配置
 
-- config/config.php 配置入口文件（修改文件后需要 stop & start 服务）
+- config/config.php 配置入口文件
 
   实际项目请修改 app_name 和 app_flag 项。
 
@@ -45,7 +61,7 @@
   
   ```
   
-- config/logger.php 日志配置文件（修改改文件后需要 stop & start 服务）
+- config/logger.php 日志配置文件
 
   ```php
   <?php
@@ -54,16 +70,16 @@
   
   return [
       'debug' => [
-          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/info.log'),
+          'file' => File::join(STORAGE_ROOT, 'logs/info.log'),
       ],
       'info' => [
-          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/info.log'),
+          'file' => File::join(STORAGE_ROOT, 'logs/info.log'),
       ],
       'warning' => [
-          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/warning.log'),
+          'file' => File::join(STORAGE_ROOT, 'logs/warning.log'),
       ],
       'error' => [
-          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+          'file' => File::join(STORAGE_ROOT, 'logs/error.log'),
       ],
       'critical' => [
           'mailer' => [
@@ -73,7 +89,7 @@
                   'songlin.zhang@weicheche.cn' => '张松林'
               ]
           ],
-          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+          'file' => File::join(EASYSWOOLE_ROOT, 'logs/error.log'),
       ],
       'emergency' => [
           'mailer' => [
@@ -83,7 +99,7 @@
                   'songlin.zhang@weicheche.cn' => '张松林'
               ]
           ],
-          'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
+          'file' => File::join(STORAGE_ROOT, 'logs/error.log'),
           'sms' => [
               '18588495955' => '张松林'
           ]
@@ -91,7 +107,7 @@
   ];
   ```
 
-- config/cron.php 定时任务配置文件（修改改文件后需要 stop & start 服务）
+- config/cron.php 定时任务配置文件
 
   ```php
   <?php
@@ -108,7 +124,7 @@
   ];
   ```
 
-- config/subscriber/subscriber.php 事件订阅配置（修改后 reload 服务即可）
+- config/subscriber/subscriber.php 事件订阅配置
 
   ```php
   <?php
@@ -120,7 +136,7 @@
 
 - config/api/api.php 外部 api 配置，[详情](./invoke.md)
 
-- config/di/di.php 依赖注入配置（修改后 reload 服务即可）
+- config/di/di.php 依赖注入配置
 
   ```php
   <?php
@@ -151,7 +167,7 @@
   ];
   ```
 
-- config/env/$env.php 环境相关配置，如数据库、redis等，目前有四个环境配置：dev.php、test.php、preview.php、produce.php（修改改文件后需要 stop & start 服务）
+- config/env/$env.php 环境相关配置，如数据库、redis等，目前有四个环境配置：dev.php、test.php、preview.php、produce.php
 
   ```php
   <?php
@@ -222,7 +238,7 @@
           'prefix' => 'usercenter',
           'expire' => 3600, // 缓存默认过期时间，单位秒
           'redis' => 'cache', // 当 driver = redis 时，使用哪个 redis 配置
-          'dir' => File::join(EASYSWOOLE_ROOT, 'storage/cache'), // 当 driver = file 时，缓存存放目录
+          'dir' => File::join(STORAGE_ROOT, 'cache'), // 当 driver = file 时，缓存存放目录
       ],
       // 最低记录级别：debug, info, warning, error, critical, off
       'log_level' => 'debug',

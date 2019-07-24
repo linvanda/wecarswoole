@@ -56,6 +56,8 @@
 
 8. 停止：`php easyswoole stop`
 
+9. 重启：`php easyswoole reload all`。注意：不会重启用户自定义进程。
+
 9. 其他指令参见 easyswoole 官网
 
 > 生产环境请使用 `composer install --no-dev`，其它环境请使用 `composer install`，因为非生产环境以后可能会加单元测试流程。

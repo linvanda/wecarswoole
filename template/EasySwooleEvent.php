@@ -5,13 +5,14 @@ namespace EasySwoole\EasySwoole;
 use App\Bootstrap;
 use Swoole\Server;
 use WecarSwoole\CronTabUtil;
-use WecarSwoole\Util\File;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\Component\Di;
+use WecarSwoole\Process\ApolloWatcher;
 use WecarSwoole\Process\HotReload;
+use WecarSwoole\Config\Config as WecarConfig;
 
 
 class EasySwooleEvent implements Event
@@ -23,8 +24,12 @@ class EasySwooleEvent implements Event
         // HTTP 控制器命名空间
         Di::getInstance()->set(SysConst::HTTP_CONTROLLER_NAMESPACE, 'App\\Http\\Controllers\\');
 
-        //加载应用配置
-        Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
+        /**
+         * 设置配置存储模式为内存数组
+         * easyswoole 默认使用 swoole table 存储，而其设置的字段大小为 1024，加之其存储的实现方式，
+         * 有可能会导致 value 超过长度而存储失败
+         */
+        Config::getInstance()->storageHandler(new WecarConfig())->load(Config::getInstance()->getConf());
     }
 
     /**
@@ -43,12 +48,16 @@ class EasySwooleEvent implements Event
             );
         }
 
+        // worker 进程启动脚本
         $register->add(EventRegister::onWorkerStart, function (Server $server, $workerId) {
             Bootstrap::boot($server, $workerId);
         });
 
-        // 加载定时任务
+        // 定时任务
         CronTabUtil::register();
+
+        // Apollo 配置变更监听程序
+        ServerManager::getInstance()->getSwooleServer()->addProcess(new ApolloWatcher());
     }
 
     public static function onRequest(Request $request, Response $response): bool

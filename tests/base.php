@@ -15,4 +15,10 @@ if (file_exists($file)) {
     die("include composer autoload.php fail\n");
 }
 
-Config::getInstance()->loadFile(File::join(EASYSWOOLE_ROOT, 'config/config.php'), true);
+defined('STORAGE_ROOT') or define('STORAGE_ROOT', \WecarSwoole\Util\File::join(EASYSWOOLE_ROOT, 'template/storage'));
+defined('CONFIG_ROOT') or define('CONFIG_ROOT', \WecarSwoole\Util\File::join(EASYSWOOLE_ROOT, 'template/config'));
+
+$config = Config::getInstance()->getConf();
+Config::getInstance()->storageHandler(new \WecarSwoole\Config\Config())->load($config);
+
+//Config::getInstance()->loadFile(File::join(CONFIG_ROOT, 'config.php'), true);

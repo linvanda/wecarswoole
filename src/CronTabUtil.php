@@ -6,6 +6,7 @@ use WecarSwoole\Process\CronHeartBeatProcess;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\EasySwoole\Crontab\Crontab;
 use EasySwoole\EasySwoole\ServerManager;
+use WecarSwoole\Util\File;
 
 class CronTabUtil
 {
@@ -22,7 +23,8 @@ class CronTabUtil
             return;
         }
 
-        $conf = Config::getInstance()->getConf('cron_config');
+        Config::getInstance()->loadFile(File::join(CONFIG_ROOT, 'cron.php'), false);
+        $conf = Config::getInstance()->getConf('cron');
         if (!$conf || !$conf['name'] || !$conf['tasks']) {
             return;
         }
