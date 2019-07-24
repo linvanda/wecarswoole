@@ -3,7 +3,6 @@
 namespace EasySwoole\EasySwoole;
 
 use App\Bootstrap;
-use Swoole\Server;
 use WecarSwoole\CronTabUtil;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
@@ -12,8 +11,6 @@ use EasySwoole\Http\Response;
 use EasySwoole\Component\Di;
 use WecarSwoole\Process\ApolloWatcher;
 use WecarSwoole\Process\HotReload;
-use WecarSwoole\Config\Config as WecarConfig;
-
 
 class EasySwooleEvent implements Event
 {
@@ -23,14 +20,6 @@ class EasySwooleEvent implements Event
 
         // HTTP 控制器命名空间
         Di::getInstance()->set(SysConst::HTTP_CONTROLLER_NAMESPACE, 'App\\Http\\Controllers\\');
-
-        /**
-         * 设置配置存储模式为内存数组
-         * easyswoole 默认使用 swoole table 存储，而其设置的字段大小为 1024，加之其存储的实现方式，
-         * 有可能会导致 value 超过长度而存储失败
-         */
-        $oldConfig = Config::getInstance()->getConf();
-        Config::getInstance()->storageHandler(new WecarConfig())->load($oldConfig);
     }
 
     /**

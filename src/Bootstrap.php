@@ -9,6 +9,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use WecarSwoole\HealthCheck\HealthCheck;
 use WecarSwoole\Util\File;
+use WecarSwoole\Config\Config as WecarConfig;
 
 /**
  * worker 进程启动脚本
@@ -38,6 +39,14 @@ class Bootstrap
 
     protected static function loadConfig()
     {
+        /**
+         * 设置配置存储模式为内存数组
+         * easyswoole 默认使用 swoole table 存储，而其设置的字段大小为 1024，加之其存储的实现方式，
+         * 有可能会导致 value 超过长度而存储失败
+         */
+        $oldConfig = Config::getInstance()->getConf();
+        Config::getInstance()->storageHandler(new WecarConfig())->load($oldConfig);
+
         //加载应用配置
         Config::getInstance()->loadFile(File::join(CONFIG_ROOT, 'config.php'), true);
     }
