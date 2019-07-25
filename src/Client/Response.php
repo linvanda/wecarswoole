@@ -7,12 +7,14 @@ class Response
     protected $body;
     protected $message;
     protected $status;
+    protected $fromRealRequest; // 是否来自真正的请求，还是模拟的
 
-    public function __construct($body = [], $status = 500, $message = '请求出错')
+    public function __construct($body = [], $status = 500, $message = '请求出错', $fromRealRequest = true)
     {
         $this->body = $body;
         $this->status = $status;
         $this->message = $message;
+        $this->fromRealRequest = $fromRealRequest;
     }
 
     public function getMessage()
@@ -49,12 +51,18 @@ class Response
         $this->body = $body;
     }
 
+    public function fromRealRequest(): bool
+    {
+        return $this->fromRealRequest;
+    }
+
     public function __toString()
     {
         return json_encode([
             'http_code' => $this->status,
             'message' => $this->message,
             'body' => $this->body,
+            'from_real_request' => intval($this->fromRealRequest)
         ]);
     }
 }

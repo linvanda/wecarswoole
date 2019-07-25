@@ -101,8 +101,10 @@ class HttpClient implements IClient
 
         // 执行
         $response = $this->execMiddlewares('before', $this->config, $requestBean);
+        $fromRealRequest = false;
         if (!$response instanceof ResponseInterface) {
             $response = $saber->exec()->recv();
+            $fromRealRequest = true;
         }
         $this->execMiddlewares('after', $this->config, $requestBean, $response);
 
@@ -113,7 +115,8 @@ class HttpClient implements IClient
             new Response(
                 $response->getBody()->read($response->getBody()->getSize()),
                 $response->getStatusCode(),
-                $response->getReasonPhrase()
+                $response->getReasonPhrase(),
+                $fromRealRequest
             )
         );
     }
