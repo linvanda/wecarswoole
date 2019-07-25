@@ -1,9 +1,18 @@
 <?php
 
+use function WecarSwoole\Config\apollo;
+
 $baseConfig = [
     'app_name' => '应用名称',
-    // 应用标识
+    // 应用标识，必填
     'app_flag' => 'SY',
+    // 应用id，必填
+    'app_id' => '1000000',
+    // 可用 server 列表，必填
+    'server' => [
+        'modules' => apollo('fw.modules'),
+        'app_ids' => apollo('fw.appids'),
+    ],
     // 邮件。可以配多个
     'mailer' => [
         'default' => [

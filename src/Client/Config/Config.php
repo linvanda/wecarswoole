@@ -96,21 +96,11 @@ class Config
         unset($globalConf[$protocol], $groupConf[$protocol], $apiConf[$protocol]);
 
         $config = array_merge(['api_name' => $api], $globalConf, $groupConf, $protocolConf, $apiConf);
-        $config['app_id'] = self::currentAppId($config);
+        $config['app_id'] = EsConfig::getInstance()->getConf('app_id');
 
         $confCache[$api] = $config;
 
         return $config;
-    }
-
-    private static function currentAppId(array $config): string
-    {
-        // 当前项目的 app_id
-        if (!isset($config['app_id']) && ($serverFlag = EsConfig::getInstance()->getConf('app_flag'))) {
-            $config['app_id'] = EsConfig::getInstance()->getConf("server.$serverFlag")['app_id'];
-        }
-
-        return $config['app_id'];
     }
 
     /**

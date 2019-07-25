@@ -13,5 +13,7 @@ return [
     // 需要监听的 namespace
     'namespaces' => [
         'application',
+        'fw.appids',
+        'fw.modules',
     ]
 ];

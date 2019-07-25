@@ -49,8 +49,12 @@ class HttpServerParser implements IHttpServerParser
 
     protected function parseFromConfig(string $server): string
     {
-        if (!($serverConf = EsConfig::getInstance()->getConf("server.$server"))) {
+        if (!($serverConf = EsConfig::getInstance()->getConf("server.modules.$server"))) {
             return $server;
+        }
+
+        if (is_string($serverConf)) {
+            $serverConf = json_decode($serverConf, true);
         }
 
         if (!($serverConf = $serverConf['servers'])) {

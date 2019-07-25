@@ -153,7 +153,7 @@ class Client
     {
         $releaseKey = '';
         if (file_exists($configFile)) {
-            $lastConfig = require($configFile);
+            $lastConfig = require_once($configFile);
             is_array($lastConfig) && isset($lastConfig['releaseKey']) && $releaseKey = $lastConfig['releaseKey'];
         }
         return $releaseKey;

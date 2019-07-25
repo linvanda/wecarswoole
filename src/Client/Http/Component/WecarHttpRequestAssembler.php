@@ -2,9 +2,9 @@
 
 namespace WecarSwoole\Client\Http\Component;
 
+use EasySwoole\EasySwoole\Config;
 use WecarSwoole\Exceptions\Exception;
 use WecarSwoole\Signer\WecarSigner;
-use WecarSwoole\Util\Config as UtilConfig;
 
 /**
  * wecar 内部的请求组装器
@@ -28,8 +28,7 @@ class WecarHttpRequestAssembler extends DefaultHttpRequestAssembler
 
         // 签名器
         $signer = new WecarSigner();
-        $currentServerInfo = UtilConfig::getServerInfoByAppId($this->config->appId);
-        $secret = $currentServerInfo['secret'] ?? '';
+        $secret = $this->getAppSecret();
 
         if ($this->config->method === 'GET') {
             $queryParams = $this->combineWithSignature($signer, $secret, $queryParams);
@@ -49,5 +48,25 @@ class WecarHttpRequestAssembler extends DefaultHttpRequestAssembler
         $params['token'] = $signer->signature($params, $secret);
 
         return $params;
+    }
+
+    /**
+     * @return string
+     * @throws Exception
+     */
+    protected function getAppSecret(): string
+    {
+        $currentAppId = Config::getInstance()->getConf('app_id');
+
+        if (!$currentAppId) {
+            throw new Exception("no config:app_id");
+        }
+
+        $appInfo = Config::getInstance()->getConf("server.app_ids.$currentAppId");
+        if (is_string($appInfo)) {
+            $appInfo = json_decode($appInfo, true);
+        }
+
+        return $appInfo['secret'] ?? '';
     }
 }
