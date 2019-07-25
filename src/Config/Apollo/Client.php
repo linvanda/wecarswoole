@@ -18,7 +18,7 @@ class Client
     protected $clientIp; //绑定IP做灰度发布用
     protected $notifications = [];
     protected $pullTimeout = 5; //获取某个namespace配置的请求超时时间
-    protected $intervalTimeout = 60; //每次请求获取apollo配置变更时的超时时间
+    protected $intervalTimeout = 70; //每次请求获取apollo配置变更时的超时时间
 
     /**
      * ApolloClient constructor.

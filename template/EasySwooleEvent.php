@@ -54,7 +54,7 @@ class EasySwooleEvent implements Event
         CronTabUtil::register();
 
         // Apollo 配置变更监听程序
-        ServerManager::getInstance()->getSwooleServer()->addProcess(new ApolloWatcher());
+        ServerManager::getInstance()->getSwooleServer()->addProcess((new ApolloWatcher())->getProcess());
     }
 
     public static function onRequest(Request $request, Response $response): bool
