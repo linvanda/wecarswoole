@@ -2,11 +2,11 @@
 
 namespace WecarSwoole\Client\Http\Middleware;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use WecarSwoole\Client\Config\HttpConfig;
-use WecarSwoole\Client\Contract\IHttpRequestBean;
 use WecarSwoole\Middleware\Next;
 
 /**
@@ -24,14 +24,14 @@ class LogRequestMiddleware implements IRequestMiddleware
         $this->logger = $logger;
     }
 
-    public function before(Next $next, HttpConfig $config, IHttpRequestBean $request)
+    public function before(Next $next, HttpConfig $config, RequestInterface $request)
     {
         $this->startTime = time();
 
         return $next($config, $request);
     }
 
-    public function after(Next $next, HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response)
+    public function after(Next $next, HttpConfig $config, RequestInterface $request, ResponseInterface $response)
     {
         $this->logger->log(
             $this->logLevel($response),
@@ -48,14 +48,17 @@ class LogRequestMiddleware implements IRequestMiddleware
             LogLevel::INFO : LogLevel::CRITICAL;
     }
 
-    protected function logContext(HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response): array
+    protected function logContext(HttpConfig $config, RequestInterface $request, ResponseInterface $response): array
     {
         $body = (string)$response->getBody();
         $body = mb_strlen($body) > 1024 * 400 ? mb_strcut($body, 0, 1024 * 400) : $body;
 
         return [
             'use_time' => time() - $this->startTime,
-            'request' => (string)$request,
+            'request' => [
+                'url' => strval($request->getUri()),
+                'body' => strval($request->getBody())
+            ],
             'response' => [
                 'http_code' => $response->getStatusCode(),
                 'reason' => $response->getReasonPhrase(),

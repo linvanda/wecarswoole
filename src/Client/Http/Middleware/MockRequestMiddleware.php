@@ -2,10 +2,10 @@
 
 namespace WecarSwoole\Client\Http\Middleware;
 
+use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swlib\Http\Response;
 use WecarSwoole\Client\Config\HttpConfig;
-use WecarSwoole\Client\Contract\IHttpRequestBean;
 use WecarSwoole\Middleware\Next;
 use WecarSwoole\Util\File;
 
@@ -18,7 +18,7 @@ class MockRequestMiddleware implements IRequestMiddleware
 {
     private static $config;
 
-    public function before(Next $next, HttpConfig $config, IHttpRequestBean $request)
+    public function before(Next $next, HttpConfig $config, RequestInterface $request)
     {
         // 仅 dev 环境才 mock
         if (ENVIRON === 'dev' && ($mockData = $this->getMockData($config, $request)) && $mockData['activate']) {
@@ -31,13 +31,13 @@ class MockRequestMiddleware implements IRequestMiddleware
         return $next($config, $request);
     }
 
-    public function after(Next $next, HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response)
+    public function after(Next $next, HttpConfig $config, RequestInterface $request, ResponseInterface $response)
     {
         // nothing
         return $next($config, $request, $response);
     }
 
-    private function getMockData(HttpConfig $config, IHttpRequestBean $request)
+    private function getMockData(HttpConfig $config, RequestInterface $request)
     {
         $mockConf = $this->loadConfig();
 
@@ -48,7 +48,7 @@ class MockRequestMiddleware implements IRequestMiddleware
         return $this->resolveMockInfo($mockConf[$config->apiName], $config, $request);
     }
 
-    private function resolveMockInfo($mockConf, HttpConfig $config, IHttpRequestBean $request)
+    private function resolveMockInfo($mockConf, HttpConfig $config, RequestInterface $request)
     {
         if (is_callable($mockConf)) {
             $mockConf = $mockConf($config, $request);

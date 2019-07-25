@@ -100,13 +100,13 @@ class HttpClient implements IClient
         }
 
         // 执行
-        $response = $this->execMiddlewares('before', $this->config, $requestBean);
+        $response = $this->execMiddlewares('before', $this->config, $saber);
         $fromRealRequest = false;
         if (!$response instanceof ResponseInterface) {
             $response = $saber->exec()->recv();
             $fromRealRequest = true;
         }
-        $this->execMiddlewares('after', $this->config, $requestBean, $response);
+        $this->execMiddlewares('after', $this->config, $saber, $response);
 
         $this->dealBadResponse($response, $requestBean);
 

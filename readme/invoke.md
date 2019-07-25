@@ -183,7 +183,7 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
    ```php
    use WecarSwoole\Util\Mock;
    use WecarSwoole\Client\Config\HttpConfig;
-   use WecarSwoole\Client\Contract\IHttpRequestBean;
+   use Psr\Http\Message\RequestInterface;
    use Swoole\Coroutine as Co;
    
    $mock = new Mock();
@@ -200,7 +200,7 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
         * 注意：如果直接返回数组，则多次使用的是同一份模拟数据，如果想每次都随机生成不同的，需要使用匿名函数
         *
         */
-       'weiche:oil.info' => function (HttpConfig $config, IHttpRequestBean $request) use ($mock) {
+       'weiche:oil.info' => function (HttpConfig $config, RequestInterface $request) use ($mock) {
            // 此处模拟响应延迟
            Co::sleep(5);
    

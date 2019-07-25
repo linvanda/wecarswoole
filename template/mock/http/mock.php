@@ -2,7 +2,7 @@
 
 use WecarSwoole\Util\Mock;
 use WecarSwoole\Client\Config\HttpConfig;
-use WecarSwoole\Client\Contract\IHttpRequestBean;
+use Psr\Http\Message\RequestInterface;
 
 $mock = new Mock();
 
@@ -25,7 +25,7 @@ return [
      * 闭包中可以做复杂的处理，比如模拟慢请求，返回 http 错误码等
      * 返回格式同上面
      */
-    'weicar:coupon.info' => function (HttpConfig $config, IHttpRequestBean $requestBean) use ($mock) {
+    'weicar:coupon.info' => function (HttpConfig $config, RequestInterface $request) use ($mock) {
         return [
             'cid' => $mock->number('1000, 1000000')
         ];

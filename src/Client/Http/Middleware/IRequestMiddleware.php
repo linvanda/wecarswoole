@@ -2,8 +2,8 @@
 
 namespace WecarSwoole\Client\Http\Middleware;
 
+use Psr\Http\Message\RequestInterface;
 use WecarSwoole\Client\Config\HttpConfig;
-use WecarSwoole\Client\Contract\IHttpRequestBean;
 use Psr\Http\Message\ResponseInterface;
 use WecarSwoole\Middleware\Next;
 
@@ -19,10 +19,10 @@ interface IRequestMiddleware
      * 如果返回的是 Psr\Http\Message\ResponseInterface，则以此 Response 作为返回（可用此模拟请求）
      * @param Next $next
      * @param HttpConfig $config
-     * @param IHttpRequestBean $request
+     * @param RequestInterface $request
      * @return mixed
      */
-    public function before(Next $next, HttpConfig $config, IHttpRequestBean $request);
+    public function before(Next $next, HttpConfig $config, RequestInterface $request);
 
     /**
      * 请求后执行的钩子函数，在响应解析器解析响应参数前执行
@@ -31,9 +31,9 @@ interface IRequestMiddleware
      * 请用 (string)$response->getBody() 的方式拿请求数据
      * @param Next $next
      * @param HttpConfig $config
-     * @param IHttpRequestBean $request
+     * @param RequestInterface $request
      * @param ResponseInterface $response
      * @return mixed
      */
-    public function after(Next $next, HttpConfig $config, IHttpRequestBean $request, ResponseInterface $response);
+    public function after(Next $next, HttpConfig $config, RequestInterface $request, ResponseInterface $response);
 }
