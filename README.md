@@ -25,34 +25,24 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 ### 目录
 
 - [启动项目](./readme/creat_project.md)
-
+- [新项目部署](./readme/deploy.md)
+- [注意点](./readme/attention.md)
 - [目录结构](./readme/dir.md)
-
 - [分层模型](./readme/layer.md)
-
 - [配置](./readme/config.md)
-
 - [路由](./readme/route.md)
-
 - [控制器](./readme/controller.md)
-
 - 领域
     - [领域事件](./readme/event.md)
     
     - [仓储](./readme/repos.md)
     
     - [实体](./readme/entity.md)
-
 - [定时任务](./readme/cron.md)
-
 - [异步任务](./readme/async_task.md)
-
 - [API 调用](./readme/invoke.md)
-
 - [Exception](./readme/exception.md)
-
 - [中间件](./readme/middleware.md)
-
 - 基础设施
     - [Email](./readme/email.md)
     
@@ -63,18 +53,11 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
     - [Redis](./readme/redis.md)
 
     - [MySQL](./readme/mysql.md)
-
 - [事务](./readme/trans.md)
-
 - [DTO](./readme/dto.md)
-
 - [依赖注入](./readme/di.md)
-
 - [Util 工具](./readme/util.md)
-
 - 测试
     - [单元测试](./readme/union_test.md)
-
 - [代码规范](./readme/code_rule.md)
-
 - [杂项](./readme/others.md)
