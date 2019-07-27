@@ -5,10 +5,10 @@
 return [
     'app_id' => 1000090,
     'server' => [
-        'dev' => 'http://192.168.85.203:8080',
-        'test' => '192.168.85.201:8080',
-        'preview' => '119.23.146.197:8080',
-        'produce' => '120.78.9.114:8080',
+        'dev' => 'develop.configserver.zhyz.cn:8080',
+        'test' => 'test.configserver.zhyz.cn:8080',
+        'preview' => 'preview.configserver.zhihuiyouzhan.cn:8080',
+        'produce' => 'production.configserver.zhihuiyouzhan.cn:8080',
     ],
     // 需要监听的 namespace
     'namespaces' => [

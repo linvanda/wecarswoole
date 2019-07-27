@@ -105,7 +105,7 @@
 
 ### RESTful API
 
-建议使用 RESTful 风格 API 定义。关于 RESTful 请参见 [Restful API 最佳实践](http://www.ruanyifeng.com/blog/2018/10/restful-api-best-practices.html)
+支持 RESTful 风格 API 书写。
 
 
 [返回](../README.md)
