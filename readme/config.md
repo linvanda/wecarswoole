@@ -123,6 +123,12 @@ Easyswoole 默认采用 swoole table 存储配置信息，其问题是 swoole ta
               'host' => apollo('fw.redis.01', 'host'),
               'port' => apollo('fw.redis.01', 'port'),
               'auth' => apollo('fw.redis.01', 'auth'),
+            	// 连接池配置
+              '__pool' => [
+                  'max_object_num' => 10,
+                  'min_object_num' => 1,
+                  'max_idle_time' => 60,
+              ]
           ]
       ],
   ];
@@ -266,7 +272,6 @@ Easyswoole 默认采用 swoole table 存储配置信息，其问题是 swoole ta
   ];
   ```
   
-
 - config/apollo.php 配置中心 apollo 的配置：
 
   ```php

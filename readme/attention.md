@@ -7,3 +7,4 @@
 5. `reload` 指令不会重启自定义进程，因而自定义进程的代码修改后必须 stop & start 服务；
 6. 自定义进程中默认不可使用 config/ 下的大多数配置，也不可使用 Logger、Cache、依赖注入等，因为这些的初始化工作是发生在 worker/task 进程启动时的，如果要在自定义进程中使用，需要在自定义进程启动时执行 `\WecarSwoole\Bootstrap::boot()` 脚本；
 7. 数据库、Redis 等公共资源必须从 apollo 配置中心获取，不可在代码写死；
+8. 所有的 woker/task 进程都调用了 `Runtime::enableCoroutine()` 将 PHP I/O 函数协程化，项目中使用 PHP 相关函数时需知晓；
