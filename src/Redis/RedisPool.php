@@ -22,7 +22,11 @@ class RedisPool extends AbstractPool
             $conf['timeout']
         );
         if ($conf['password']) {
-            $redis->auth($conf['password']);
+            try {
+                $redis->auth($conf['password']);
+            } catch (\RedisException $e) {
+                //
+            }
         }
 
         return $redis;
