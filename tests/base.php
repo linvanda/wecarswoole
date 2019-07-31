@@ -21,4 +21,4 @@ defined('CONFIG_ROOT') or define('CONFIG_ROOT', \WecarSwoole\Util\File::join(EAS
 $config = Config::getInstance()->getConf();
 Config::getInstance()->storageHandler(new \WecarSwoole\Config\Config())->load($config);
 
-//Config::getInstance()->loadFile(File::join(CONFIG_ROOT, 'config.php'), true);
+Config::getInstance()->loadFile(File::join(CONFIG_ROOT, 'config.php'), true);

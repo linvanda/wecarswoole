@@ -4,6 +4,8 @@ namespace WecarSwoole;
 
 use WecarSwoole\Exceptions\ConfigNotFoundException;
 use EasySwoole\EasySwoole\Config;
+use WecarSwoole\Redis\RedisProxy;
+use WecarSwoole\Redis\TmpRedisProxyCreator;
 
 /**
  * Redis 工厂
@@ -13,22 +15,30 @@ use EasySwoole\EasySwoole\Config;
 class RedisFactory
 {
     /**
+     * 创建临时 RedisProxy 子类实例
      * @param string $redisAlias
-     * @return \Redis
+     * @return RedisProxy
      * @throws ConfigNotFoundException
      */
-    public static function build(string $redisAlias): \Redis
+    public static function build(string $redisAlias): RedisProxy
     {
         $redisConf = Config::getInstance()->getConf("redis.$redisAlias");
         if (!$redisConf) {
             throw new ConfigNotFoundException("redis.$redisAlias");
         }
 
-        $redis = new \Redis();
-        $redis->connect($redisConf['host'], $redisConf['port'], 3, null, 5000);
-        if ($redisConf['auth']) {
-            $redis->auth($redisConf['auth']);
+        $redisClassName = '\WecarSwoole\Redis\TmpAb837dfdeh2nqoiqmgnRedisProxy';
+        if (!class_exists($redisClassName)) {
+            TmpRedisProxyCreator::create($redisClassName);
         }
+
+        $redis = new $redisClassName(
+            $redisConf['host'],
+            $redisConf['port'],
+            3,
+            $redisConf['auth'],
+            $redisConf['__pool'] ?? []
+        );
 
         return $redis;
     }

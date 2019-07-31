@@ -21,6 +21,19 @@ $baseConfig = [
             'password' => 'Chechewei123'
         ]
     ],
+    'redis' => [
+        'main' => [
+            'host' => 'db.redis.wcc.cn',
+            'port' => 6379,
+            'auth' => 'XEXeh1l6nT3wHL0z',
+            // 连接池配置
+            '__pool' => [
+                'max_object_num' => 10,
+                'min_object_num' => 1,
+                'max_idle_time' => 60,
+            ]
+        ],
+    ],
     // 并发锁配置
     'concurrent_locker' => [
         'onoff' => 'off',

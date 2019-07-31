@@ -6,6 +6,7 @@ use DI\ContainerBuilder;
 use EasySwoole\Component\Di;
 use EasySwoole\EasySwoole\Config;
 use Psr\Log\LoggerInterface;
+use Swoole\Runtime;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use WecarSwoole\HealthCheck\HealthCheck;
 use WecarSwoole\Util\File;
@@ -25,6 +26,8 @@ class Bootstrap
      */
     public static function boot()
     {
+        Runtime::enableCoroutine();
+
         // 加载配置
         static::loadConfig();
 
