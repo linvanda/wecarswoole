@@ -168,7 +168,7 @@ class RedisProxy extends \Redis
      */
     private function createPool(string $key)
     {
-        if (self::$poolMap[$key]) {
+        if (isset(self::$poolMap[$key])) {
             return;
         }
 
