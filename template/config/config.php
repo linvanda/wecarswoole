@@ -17,8 +17,8 @@ $baseConfig = [
     'mailer' => [
         'default' => [
             'host' => 'smtp.exmail.qq.com',
-            'username' => 'robot@weicheche.cn',
-            'password' => 'Chechewei123'
+            'username' => 'robot2@weicheche.cn',
+            'password' => 'j6qW4Y7onb2MfXpr'
         ]
     ],
     'redis' => [
