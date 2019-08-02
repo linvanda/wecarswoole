@@ -21,6 +21,7 @@ class RequestTimeMiddleware implements IControllerMiddleware
     protected $redis;
     protected $logger;
     protected $percent;
+    protected $beforeDone = false;
 
     /**
      * RequestTimeMiddleware constructor.
@@ -38,6 +39,7 @@ class RequestTimeMiddleware implements IControllerMiddleware
 
     public function before(Next $next, Request $request, Response $response)
     {
+        $this->beforeDone = true;
         $this->startTime = time();
         $this->requestId = $this->requestKey($request);
         return $next($request, $response);
@@ -45,6 +47,10 @@ class RequestTimeMiddleware implements IControllerMiddleware
 
     public function after(Next $next, Request $request, Response $response)
     {
+        if (!$this->beforeDone) {
+            return $next($request, $response);
+        }
+
         $stats = $this->redis->get($this->requestId);
 
         if (!$stats) {
@@ -73,6 +79,7 @@ class RequestTimeMiddleware implements IControllerMiddleware
     {
         $this->startTime = null;
         $this->requestId = null;
+        $this->beforeDone = false;
         return $next();
     }
 

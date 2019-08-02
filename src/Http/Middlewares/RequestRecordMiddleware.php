@@ -19,6 +19,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
     protected static $on;
     protected $logTheRequest;
     protected $startTime;
+    protected $beforeDone = false;
 
     /**
      * @param Next $next
@@ -28,6 +29,8 @@ class RequestRecordMiddleware implements IControllerMiddleware
      */
     public function before(Next $next, Request $request, Response $response)
     {
+        $this->beforeDone = true;
+
         if (self::$on === false) {
             goto last;
         }
@@ -54,7 +57,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
 
     public function after(Next $next, Request $request, Response $response)
     {
-        if (self::$on === false || !$this->logTheRequest) {
+        if (!$this->beforeDone || self::$on === false || !$this->logTheRequest) {
             return $next($request, $response);
         }
 
@@ -75,6 +78,7 @@ class RequestRecordMiddleware implements IControllerMiddleware
     {
         $this->logTheRequest = null;
         $this->startTime = null;
+        $this->beforeDone = false;
         return $next();
     }
 
