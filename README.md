@@ -9,7 +9,6 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 - PHP >= 7.2
 - Swoole >= 4.3.0
 - phpredis 扩展
-  > php.ini 配置文件需加入 `redis.pconnect.pooling_enabled=1` 开启 phpredis 连接池
   
 ### 系统设计要点
 
