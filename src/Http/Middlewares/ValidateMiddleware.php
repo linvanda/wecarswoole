@@ -5,6 +5,7 @@ namespace WecarSwoole\Http\Middlewares;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\Validate\Validate;
+use WecarSwoole\ErrCode;
 use WecarSwoole\Exceptions\ValidateException;
 use WecarSwoole\Http\Controller;
 use WecarSwoole\Middleware\Middleware;
@@ -52,7 +53,7 @@ class ValidateMiddleware extends Middleware implements IControllerMiddleware
 
         // 执行验证
         if (!$this->proxy->validate($validate)) {
-            throw new ValidateException($validate->getError()->getErrorRuleMsg());
+            throw new ValidateException($validate->getError()->getErrorRuleMsg(), ErrCode::PARAM_VALIDATE_FAIL);
         }
 
         last:

@@ -29,6 +29,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 - [目录结构](./readme/dir.md)
 - [分层模型](./readme/layer.md)
 - [配置](./readme/config.md)
+- [错误码](./readme/error_code.md)
 - [路由](./readme/route.md)
 - [控制器](./readme/controller.md)
 - 领域
