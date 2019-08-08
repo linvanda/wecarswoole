@@ -189,7 +189,7 @@ class Controller extends EsController
             $params = is_string($params['data']) ? json_decode($params['data'], true) : $params['data'];
         }
 
-        return isset($key) ? $params[$key] : $params;
+        return isset($key) ? ($params[$key] ?? null) : $params;
     }
 
     /**
