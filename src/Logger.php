@@ -149,7 +149,8 @@ class Logger extends AbstractLogger
         $mailer = Mailer::getSwiftMailer(
             $mailerConfig['host'] ?? '',
             $mailerConfig['username'] ?? '',
-            $mailerConfig['password'] ?? ''
+            $mailerConfig['password'] ?? '',
+            $mailerConfig['port'] ?: 25
         );
 
         $messager = new \Swift_Message($config['subject'] ?? "日志邮件告警");

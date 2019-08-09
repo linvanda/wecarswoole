@@ -26,7 +26,12 @@ class SendMail extends AbstractAsyncTask
         if (!$taskData['message'] || !$taskData['message'] instanceof \Swift_Message) {
             throw new \Exception("邮件内容非法，必须为 \Swift_Message 类型");
         }
-        $mailer = Mailer::getSwiftMailer($taskData['host'] ?? '', $taskData['username'] ?? '', $taskData['password'] ?? '');
+        $mailer = Mailer::getSwiftMailer(
+            $taskData['host'] ?? '',
+            $taskData['username'] ?? '',
+            $taskData['password'] ?? '',
+            $taskData['port'] ?: 25
+        );
         return $mailer->send($taskData['message']);
     }
 
