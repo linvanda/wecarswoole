@@ -1,16 +1,11 @@
-### 环境
-
-目前有四个环境：dev、test、preview、produce
-
 
 
 > 注意：
 >
 > 1. 由于所有的应用配置都是在 onWorkerStart 中载入的（包括 apollo 的配置），而用户自定义进程启动不会触发该回调函数，因而这些配置无法在自定义进程中使用。
->
-> 2. 如果要在自定义进程中使用配置，则需要在自定义进程中单独用 `Config::getInstance()->loadFile` 载入。或者在自定义进程里面执行启动脚本：`\WecarSwoole\Bootstrap::boot()`。
->
+>2. 如果要在自定义进程中使用配置，则需要在自定义进程中单独用 `Config::getInstance()->loadFile` 载入。或者在自定义进程里面执行启动脚本：`\WecarSwoole\Bootstrap::boot()`。
 > 3. 另外，reload 指令不会对自定义进程生效，如果改了自定义进程相关代码或配置，必须 stop & start 服务。
+>4. 所有环境相关的配置全部放到配置中心，然后通过在 config.php 中引用，程序中不再设置 env/ 配置。
 
 
 
@@ -37,7 +32,7 @@ Easyswoole 默认采用 swoole table 存储配置信息，其问题是 swoole ta
 
 ### 配置
 
-- config/config.php 配置入口文件
+- config/config.php 配置入口文件（具体项目可基于 config.example.php 设置自己的配置）
 
   实际项目请修改 app_name 、app_flag 项。
 
@@ -249,29 +244,6 @@ Easyswoole 默认采用 swoole table 存储配置信息，其问题是 swoole ta
   ];
   ```
 
-- config/env/$env.php 环境相关配置，如数据库、redis等，目前有四个环境配置：dev.php、test.php、preview.php、produce.php
-
-  ```php
-  <?php
-  
-  use \App\Util\File;
-  
-  return [
-      // 缓存配置
-      'cache' => [
-          'driver' => 'redis', // 可用：redis、file、array、null(一般测试时用来禁用缓存)
-          'prefix' => 'usercenter',
-          'expire' => 3600, // 缓存默认过期时间，单位秒
-          'redis' => 'cache', // 当 driver = redis 时，使用哪个 redis 配置
-          'dir' => File::join(STORAGE_ROOT, 'cache'), // 当 driver = file 时，缓存存放目录
-      ],
-      // 最低记录级别：debug, info, warning, error, critical, off
-      'log_level' => 'debug',
-    	'base_url' => 'https://wx.weicheche.cn/v2/refuel',
-    	'server' => require_once __DIR__ . '/dev_server.php'
-  ];
-  ```
-  
 - config/apollo.php 配置中心 apollo 的配置：
 
   ```php
