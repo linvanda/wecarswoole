@@ -23,7 +23,7 @@
       2. swoole >= 4.3.0
       3. predis 扩展
    2. 项目下的 storage/ 目录针对 www 用户（服务运行用户）需要有读写权限；
-   3. 需要将 storage/ 目录软链接到外部，防止每次发版被覆盖；
+   3. 需要将 storage/apollo、storage/logs、storage/temp 目录软链接到外部，防止每次发版被覆盖；
 3. 在项目外部创建一个 vendor 目录；
 4. 每次发布前将外部的 vendor 目录（第 3 步创建的）拷贝到新项目根目录下，然后执行 `composer install`增量安装依赖；
 5. 执行成功 `composer install ` 后将新项目下的 vendor/ 目录拷贝回覆盖外部的 vendor 目录（第 3 步创建的那个，保证外部的 vendor 是最新的）；
