@@ -43,7 +43,10 @@ class RequestId
     private function generate(Request $request)
     {
         // 从 header 中获取
-        $pre = $request->getHeader(self::key()) ?: '';
+        $pre = $request->getHeader(self::key()) ?? [];
+        if (is_array($pre)) {
+            $pre = $pre[0] ?: '';
+        }
         $preArr = explode(':', $pre);
 
         $svrFlag = Config::getInstance()->getConf('app_flag') ?: 'NONE';
