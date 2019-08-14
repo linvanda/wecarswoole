@@ -41,6 +41,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 - [定时任务](./readme/cron.md)
 - [异步任务](./readme/async_task.md)
 - [API 调用](./readme/invoke.md)
+- [RequestId](./readme/request_id.md)
 - [Exception](./readme/exception.md)
 - [中间件](./readme/middleware.md)
 - 基础设施

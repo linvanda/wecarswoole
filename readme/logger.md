@@ -4,11 +4,11 @@
 
 - 配置：
 
-  config/env/$env.php 中配置开启级别，可配置 PSR 规定的所有级别（外加 off 关闭日志）：
+  config.php 中配置开启级别，可配置 PSR 规定的所有级别（外加 off 关闭日志）：
 
   ```php
   // 最低记录级别：debug, info, warning, error, critical, off
-  'log_level' => 'debug',
+  'log_level' => apollo('application', 'log_level') ?: 'info',
   ```
 
   config/logger.php 中配置每个级别的 handler，目前支持的有 file、mailer、sms，file 对应的配置日志文件名，mailer 对应的是邮件配置。如果某个级别没配置，则使用低级别的配置。可以配置多个 handler：
@@ -32,8 +32,7 @@
           'mailer' => [
               'driver' => 'default',
               'subject' => '喂车邮件告警',
-              'to' => [
-              ]
+              'to' => json_decode(apollo('application', 'logger.emails'), true) ?: []
           ],
           'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
       ],
@@ -41,20 +40,16 @@
           'mailer' => [
               'driver' => 'default',
               'subject' => '喂车告警',
-              'to' => [
-                  'songlin.zhang@weicheche.cn' => '张松林'
-              ]
+              'to' => json_decode(apollo('application', 'logger.emails'), true) ?: []
           ],
           'file' => File::join(EASYSWOOLE_ROOT, 'storage/logs/error.log'),
-          'sms' => [
-              '18588495955' => '张松林'
-          ]
+          'sms' => json_decode(apollo('application', 'logger.mobiles'), true) ?: []
       ]
   ],
   ```
-
+  
   可以配置 PSR 规定的所有级别。
-
+  
 - 使用：
 
   构造函数注入(已在 config/di/di.php 中配置了接口实现，或者使用 di 容器获取)：
