@@ -45,7 +45,7 @@ class RequestId
         // 从 header 中获取
         $pre = $request->getHeader(self::key()) ?? [];
         if (is_array($pre)) {
-            $pre = $pre[0] ?: '';
+            $pre = $pre[0] ?? '';
         }
         $preArr = explode(':', $pre);
 

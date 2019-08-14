@@ -2,6 +2,7 @@
 
 namespace WecarSwoole\Client\Http\Component;
 
+use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\EasySwoole\Config;
 use WecarSwoole\Exceptions\Exception;
 use WecarSwoole\Signer\WecarSigner;
@@ -68,5 +69,21 @@ class WecarHttpRequestAssembler extends DefaultHttpRequestAssembler
         }
 
         return $appInfo['secret'] ?? '';
+    }
+
+    protected function parseHeaders(array $params): array
+    {
+        $headers = parent::parseHeaders($params);
+
+        // 增加 request-id 头部(只适用于worker进程，task进程需要自行加入该头部)
+        $requestIdKey = Config::getInstance()->getConf('request_id_key') ?: 'wcc-request-id';
+        if (!array_key_exists($requestIdKey, $headers)) {
+            $requestId = ContextManager::getInstance()->get('wcc-request-id');
+            if ($requestId) {
+                $headers[$requestIdKey] = $requestId;
+            }
+        }
+
+        return $headers;
     }
 }
