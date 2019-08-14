@@ -8,6 +8,7 @@ $baseConfig = [
     // 应用标识
     'app_flag' => 'YH',
     'app_id' => 10017,
+    'request_id_key' => 'wcc-request-id',
     'server' => [
         'modules' => apollo('fw.modules'),
         'app_ids' => apollo('fw.appids'),

@@ -6,11 +6,13 @@ use App\Bootstrap;
 use WecarSwoole\CronTabUtil;
 use EasySwoole\EasySwoole\Swoole\EventRegister;
 use EasySwoole\EasySwoole\AbstractInterface\Event;
+use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use EasySwoole\Component\Di;
 use WecarSwoole\Process\ApolloWatcher;
 use WecarSwoole\Process\HotReload;
+use WecarSwoole\RequestId;
 
 class EasySwooleEvent implements Event
 {
@@ -57,13 +59,17 @@ class EasySwooleEvent implements Event
         ServerManager::getInstance()->getSwooleServer()->addProcess((new ApolloWatcher())->getProcess());
     }
 
+    /**
+     * @param Request $request
+     * @param Response $response
+     * @return bool
+     * @throws \EasySwoole\Component\Context\Exception\ModifyError
+     */
     public static function onRequest(Request $request, Response $response): bool
     {
-        return true;
-    }
+        // 设置 request id
+        ContextManager::getInstance()->set('wcc-request-id', new RequestId($request));
 
-    public static function afterRequest(Request $request, Response $response): void
-    {
-        //
+        return true;
     }
 }

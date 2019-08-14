@@ -5,6 +5,7 @@ namespace WecarSwoole\Http;
 use Psr\Log\LoggerInterface;
 use EasySwoole\Http\AbstractInterface\Controller as EsController;
 use WecarSwoole\Container;
+use WecarSwoole\ErrCode;
 use WecarSwoole\RedisFactory;
 use WecarSwoole\Middleware\MiddlewareHelper;
 use WecarSwoole\Exceptions\{
@@ -142,6 +143,7 @@ class Controller extends EsController
     /**
      * 发生异常：记录错误日志，返回错误
      * @param \Throwable $throwable
+     * @throws \Throwable
      */
     protected function onException(\Throwable $throwable): void
     {
@@ -174,7 +176,7 @@ class Controller extends EsController
             $logger->error($message, $context);
         }
 
-        $this->return($data, $throwable->getCode() ?: 500, $displayMsg, $retry);
+        $this->return($data, $throwable->getCode() ?: ErrCode::ERROR, $displayMsg, $retry);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace WecarSwoole;
 
+use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\ServerManager;
 use Monolog\Handler\RotatingFileHandler;
@@ -42,13 +43,23 @@ class Logger extends AbstractLogger
     public function log($level, $message, array $context = array())
     {
         $server = ServerManager::getInstance()->getSwooleServer();
-        $log = new Log(['level' => $level, 'message' => $message, 'context' => $context]);
+        $log = new Log(['level' => $level, 'message' => $this->wrapMessage($message), 'context' => $context]);
         // 如果在工作进程中，则投递异步任务，否则直接执行（task进程不能投递异步任务）
         if (!$server->taskworker) {
             TaskManager::async($log);
         } else {
             $log->__onTaskHook($server->worker_id, $server->worker_id);
         }
+    }
+
+    private function wrapMessage(string $message): string
+    {
+        $requestId = ContextManager::getInstance()->get('wcc-request-id');
+        if ($requestId) {
+            $message = "(requestid:$requestId) " . $message;
+        }
+
+        return $message;
     }
 
     /**
