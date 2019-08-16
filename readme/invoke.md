@@ -6,24 +6,7 @@
 
 API 是分组配置的，最佳实践是同一个接口提供方的 API 放在一组，而不同的提供方往往其请求参数组装方式、响应参数解析方式甚至是协议都不同，一般放到不同分组中。喂车内部接口（OS的例外）由于遵循相同的处理方式，可放到一组。 
 
-1. 配置 Server。在 config/env/$env.php 中定义（实际中应该使用配置中心）：
-
-```php
-return [
-    'server' => [
-        'OL' => [
-            'name' => '油号',
-          	'app_id' => 2343,
-          	'secret' => 'poukhsfdsasadf43423fddd2s2erldojf',
-            'servers' => [
-                ['url' => 'http://192.168.85.201:8081', 'weight' => 100],
-            ],
-        ],
-    ]
-];
-```
-
-2. 配置 api。在 config/api/ 中定义。如：
+1. 配置 api。在 config/api/ 中定义。如：
 
 api.php:
 
@@ -79,7 +62,7 @@ return [
     // 组公共配置，可覆盖 api.php 中的公共配置
     'config' => [
       	// 组 server 配置，底下 api 共用
-				'server' => 'CP',
+		'server' => 'CP',
       	'http' => [
 
         ]
