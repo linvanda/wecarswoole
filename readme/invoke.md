@@ -132,12 +132,15 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
 
      ```php
      $params = [
+         // 请求头中的 Cookie 信息
          'cookies' => [
              'session_id' => '424dkjnt33fdew320fooee',
          ],
+         // Header 头部
          'headers' => [
              'Auth-Token' => 'ah2jj2hb20djeyqmkiag476242',
          ],
+         // query string(url 中 ? 后面的部分)
          'query_params' => [
              'flag' => 'wx'
          ],
@@ -145,6 +148,7 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
          'flag_params' => [
              'uid' => 33433
          ],
+         // POST 等的 body 内容（如果是 GET，则合并到 query_params 中）
          'body' => [
              'oilstation_id' => 172073,
          ]
