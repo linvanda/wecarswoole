@@ -21,7 +21,6 @@
   - config
     - api
     - di
-    - env
     - subscriber
   - storage
     - app
@@ -29,9 +28,11 @@
     - di
     - logs
     - temp
+    - apollo
   - vendor
   - tests
   - mock
+  - SQL
 
 #### 说明
 
@@ -77,8 +78,6 @@ config/api/ : 外部 api 定义
 
 config/di/ : 依赖注入配置
 
-config/env/ : 环境相关配置（如数据库、redis 等）
-
 config/subscriber/ : 订阅者配置
 
 storage/ : 存储相关（日志、缓存、临时文件等）
@@ -93,11 +92,15 @@ storage/logs/ : 文件日志
 
 storage/temp/ : 临时文件
 
+storage/apollo/ : Apollo 配置中心本地缓存文件
+
 vendor/ : 第三方库
 
 tests/ : 单元测试
 
 mock/：(api请求)数据模拟
+
+SQL/: SQL 脚本。SQL 底下按年月划分子目录
 
 dev.php : 开发环境（包括开发、测试、预发布）swoole_server 配置
 
