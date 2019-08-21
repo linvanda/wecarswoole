@@ -25,11 +25,7 @@ class CronTabUtil
 
         Config::getInstance()->loadFile(File::join(CONFIG_ROOT, 'cron.php'), false);
         $conf = Config::getInstance()->getConf('cron');
-        if (!$conf || !$conf['name'] || !$conf['tasks']) {
-            return;
-        }
-
-        if (!self::willRunCrontab($conf)) {
+        if (!$conf || !$conf['ip'] || !$conf['tasks'] || !self::willRunCrontab($conf)) {
             return;
         }
 
@@ -39,44 +35,6 @@ class CronTabUtil
         foreach ($conf['tasks'] as $cronTab) {
             Crontab::getInstance()->addTask($cronTab);
         }
-
-        // 如果是 redis 分布式模式，需要设置 heartbeat
-        if (!$conf['ip']) {
-            ServerManager::getInstance()->getSwooleServer()
-                ->addProcess((new CronHeartBeatProcess('crontab_heartbeat'))->getProcess());
-        }
-    }
-
-    /**
-     * @throws \WecarSwoole\Exceptions\ConfigNotFoundException
-     */
-    public static function clean()
-    {
-        if (!self::$createdCron) {
-            return;
-        }
-
-        $conf = Config::getInstance()->getConf('cron_config');
-        RedisFactory::build($conf['redis'] ?? 'main')->del(self::key());
-    }
-
-    public static function key()
-    {
-        $conf = Config::getInstance()->getConf('cron_config');
-        if (!$conf['name']) {
-            return '';
-        }
-        return 'crontab_d48fd_' . $conf['name'];
-    }
-
-    public static function flag()
-    {
-        return self::$flag;
-    }
-
-    public static function hasCreated()
-    {
-        return self::$createdCron;
     }
 
     /**
@@ -84,32 +42,22 @@ class CronTabUtil
      * @return bool
      * @throws Exceptions\ConfigNotFoundException
      */
-    private static function willRunCrontab(array $conf): bool
+    public static function willRunCrontab(array $conf): bool
     {
-        if ($conf['ip']) {
-            $conf['ip'] = is_string($conf['ip']) ? [$conf['ip']] : $conf['ip'];
-            // ip 限制模式
-            if (!array_intersect($conf['ip'], array_values(swoole_get_local_ip()))) {
-                return false;
-            }
-            return true;
+        if (!isset($conf['ip']) || !$conf['ip']) {
+            return false;
         }
 
-        // redis 分布式模式
-        $redis = RedisFactory::build($conf['redis'] ?? 'main');
-        $flag = self::randomFlag();
-
-        if ($redis->set(self::key(), $flag, ['nx', 'ex' => 8])) {
-            self::$flag = $flag;
-            return true;
+        $ips = is_string($conf['ip']) ? [$conf['ip']] : $conf['ip'];
+        $env = defined('ENVIRON') ? ENVIRON : 'produce';
+        reset($ips);
+        if (!is_int(key($ips))) {
+            $ips = [$ips[$env]];
         }
 
-        return false;
-    }
-
-    private static function randomFlag()
-    {
-        mt_srand();
-        return mt_rand(100, 10000000);
+        if (!$ips || !array_intersect($ips, array_values(swoole_get_local_ip()))) {
+            return false;
+        }
+        return true;
     }
 }
