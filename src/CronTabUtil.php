@@ -2,16 +2,13 @@
 
 namespace WecarSwoole;
 
-use WecarSwoole\Process\CronHeartBeatProcess;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\EasySwoole\Crontab\Crontab;
-use EasySwoole\EasySwoole\ServerManager;
 use WecarSwoole\Util\File;
 
 class CronTabUtil
 {
     private static $createdCron = false;
-    private static $flag;
 
     /**
      * 注册定时任务，多台服务器只能有一台注册
