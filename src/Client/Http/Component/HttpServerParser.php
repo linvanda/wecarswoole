@@ -39,7 +39,7 @@ class HttpServerParser implements IHttpServerParser
             }
         }
 
-        if (strpos($server, '://') !== false) {
+        if (strpos($server, '://') !== false || strlen($server) > 8) {
             return $server;
         }
 
