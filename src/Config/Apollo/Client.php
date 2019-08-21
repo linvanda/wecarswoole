@@ -2,6 +2,8 @@
 
 namespace WecarSwoole\Config\Apollo;
 
+use Swlib\Http\Exception\HttpExceptionMask;
+use Swlib\Saber;
 use WecarSwoole\Config\Config;
 
 /**
@@ -188,26 +190,20 @@ class Client
     }
 
     /**
-     * 不使用 swoole 的协程 Client，swoole 的协程 Client 在服务器返回 304 时会一直等待直到超时
      * @param string $url
      * @return array
      */
     private function curlGet(string $url, int $timeout): array
     {
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $errorNo = curl_errno($ch);
+        $saber = Saber::create([
+            'timeout' => $timeout,
+            'exception_report' => HttpExceptionMask::E_NONE
+        ]);
 
-        if (!$errorNo) {
-            $response = json_decode($response, true);
-        }
-
-        curl_close($ch);
-
-        return ['error_no' => $errorNo, 'http_code' => $httpCode, 'response' => $response];
+        $response = $saber->get($url);
+        return [
+            'http_code' => $response->getStatusCode(),
+            'response' => json_decode(strval($response->getBody()), true)
+        ];
     }
 }
