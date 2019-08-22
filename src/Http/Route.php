@@ -9,11 +9,6 @@ use EasySwoole\Http\Response;
 
 /**
  * 路由基类
- * 中间件的注册方式：
- *  1. 类全局注册：在子类的$middleware数组中配置中间件类名，则此类中定义的所有路由共用该中间件
- *  2. 路由注册：在设置路由时于参数中指定中间件类名，则仅用于该路由
- * 中间件执行顺序取决于注册顺序，类全局的先于特定路由的
- * Interface IRoute
  */
 abstract class Route
 {
