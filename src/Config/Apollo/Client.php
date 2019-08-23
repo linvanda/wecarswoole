@@ -75,7 +75,7 @@ class Client
     public function start(\Closure $callback = null)
     {
         do {
-            $notifyResults = $this->curlGet($this->getNotifyUrl(), $this->intervalTimeout);
+            $notifyResults = $this->get($this->getNotifyUrl(), $this->intervalTimeout);
 
             if ($notifyResults['http_code'] != 200) {
                 continue;
@@ -119,11 +119,14 @@ class Client
 
         $responseList = [];
         $reloaded = false;
-        // 实际中 namespaces 不是很多，此处依次调用 curl get 获取数据
-        foreach ($namespaces as $namespace) {
-            $response = $this->curlGet($this->getPullUrl($namespace), $this->pullTimeout);
-            $responseList[$namespace] = true;
 
+        $responses = $this->requestAll($this->getPullUrls($namespaces), $this->pullTimeout);
+
+        foreach ($namespaces as $namespace) {
+            $responseList[$namespace] = true;
+        }
+
+        foreach ($responses as $response) {
             if ($response['http_code'] == 200) {
                 $result = $response['response'];
 
@@ -178,6 +181,13 @@ class Client
         return $api;
     }
 
+    private function getPullUrls(array $namespaces): array
+    {
+        return array_map(function ($namespace) {
+            return $this->getPullUrl($namespace);
+        }, $namespaces);
+    }
+
     private function getNotifyUrl(): string
     {
         $params = [
@@ -193,7 +203,7 @@ class Client
      * @param string $url
      * @return array
      */
-    private function curlGet(string $url, int $timeout): array
+    private function get(string $url, int $timeout): array
     {
         $saber = Saber::create([
             'timeout' => $timeout,
@@ -205,5 +215,40 @@ class Client
             'http_code' => $response->getStatusCode(),
             'response' => json_decode(strval($response->getBody()), true)
         ];
+    }
+
+    private function requestAll(array $urls, int $timeout): array
+    {
+        if (!$urls) {
+            return [];
+        }
+
+        $saber = Saber::create([
+            'timeout' => $timeout,
+            'exception_report' => HttpExceptionMask::E_NONE
+        ]);
+
+        $responseMap = $saber->requests(
+            array_map(
+                function ($url) {
+                    return ['get', $url];
+                },
+                $urls
+            )
+        );
+
+        if (!$responseMap) {
+            return [];
+        }
+
+        return array_map(
+            function ($response) {
+                return [
+                    'http_code' => $response->getStatusCode(),
+                    'response' => json_decode(strval($response->getBody()), true)
+                ];
+            },
+            $responseMap->getArrayCopy()
+        );
     }
 }
