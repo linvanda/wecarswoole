@@ -18,13 +18,20 @@ class Mailer
     private $username;
     private $password;
     private $port;
+    private $encryption;
 
-    public function __construct(string $host = '', string $username = '', string $password = '', int $port = 25)
-    {
+    public function __construct(
+        string $host = '',
+        string $username = '',
+        string $password = '',
+        int $port = null,
+        string $encryption = null
+    ) {
         $this->host = $host;
         $this->username = $username;
         $this->password = $password;
         $this->port = $port;
+        $this->encryption = $encryption;
     }
 
     public function send(\Swift_Message $message)
@@ -35,7 +42,8 @@ class Mailer
             'host' => $this->host,
             'username' => $this->username,
             'password' => $this->password,
-            'port' => $this->port
+            'port' => $this->port,
+            'encryption' => $this->encryption
         ]);
         // 如果在工作进程中，则投递异步任务，否则直接执行（task进程不能投递异步任务）
         if (!$server->taskworker) {
@@ -49,12 +57,17 @@ class Mailer
         string $host = '',
         string $username = '',
         string $password = '',
-        int $port = 25
+        ?int $port = null,
+        ?string $encryption = null
     ): \Swift_Mailer {
         $config = Config::getInstance()->getConf('mailer');
         $config = $config['default'] ?? $config;
 
-        $transport = new \Swift_SmtpTransport($host ?: $config['host'], $port ?: $config['port']);
+        $transport = new \Swift_SmtpTransport(
+            $host ?: $config['host'],
+            $port ?: $config['port'],
+            $encryption ?: $config['encryption']
+        );
         $transport->setUsername($username ?: $config['username'])->setPassword($password ?: $config['password']);
 
         return new \Swift_Mailer($transport);

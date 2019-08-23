@@ -30,7 +30,8 @@ class SendMail extends AbstractAsyncTask
             $taskData['host'] ?? '',
             $taskData['username'] ?? '',
             $taskData['password'] ?? '',
-            $taskData['port'] ?: 25
+            $taskData['port'],
+            $taskData['encryption']
         );
         return $mailer->send($taskData['message']);
     }

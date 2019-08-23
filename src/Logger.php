@@ -37,8 +37,7 @@ class Logger extends AbstractLogger
     ];
 
     protected function __construct()
-    {
-    }
+    { }
 
     public function log($level, $message, array $context = array())
     {
@@ -161,7 +160,8 @@ class Logger extends AbstractLogger
             $mailerConfig['host'] ?? '',
             $mailerConfig['username'] ?? '',
             $mailerConfig['password'] ?? '',
-            $mailerConfig['port'] ?: 25
+            $mailerConfig['port'] ?: 465,
+            $mailerConfig['encryption'] ?: 'ssl'
         );
 
         $messager = new \Swift_Message($config['subject'] ?? "日志邮件告警");

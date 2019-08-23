@@ -16,5 +16,6 @@ return [
         'application',
         'fw.appids',
         'fw.modules',
+        'fw.mail',
     ]
 ];
