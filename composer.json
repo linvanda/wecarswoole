@@ -3,8 +3,8 @@
     "description": "wecheche foundational web framework",
     "type": "library",
     "require": {
-        "php": ">=7.2",
-        "ext-swoole": ">=4.3.0",
+        "php": "*",
+        "ext-swoole": "*",
         "ext-redis": "*",
         "easyswoole/easyswoole": "^3.2",
         "php-di/php-di": "~6.0.0",
