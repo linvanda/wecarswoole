@@ -139,7 +139,7 @@ class RedisProxy extends \Redis
      */
     private static function connectRedis($redis, array $connInfo)
     {
-        $redis->pconnect(
+        $redis->connect(
             $connInfo['host'],
             $connInfo['port'],
             $connInfo['timeout']

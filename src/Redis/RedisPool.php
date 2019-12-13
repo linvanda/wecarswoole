@@ -15,18 +15,14 @@ class RedisPool extends AbstractPool
     protected function createObject()
     {
         $conf = $this->getConfig()->getExtraConf();
-        try {
-            $redis = new \Redis();
-            $redis->pconnect(
-                $conf['host'],
-                $conf['port'],
-                $conf['timeout']
-            );
-            if ($conf['password']) {
-                $redis->auth($conf['password']);
-            }
-        } catch (\RedisException $exception) {
-            // do nothing
+        $redis = new Redis();
+        $redis->connect(
+            $conf['host'],
+            $conf['port'],
+            $conf['timeout']
+        );
+        if ($conf['password']) {
+            $redis->auth($conf['password']);
         }
 
         return $redis;
