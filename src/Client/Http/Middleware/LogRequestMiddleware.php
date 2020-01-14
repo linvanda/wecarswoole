@@ -6,6 +6,7 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
+use Swlib\Http\BufferStream;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Middleware\Next;
 
@@ -50,12 +51,19 @@ class LogRequestMiddleware implements IRequestMiddleware
 
     protected function logContext(HttpConfig $config, RequestInterface $request, ResponseInterface $response): array
     {
-        $responseBody = (string)$response->getBody();
+        $responseBody = $response->getBody()->getContents();
+        // buffer 重新写入供后面用
+        $buff = new BufferStream(strlen($responseBody));
+        $buff->write($responseBody);
+        $response->withBody($buff);
+
         $responseBody = mb_strlen($responseBody) > 1024 * 400 ? mb_strcut($responseBody, 0, 1024 * 400) : $responseBody;
 
         $requestBody = $request->getBody()->getContents();
-        // 再写回去供后面的中间件用
-        $request->getBody()->write($requestBody);
+        // buffer 重新写入供后面用
+        $buff = new BufferStream(strlen($requestBody));
+        $buff->write($requestBody);
+        $request->withBody($buff);
 
         return [
             'use_time' => time() - $this->startTime,

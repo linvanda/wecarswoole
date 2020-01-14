@@ -127,6 +127,10 @@ class Client
         }
 
         foreach ($responses as $response) {
+            if (!$response['response']) {
+                continue;
+            }
+
             $namespace = $response['response']['namespaceName'];
             if ($response['http_code'] == 200) {
                 $result = $response['response'];

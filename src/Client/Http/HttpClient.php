@@ -102,11 +102,7 @@ class HttpClient implements IClient
         $buffer->write($body);
         $saber->withBody($buffer);
 
-        // 执行
         $response = $this->execMiddlewares('before', $this->config, $saber);
-
-        // clone 一个供后面使用
-        $rawRequest = clone $saber;
 
         $fromRealRequest = false;
         if (!$response instanceof ResponseInterface) {
@@ -114,7 +110,12 @@ class HttpClient implements IClient
             $fromRealRequest = true;
         }
 
-        $this->execMiddlewares('after', $this->config, $rawRequest, $response);
+        // 重新设置 body 供后面使用
+        $buffer = new BufferStream();
+        $buffer->write($body);
+        $saber->withBody($buffer);
+
+        $this->execMiddlewares('after', $this->config, $saber, $response);
 
         $this->dealBadResponse($response, $requestBean);
 
