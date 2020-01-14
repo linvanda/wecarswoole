@@ -14,7 +14,7 @@ use Psr\Log\LogLevel;
 class HealthCheck
 {
     private const BUCKETS_SIZE = 60;
-    private const TICK_FREQ = 10000;
+    private const TICK_FREQ = 60000;
 
     /**
      * @var LoggerInterface
@@ -97,7 +97,7 @@ class HealthCheck
     }
 
     /**
-     * 每次都发送 error 级别告警(普通日志)，30s 一次 critical（邮件），1分钟一次 emergency（短信）
+     * 每次都发送 error 级别告警(普通日志)，1分钟 一次 critical（邮件），5分钟一次 emergency（短信）
      * @param string $str
      */
     private static function log(string $str)
@@ -105,10 +105,10 @@ class HealthCheck
         $time = time();
 
         $logLevel = LogLevel::ERROR;
-        if ($time - self::$lastEmergencyLogTime > 5) {
+        if ($time - self::$lastEmergencyLogTime >= 300) {
             $logLevel = LogLevel::EMERGENCY;
             self::$lastEmergencyLogTime = $time;
-        } elseif ($time - self::$lastCriticalLogTime > 3) {
+        } elseif ($time - self::$lastCriticalLogTime >= 60) {
             $logLevel = LogLevel::CRITICAL;
             self::$lastCriticalLogTime = $time;
         }
