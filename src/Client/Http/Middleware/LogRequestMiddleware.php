@@ -57,7 +57,7 @@ class LogRequestMiddleware implements IRequestMiddleware
             'use_time' => time() - $this->startTime,
             'request' => [
                 'url' => strval($request->getUri()),
-                'body' => strval($request->getBody())
+                'body' => $request->getBody()
             ],
             'response' => [
                 'http_code' => $response->getStatusCode(),
