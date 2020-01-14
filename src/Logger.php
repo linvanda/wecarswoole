@@ -55,7 +55,7 @@ class Logger extends AbstractLogger
     {
         $requestId = ContextManager::getInstance()->get('wcc-request-id');
         if ($requestId) {
-            $message = "[$requestId]" . $message;
+            $message = "[" . (defined('ENVIRON') ? ENVIRON : 'unknown') . "][$requestId]" . $message;
         }
 
         return $message;
