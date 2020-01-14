@@ -58,7 +58,7 @@ return [
         ],
     ],
     // 组
-    'weiche' => include_once __DIR__ . '/weicheche.php',
+    'weiche' => include_once __DIR__ . 'weiche.php',
 ];
 ```
 
@@ -165,6 +165,8 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
 5. 中间件：
 
    实现 `WecarSwoole\Client\Http\Middleware\IRequestMiddleware` 接口，然后在配置文件中使用。
+   
+   注意：在中间件中操作了请求的 BufferStream （如read、getContents）需要将内容重新设置回去，否则后面就拿不到里面的东西了（对 Buffer 的读取会清空 Buffer）。
 
 6. Mock:
 

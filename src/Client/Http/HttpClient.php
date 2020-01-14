@@ -91,22 +91,30 @@ class HttpClient implements IClient
             $saber->withHeader('Cookie', (new Cookies($requestBean->cookies()))->toRequestString());
         }
 
-        if ($body = $requestBean->getBody()) {
+        if ($body = $requestBean->getBody() ?? '') {
             if (!is_string($body)) {
                 $body = isset($headers['Content-Type']) && $headers['Content-Type'] == 'application/json'
                     ? json_encode($body) : http_build_query($body);
             }
-            $saber->withBody(new BufferStream($body));
         }
+
+        $buffer = new BufferStream();
+        $buffer->write($body);
+        $saber->withBody($buffer);
 
         // 执行
         $response = $this->execMiddlewares('before', $this->config, $saber);
+
+        // clone 一个供后面使用
+        $rawRequest = clone $saber;
+
         $fromRealRequest = false;
         if (!$response instanceof ResponseInterface) {
             $response = $saber->exec()->recv();
             $fromRealRequest = true;
         }
-        $this->execMiddlewares('after', $this->config, $saber, $response);
+
+        $this->execMiddlewares('after', $this->config, $rawRequest, $response);
 
         $this->dealBadResponse($response, $requestBean);
 
