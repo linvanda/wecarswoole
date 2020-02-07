@@ -29,6 +29,7 @@ class RedisProxy extends \Redis
      * @param float $timeout
      * @param string $password
      * @param array $poolConf
+     * @param int $database
      * @throws \EasySwoole\Component\Pool\Exception\PoolException
      * @throws \EasySwoole\Component\Pool\Exception\PoolObjectNumError
      */
@@ -37,11 +38,16 @@ class RedisProxy extends \Redis
         $port = 6379,
         $timeout = 0.0,
         $password = '',
-        $poolConf = []
+        $poolConf = [],
+        $database = 0
     ) {
         $this->connect($host, $port, $timeout, null, 0);
         $this->auth($password);
         $this->poolConf = $poolConf;
+
+        if ($database) {
+            $this->select($database);
+        }
 
         // 创建连接池
         $this->pool = $this->getPool();
@@ -70,6 +76,11 @@ class RedisProxy extends \Redis
     public function auth($password)
     {
         $this->connInfo['password'] = $password;
+    }
+
+    public function select($database)
+    {
+        $this->connInfo['database'] = $database;
     }
 
     /**
@@ -144,8 +155,13 @@ class RedisProxy extends \Redis
             $connInfo['port'],
             $connInfo['timeout']
         );
+        
         if ($connInfo['password']) {
             $redis->auth($connInfo['password']);
+        }
+
+        if ($connInfo['database']) {
+            $redis->select($connInfo['database']);
         }
     }
 

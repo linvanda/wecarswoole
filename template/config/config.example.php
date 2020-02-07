@@ -71,17 +71,19 @@ $baseConfig = [
             'host' => apollo('fw.redis.01', 'redis.host'),
             'port' => apollo('fw.redis.01', 'redis.port'),
             'auth' => apollo('fw.redis.01', 'redis.auth'),
+            'database' => apollo('fw.redis.01', 'redis.database') ?? 0,
             // 连接池配置
             '__pool' => [
                 'max_object_num' => apollo('application', 'redis.pool.main.max_num') ?? 15,
                 'min_object_num' => apollo('application', 'redis.pool.main.min_num') ?? 1,
                 'max_idle_time' => apollo('application', 'redis.pool.main.idle_time') ?? 300,
-            ]
+            ],
         ],
         'cache' => [
             'host' => apollo('fw.redis.01', 'redis.host'),
             'port' => apollo('fw.redis.01', 'redis.port'),
             'auth' => apollo('fw.redis.01', 'redis.auth'),
+            'database' => apollo('fw.redis.01', 'redis.database') ?? 0,
             // 连接池配置
             '__pool' => [
                 'max_object_num' => apollo('application', 'redis.pool.cache.max_num') ?? 15,

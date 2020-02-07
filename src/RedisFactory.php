@@ -37,7 +37,8 @@ class RedisFactory
             $redisConf['port'],
             3,
             $redisConf['auth'],
-            $redisConf['__pool'] ?? []
+            $redisConf['__pool'] ?? [],
+            $redisConf['database'] ?? 0
         );
 
         return $redis;
