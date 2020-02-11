@@ -42,7 +42,7 @@ class Url
 
         if ($queryParams) {
             $queryStr = http_build_query($queryParams);
-            $uri = strpos(rtrim($uri, '?'), '?') === false ? $uri . '?' . $queryStr : '&' . $queryStr;
+            $uri .= strpos(rtrim($uri, '?'), '?') === false ? '?' . $queryStr : '&' . $queryStr;
         }
 
         return $uri;
