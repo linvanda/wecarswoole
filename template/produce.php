@@ -1,5 +1,7 @@
 <?php
 
+use WecarSwoole\Util\File;
+
 return [
     'SERVER_NAME' => "EasySwoole",
     'MAIN_SERVER' => [
@@ -18,13 +20,13 @@ return [
             'task_max_request' => 10000,
             'dispatch_mode' => 1,
             'enable_reuse_port' => 1,
-            'pid_file' => \WecarSwoole\Util\File::join(STORAGE_ROOT, 'temp/master.pid')
+            'pid_file' => File::join(STORAGE_ROOT, 'temp/master.pid')
         ],
     ],
-    'TEMP_DIR' => 'storage/temp',
-    'LOG_DIR' => 'storage/logs',
+    'TEMP_DIR' => File::join(STORAGE_ROOT, 'temp'),
+    'LOG_DIR' => File::join(STORAGE_ROOT, 'logs'),
     'CONSOLE' => [
-        'ENABLE' => true,
+        'ENABLE' => false,
         'LISTEN_ADDRESS' => '127.0.0.1',
         'HOST' => '127.0.0.1',
         'PORT' => 9500,
