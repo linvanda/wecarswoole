@@ -11,7 +11,7 @@ use WecarSwoole\MySQLFactory;
  * Class MySQLRepository
  * @package WecarSwoole\Repository
  */
-abstract class MySQLRepository implements IDBRepository
+abstract class MySQLRepository extends DBRepository
 {
     /**
      * @var \Dev\MySQL\Query

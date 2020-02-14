@@ -11,11 +11,12 @@ namespace WecarSwoole;
 final class Proxy
 {
     private $newThis;
-    private $func;
+    private $funcGet;
+    private $funcSet;
 
     public function __construct($obj = null)
     {
-        $this->func = function ($name, ...$arguments) {
+        $this->funcGet = function ($name, ...$arguments) {
             if (method_exists($this, $name)) {
                 return $this->{$name}(...$arguments);
             } elseif (property_exists($this, $name)) {
@@ -25,17 +26,28 @@ final class Proxy
             return null;
         };
 
+        $this->funcSet = function ($name, $value) {
+            if (property_exists($this, $name)) {
+                $this->{$name} = $value;
+            }
+        };
+
         $this->newThis = $obj;
     }
 
     public function __call($name, $arguments)
     {
-        return $this->func->call($this->newThis, $name, ...$arguments);
+        return $this->funcGet->call($this->newThis, $name, ...$arguments);
     }
 
     public function __get($name)
     {
-        return $this->func->call($this->newThis, $name);
+        return $this->funcGet->call($this->newThis, $name);
+    }
+
+    public function __set($name, $value)
+    {
+        $this->funcSet->call($this->newThis, $name, $value);
     }
 
     public function setObject($obj)

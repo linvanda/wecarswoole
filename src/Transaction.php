@@ -2,7 +2,7 @@
 
 namespace WecarSwoole;
 
-use WecarSwoole\Repository\IRepository;
+use WecarSwoole\Repository\Repository;
 
 /**
  * 事务管理器
@@ -65,7 +65,7 @@ class Transaction
     public function add(...$repositories): void
     {
         foreach ($repositories as $repository) {
-            if (!$repository instanceof IRepository) {
+            if (!$repository instanceof Repository) {
                 continue;
             }
 
