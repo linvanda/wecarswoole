@@ -11,7 +11,7 @@ use WecarSwoole\MySQLFactory;
  * Class MySQLRepository
  * @package WecarSwoole\Repository
  */
-abstract class MySQLRepository extends DBRepository
+abstract class MySQLRepository extends Repository implements ITransactional
 {
     /**
      * @var \Dev\MySQL\Query
@@ -31,14 +31,14 @@ abstract class MySQLRepository extends DBRepository
         $this->query = MySQLFactory::build($this->dbAlias());
     }
 
-    public function getDBContext()
+    public function getContext()
     {
         return $this->query;
     }
 
-    public function setDBContext($dbContext)
+    public function setContext($context)
     {
-        $this->query = $dbContext;
+        $this->query = $context;
     }
 
     abstract protected function dbAlias(): string;

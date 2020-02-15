@@ -2,7 +2,7 @@
 
 namespace WecarSwoole;
 
-use WecarSwoole\Repository\Repository;
+use WecarSwoole\Repository\ITransactional;
 
 /**
  * 事务管理器
@@ -15,7 +15,7 @@ class Transaction
     private const STATUS_CLOSED = 2;
 
     private $status;
-    private $dbContext;
+    private $context;
 
     protected function __construct()
     {
@@ -25,7 +25,7 @@ class Transaction
     public function __destruct()
     {
         if ($this->status != self::STATUS_CLOSED) {
-            $this->dbContext->rollback();
+            $this->context->rollback();
         }
     }
 
@@ -44,7 +44,7 @@ class Transaction
 
     public function commit()
     {
-        $result = $this->dbContext->commit();
+        $result = $this->context->commit();
         $this->status = self::STATUS_CLOSED;
 
         return $result;
@@ -52,7 +52,7 @@ class Transaction
 
     public function rollback()
     {
-        $result = $this->dbContext->rollback();
+        $result = $this->context->rollback();
         $this->status = self::STATUS_CLOSED;
 
         return $result;
@@ -65,21 +65,21 @@ class Transaction
     public function add(...$repositories): void
     {
         foreach ($repositories as $repository) {
-            if (!$repository instanceof Repository) {
+            if (!$repository instanceof ITransactional) {
                 continue;
             }
 
             // 先试图提交之前的事务
-            $repository->getDBContext()->commit();
+            $repository->getContext()->commit();
 
             // 取第一个仓储的 dbContext
-            if (!$this->dbContext) {
-                $this->dbContext = $repository->getDBContext();
-                $this->dbContext->begin();
+            if (!$this->context) {
+                $this->context = $repository->getContext();
+                $this->context->begin();
                 continue;
             }
 
-            $repository->setDBContext($this->dbContext);
+            $repository->setContext($this->context);
         }
     }
 }

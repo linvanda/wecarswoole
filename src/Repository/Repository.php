@@ -22,4 +22,14 @@ class Repository
     {
         return new Proxy((new \ReflectionClass($className))->newInstanceWithoutConstructor());
     }
+
+    /**
+     * 创建真实对象的代理，用于获取对象的私有属性以存储起来
+     * @param $object
+     * @return Proxy
+     */
+    public function proxyObject($object)
+    {
+        return new Proxy($object);
+    }
 }
