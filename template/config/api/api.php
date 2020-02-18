@@ -1,7 +1,7 @@
 <?php
 
-use WecarSwoole\Client\Http\Component\WecarHttpRequestAssembler;
-use WecarSwoole\Client\Http\Component\JsonResponseParser;
+use WecarSwoole\Client\Http\Component\DefaultHttpRequestAssembler;
+use WecarSwoole\Client\Http\Component\DefaultResponseParser;
 use WecarSwoole\Client\Http\Middleware\LogRequestMiddleware;
 use WecarSwoole\Client\Http\Middleware\MockRequestMiddleware;
 
@@ -17,9 +17,9 @@ return [
         // http 协议请求默认配置
         'http' => [
             // 请求参数组装器
-            'request_assembler' => WecarHttpRequestAssembler::class,
+            'request_assembler' => DefaultHttpRequestAssembler::class,
             // 响应参数解析器
-            'response_parser' => JsonResponseParser::class,
+            'response_parser' => DefaultResponseParser::class,
             // 请求中间件，必须实现 \WecarSwoole\Client\Http\Middleware\IRequestMiddleware 接口
             'middlewares' => [
                 LogRequestMiddleware::class,
@@ -38,6 +38,5 @@ return [
         ],
     ],
     // 组
-    'weiche' => include_once __DIR__ . '/weicheche.php',
-    'sscard' => include_once __DIR__ . '/sscard.php',
+    'weicheche' => include_once __DIR__ . '/weicheche.php'
 ];

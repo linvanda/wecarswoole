@@ -21,11 +21,6 @@ class Config
     public $appId;
 
     /**
-     * @var string uri 组装器
-     */
-    public $uriAssembler;
-
-    /**
      * 请求参数组装器
      * @var string|null
      */
@@ -50,7 +45,6 @@ class Config
         $this->apiName = $apiConf['api_name'] ?? '';
         $this->requestAssembler = $apiConf['request_assembler'];
         $this->responseParser = $apiConf['response_parser'];
-
         $this->config = $apiConf;
     }
 
@@ -63,27 +57,27 @@ class Config
     public static function load(string $api): array
     {
         static $confCache = [];
+        $apiCacheKey = md5($api);
 
-        if (isset($confCache[$api])) {
-            return $confCache[$api];
+        if (isset($confCache[$apiCacheKey])) {
+            return $confCache[$apiCacheKey];
         }
 
-        $apiInfo = self::parseApi($api);
+        list($groupName, $apiName) = self::parseApi($api);
         $conf = EsConfig::getInstance()->getConf('api');
 
         if (!$conf) {
             throw new ConfigNotFoundException("api");
         }
 
+        // 全局配置
         $globalConf = $conf['config'] ?? [];
-        $groupConf = isset($conf[$apiInfo['group']]) && isset($conf[$apiInfo['group']]['config']) ?
-            $conf[$apiInfo['group']]['config'] : [];
-        $apiConf = $conf[$apiInfo['group']]['api'];
-        $apiConf = $apiConf[$apiInfo['api']] ?? $apiConf['/' . $apiInfo['api']];
-
-        if (!$apiConf) {
-            throw new ConfigNotFoundException("api.{$api}");
-        }
+        // 组配置
+        $groupConf = isset($conf[$groupName]) && isset($conf[$groupName]['config']) ?
+            $conf[$groupName]['config'] : [];
+        // api 配置
+        $apiConf = isset($conf[$groupName]) && isset($conf[$groupName]['api']) ? $conf[$groupName]['api'] : [];
+        $apiConf = $apiConf[$apiName] ?? $apiConf['/' . $apiName] ?? $apiConf;
 
         $protocol = $apiConf['protocol'] ?? $groupConf['protocol'] ?? $globalConf['protocol'] ?? 'http';
         // 协议配置
@@ -98,7 +92,7 @@ class Config
         $config = array_merge(['api_name' => $api], $globalConf, $groupConf, $protocolConf, $apiConf);
         $config['app_id'] = EsConfig::getInstance()->getConf('app_id');
 
-        $confCache[$api] = $config;
+        $confCache[$apiCacheKey] = $config;
 
         return $config;
     }
@@ -110,15 +104,12 @@ class Config
      */
     private static function parseApi(string $api): array
     {
-        $arr = explode(':', $api);
+        $arr = explode(':', $api, 2);
 
-        if (count($arr) !== 2) {
+        if (count($arr) < 2) {
             throw new \Exception("api 格式错误：{$api}");
         }
 
-        return [
-            'group' => $arr[0],
-            'api' => $arr[1]
-        ];
+        return [$arr[0], $arr[1]];
     }
 }

@@ -13,7 +13,7 @@ API 是分组配置的，最佳实践是同一个接口提供方的 API 放在�
 > 4. 配置提供了统一的使用方式，并且提供了很好的扩展性，针对不同的第三方接口调用，仅需要扩展相应的请求组装器和响应解析器即可，无需单独写一整套程序。
 > 5. 程序中使用 API 别名而不是直接使用 url，这对于服务注册中心是友好的。当使用注册中心时，程序中使用的是服务别名，而服务的域名、url 都是动态注册的，可能会变动的。
 
-1. 配置 api。在 config/api/ 中定义。如：
+### 配置 api。在 config/api/ 中定义。如：
 
 api.php:
 
@@ -58,7 +58,7 @@ return [
         ],
     ],
     // 组
-    'weiche' => include_once __DIR__ . 'weiche.php',
+    'weiche' => include_once __DIR__ . 'weicheche.php',
 ];
 ```
 
@@ -107,7 +107,7 @@ return [
 > - api 级别，在单个 api 中配置的；
 > - 调用级别，在调用时传入；
 
-3. 调用：
+### 调用：
 
 ```php
 use WecarSwoole\Client\API;
@@ -122,7 +122,20 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
 
 系统对自身的 API 调用也需要在此处配置。
 
-4. 默认实现：
+### 便捷调用：
+`API::invoke()`要求先在配置文件中配好 API 信息，一般情况下我们推荐这样做（为了可维护性），但有时我们要调用的 url 是动态的（如数据库配置的），此时无法
+做成静态配置。
+框架提供了另一种调用方式：`API::simpleInvoke()`，该接口支持传绝对 url 而无需事先配置。用法：
+```php
+use WecarSwoole\Client\API;
+
+// API::simpleInvoke(string $url, string $method = 'GET', array $params = [], string $group = '_', array $config = [])
+$result = API::simpleInvoke("https://www.baidu.com");
+var_export($result->getBody());
+```
+该接口和 `API::invoke()` 是兼容的，内部也是通过 `API::invoke()` 实现的。
+
+### 默认实现：
 
    框架默认提供了 `DefaultHttpRequestAssembler`、`WecarHttpRequestAssembler`、`WecarWithNoZipHttpRequestAssembler`、 `JsonResponseParser` 作为请求参数、响应参数的解析器，项目可以实现自己的。
 
@@ -162,13 +175,13 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
      ];
      ```
 
-5. 中间件：
+### 中间件：
 
    实现 `WecarSwoole\Client\Http\Middleware\IRequestMiddleware` 接口，然后在配置文件中使用。
    
    注意：在中间件中操作了请求的 BufferStream （如read、getContents）需要将内容重新设置回去，否则后面就拿不到里面的东西了（对 Buffer 的读取会清空 Buffer）。
 
-6. Mock:
+### Mock:
 
    很多时候需要跟第三方合作开发时，对方的接口尚未开发完毕，此时我们只能干等。
 
