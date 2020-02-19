@@ -22,4 +22,9 @@ class Middleware
     {
         $this->proxy = new Proxy($relObject);
     }
+
+    public function __destruct()
+    {
+        $this->proxy->destroy();
+    }
 }

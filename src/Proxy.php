@@ -5,6 +5,7 @@ namespace WecarSwoole;
 /**
  * 代理访问对象私有属性/方法
  * 注意：不要滥用该代理，除非你真的有充足的理由
+ * 另外，由于使用了闭包绑定，Proxy 对象无法自动被回收（存在循环引用），需要手动调用对象的 destroy() 方法销毁
  * Class Proxy
  * @package WecarSwoole\Middleware
  */
@@ -50,8 +51,15 @@ final class Proxy
         $this->funcSet->call($this->newThis, $name, $value);
     }
 
-    public function setObject($obj)
+    public function getObject()
     {
-        $this->newThis = $obj;
+        return $this->newThis;
+    }
+
+    public function destroy()
+    {
+        unset($this->funcSet);
+        unset($this->funcGet);
+        unset($this->newThis);
     }
 }

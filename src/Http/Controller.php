@@ -200,9 +200,16 @@ class Controller extends EsController
      * @param int $status
      * @param string $msg
      * @param int $retry 告诉客户端是否需要重试
+     * @return bool
      */
-    protected function return($data = [], int $status = 200, string $msg = '', int $retry = 0): void
+    protected function return($data = [], int $status = 200, string $msg = '', int $retry = 0): bool
     {
+        // 只能调用一次
+        if ($this->responseData) {
+            return false;
+        }
+
         $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data ?? [], 'retry' => $retry];
+        return true;
     }
 }
