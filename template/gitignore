@@ -1,5 +1,7 @@
-/vendor/
-/storage/*
+/.vscode
+/.idea/
+
+!/storage/.gitkeep
 
 /storage/apollo/*
 !/storage/apollo/.gitkeep

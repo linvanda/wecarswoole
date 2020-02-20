@@ -1,5 +1,6 @@
 /vendor/
-.idea/
+/.idea/
+/.vscode
 
 /template/storage/apollo/*
 !/template/storage/apollo/.gitkeep
