@@ -41,12 +41,12 @@ class RedisProxy extends \Redis
         $poolConf = [],
         $database = 0
     ) {
-        $this->connect($host, $port, $timeout, null, 0);
-        $this->auth($password);
+        $this->setConnect($host, $port, $timeout, null, 0);
+        $this->setAuth($password);
         $this->poolConf = $poolConf;
 
         if ($database) {
-            $this->select($database);
+            $this->setSelect($database);
         }
 
         // 创建连接池
@@ -54,7 +54,6 @@ class RedisProxy extends \Redis
     }
 
     /**
-     * 重写 connect：并不真正发起连接
      * @param string $host
      * @param int $port
      * @param float $timeout
@@ -62,7 +61,7 @@ class RedisProxy extends \Redis
      * @param int $retryInterval
      * @return bool|void
      */
-    public function connect($host, $port = 6379, $timeout = 0.0, $reserved = null, $retryInterval = 0)
+    public function setConnect($host, $port = 6379, $timeout = 0.0, $reserved = null, $retryInterval = 0)
     {
         $this->connInfo = [
             'host' => $host,
@@ -73,12 +72,12 @@ class RedisProxy extends \Redis
         ];
     }
 
-    public function auth($password)
+    public function setAuth($password)
     {
         $this->connInfo['password'] = $password;
     }
 
-    public function select($database)
+    public function setSelect($database)
     {
         $this->connInfo['database'] = $database;
     }

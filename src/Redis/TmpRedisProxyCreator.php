@@ -33,10 +33,9 @@ class TmpRedisProxyCreator
         $reflectMethods = $reflection->getMethods(\ReflectionMethod::IS_PUBLIC);
 
         foreach ($reflectMethods as $method) {
-            // 剔除 __construct、__destruct、connect、auth
+            // 剔除 __construct、__destruct
             if ($method->isConstructor() ||
                 $method->isDestructor() ||
-                in_array($method->getName(), ['connect', 'auth']) ||
                 strpos($method->getName(), '_') === 0
             ) {
                 continue;
