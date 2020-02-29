@@ -24,6 +24,9 @@ class RedisPool extends AbstractPool
         if ($conf['password']) {
             $redis->auth($conf['password']);
         }
+        if ($conf['database']) {
+            $redis->select($conf['database']);
+        }
 
         return $redis;
     }
