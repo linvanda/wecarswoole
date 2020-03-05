@@ -21,10 +21,10 @@ class RedisPool extends AbstractPool
             $conf['port'],
             $conf['timeout']
         );
-        if ($conf['password']) {
+        if (isset($conf['password'])) {
             $redis->auth($conf['password']);
         }
-        if ($conf['database']) {
+        if (isset($conf['database'])) {
             $redis->select($conf['database']);
         }
 
