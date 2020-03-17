@@ -66,7 +66,7 @@ class Url
             $data['schema'] = $arr[0];
             $arr = explode('/', $arr[1], 2);
             $data['host'] = $arr[0];
-            $tmpUrl = $arr[1];
+            $tmpUrl = $arr[1] ?? '/';
         }
 
         // 解析 path 和 query
