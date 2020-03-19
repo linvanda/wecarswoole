@@ -96,6 +96,8 @@ class HttpClient implements IClient
                 $body = isset($headers['Content-Type']) && $headers['Content-Type'] == 'application/json'
                     ? json_encode($body) : http_build_query($body);
             }
+        } else {
+            $body = '';
         }
 
         $buffer = new BufferStream();
