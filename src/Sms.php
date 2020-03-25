@@ -1,17 +1,25 @@
 <?php
 
 namespace WecarSwoole;
+
+use EasySwoole\Component\Singleton;
 use EasySwoole\EasySwoole\ServerManager;
 use EasySwoole\EasySwoole\Swoole\Task\TaskManager;
 use WecarSwoole\Tasks\SendSms;
 
 /**
  * 短信服务
- * Class Sms
+ * Class SMS
  * @package WecarSwoole
  */
-class Sms
+class SMS
 {
+    use Singleton;
+
+    protected function __construct()
+    {
+    }
+    
     public function send(string $mobile, string $content, array $options = [])
     {
         $server = ServerManager::getInstance()->getSwooleServer();

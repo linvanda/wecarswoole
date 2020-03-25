@@ -4,8 +4,7 @@ namespace WecarSwoole\LogHandler;
 
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
-use WecarSwoole\Container;
-use WecarSwoole\Sms;
+use WecarSwoole\SMS;
 
 class SmSHandler extends AbstractProcessingHandler
 {
@@ -20,7 +19,7 @@ class SmSHandler extends AbstractProcessingHandler
     protected function write(array $record)
     {
         foreach ($this->mobiles as $mobile) {
-            Container::get(Sms::class)->send($mobile, mb_substr($record['message'], 0, 50));
+            SMS::getInstance()->send($mobile, mb_substr($record['message'], 0, 50));
         }
     }
 }

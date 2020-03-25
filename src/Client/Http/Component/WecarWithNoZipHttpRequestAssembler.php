@@ -11,10 +11,10 @@ use WecarSwoole\Signer\WecarSigner;
  */
 class WecarWithNoZipHttpRequestAssembler extends WecarHttpRequestAssembler
 {
-    protected function combineWithSignature(WecarSigner $signer, string $secret, array $params): array
+    protected function combineWithSignature(WecarSigner $signer, array $params): array
     {
         $params['app_id'] = $this->config->appId;
-        $params['token'] = $signer->signature($params, $secret);
+        $params['token'] = $signer->signature($params);
 
         return $params;
     }

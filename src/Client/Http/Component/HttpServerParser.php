@@ -5,7 +5,8 @@ namespace WecarSwoole\Client\Http\Component;
 use WecarSwoole\Client\Config\HttpConfig;
 use WecarSwoole\Client\Contract\IHttpServerParser;
 use WecarSwoole\Util\Url;
-use EasySwoole\EasySwoole\Config as EsConfig;
+use WecarSwoole\SubServer\Address;
+use WecarSwoole\SubServer\Servers;
 
 /**
  * 默认的 Http 服务器解析器
@@ -44,33 +45,10 @@ class HttpServerParser implements IHttpServerParser
         }
 
         // 从配置中解析 server
-        return $this->parseFromConfig($server);
-    }
-
-    protected function parseFromConfig(string $server): string
-    {
-        if (!($serverConf = EsConfig::getInstance()->getConf("server.modules.$server"))) {
+        if (!$serverObj = Servers::getInstance()->getByAlias($server)) {
             return $server;
         }
 
-        if (is_string($serverConf)) {
-            $serverConf = json_decode($serverConf, true);
-        }
-
-        if (!($serverConf = $serverConf['servers'])) {
-            return $server;
-        }
-
-        return $this->chooseServer($serverConf);
-    }
-
-    /**
-     * 目前不考虑权重
-     * @param array $servers
-     * @return string
-     */
-    protected function chooseServer(array $servers): string
-    {
-        return $servers[mt_rand(0, count($servers) - 1)]['url'];
+        return $serverObj->address(Address::PROTO_HTTP)->url();
     }
 }

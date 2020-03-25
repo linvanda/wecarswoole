@@ -6,6 +6,7 @@ use EasySwoole\Component\Context\ContextManager;
 use EasySwoole\EasySwoole\Config;
 use WecarSwoole\Exceptions\Exception;
 use WecarSwoole\Signer\WecarSigner;
+use WecarSwoole\SubServer\Servers;
 
 /**
  * wecar 内部的请求组装器
@@ -28,25 +29,24 @@ class WecarHttpRequestAssembler extends DefaultHttpRequestAssembler
         }
 
         // 签名器
-        $signer = new WecarSigner();
-        $secret = $this->getAppSecret();
+        $signer = new WecarSigner($this->getAppSecret());
 
         if ($this->config->method === 'GET') {
-            $queryParams = $this->combineWithSignature($signer, $secret, $queryParams);
+            $queryParams = $this->combineWithSignature($signer, $queryParams);
         } else {
-            $body = $this->combineWithSignature($signer, $secret, $body);
+            $body = $this->combineWithSignature($signer, $body);
         }
 
         return ['flag_params' => $flagParams, 'query_params' => $queryParams, 'body' => $body];
     }
 
-    protected function combineWithSignature(WecarSigner $signer, string $secret, array $params): array
+    protected function combineWithSignature(WecarSigner $signer, array $params): array
     {
         $params = [
             'app_id' => $this->config->appId,
             'data' => json_encode($params)
         ];
-        $params['token'] = $signer->signature($params, $secret);
+        $params['token'] = $signer->signature($params);
 
         return $params;
     }
@@ -63,12 +63,11 @@ class WecarHttpRequestAssembler extends DefaultHttpRequestAssembler
             throw new Exception("no config:app_id");
         }
 
-        $appInfo = Config::getInstance()->getConf("server.app_ids.$currentAppId");
-        if (is_string($appInfo)) {
-            $appInfo = json_decode($appInfo, true);
+        if (!$server = Servers::getInstance()->getByAppId($currentAppId)) {
+            throw new Exception("no server config for app_id");
         }
 
-        return $appInfo['secret'] ?? '';
+        return $server->secret();
     }
 
     protected function parseHeaders(array $params): array

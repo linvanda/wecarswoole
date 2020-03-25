@@ -9,22 +9,37 @@ namespace WecarSwoole\Signer;
  */
 class WecarSigner
 {
-    public function signature(array $params, string $secret): string
+    protected $secret;
+
+    public function __construct(string $secret)
     {
-        ksort($params);
-        return md5(http_build_query($params) . $secret);
+        $this->secret = $secret;
     }
 
-    public function verify(array $params, string $token, string $secret): bool
+    /**
+     * 签名
+     * @return string
+     */
+    public function signature(array $params): string
     {
-        if (!$params['app_id']) {
+        ksort($params);
+        return md5(http_build_query($params) . $this->secret);
+    }
+
+    /**
+     * 校验
+     * @return bool
+     */
+    public function verify(array $params, string $token): bool
+    {
+        if (!isset($params['app_id'])) {
             return false;
         }
 
-        if ($params['token']) {
+        if (isset($params['token'])) {
             unset($params['token']);
         }
 
-        return $token == $this->signature($params, $secret);
+        return $token == $this->signature($params);
     }
 }

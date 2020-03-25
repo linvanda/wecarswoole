@@ -2,8 +2,6 @@
 
 namespace WecarSwoole\Client;
 
-use WecarSwoole\Util\Url;
-
 /**
  * 远程调用客户端入口类 facade
  * 远程调用 api 统一在 config/api.php 中定义

@@ -16,4 +16,5 @@ class ErrCode
     public const OK = 200;
     public const ERROR = 500;
     public const PARAM_VALIDATE_FAIL = 300;
+    public const AUTH_FAIL = 301;
 }
