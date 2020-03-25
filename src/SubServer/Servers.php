@@ -18,18 +18,18 @@ class Servers
     /**
      * @var array 服务别名到 appid 的映射，结构：[alias => appid]
      */
-    public $aliasMap = [];
+    protected $aliasMap = [];
     /**
      * @var array 和 aliasMap 反过来：[appid => alias]
      */
-    public $appIdMap = [];
+    protected $appIdMap = [];
 
     protected function __construct()
     {
         // 解析出所有的服务别名和 appid 映射关系
         $modulesConf = Config::getInstance()->getConf('server.modules');
-        $modulesConf = is_string($modulesConf) ? json_decode($modulesConf, true) : $modulesConf;
         foreach ($modulesConf as $alias => $conf) {
+            $conf = is_string($conf) ? json_decode($conf, true) : $conf;
             if (!isset($conf['app_id'])) {
                 continue;
             }
@@ -60,7 +60,7 @@ class Servers
             return $this->servers[$appId];
         }
 
-        $this->servers[$appId] = self::createServerFromConfig($appId);
+        $this->servers[$appId] = $this->createServerFromConfig($appId);
 
         return $this->servers[$appId];
     }
@@ -68,9 +68,9 @@ class Servers
     /**
      * 工厂方法：从配置文件创建 Server 对象
      */
-    protected static function createServerFromConfig(int $appId): ?Server
+    protected function createServerFromConfig(int $appId): ?Server
     {
-        if (isset($this->servers[$appId])) {
+        if (isset($this->servers[$appId]) || !isset($this->appIdMap[$appId])) {
             return null;
         }
 
@@ -78,7 +78,7 @@ class Servers
         $appConf = Config::getInstance()->getConf('server.app_ids')[$appId] ?? [];
         $moduleConf = Config::getInstance()->getConf('server.modules')[$this->appIdMap[$appId]] ?? [];
         $appConf = is_string($appConf) ? json_decode($appConf, true) : $appConf;
-        $moduleConf = is_string($moduleConf) ? json_decode($moduleConf) : $moduleConf;
+        $moduleConf = is_string($moduleConf) ? json_decode($moduleConf, true) : $moduleConf;
 
         if (!$appConf || !$moduleConf) {
             return null;
