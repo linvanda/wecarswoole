@@ -13,6 +13,7 @@ use WecarSwoole\Exceptions\{
 };
 use WecarSwoole\Http\Middlewares\{LockerMiddleware, RequestRecordMiddleware, RequestTimeMiddleware, ValidateMiddleware};
 use Dev\MySQL\Exception\DBException;
+use EasySwoole\Validate\Validate;
 
 /**
  * 控制器基类
@@ -26,6 +27,7 @@ class Controller extends EsController
     use MiddlewareHelper;
 
     protected $responseData;
+    protected $requestParams;
 
     /**
      * Controller constructor.
@@ -110,6 +112,8 @@ class Controller extends EsController
      */
     protected function onRequest(?string $action): ?bool
     {
+        $this->formatParams();
+
         if (!$this->execMiddlewares('before', $this->request(), $this->response())) {
             return false;
         }
@@ -179,6 +183,17 @@ class Controller extends EsController
         $this->return($data, $throwable->getCode() ?: ErrCode::ERROR, $displayMsg, $retry);
     }
 
+    protected function formatParams()
+    {
+        // 处理请求参数
+        $params = $this->request()->getRequestParam();
+        if (isset($params['data'])) {
+            $params = is_string($params['data']) ? json_decode($params['data'], true) : $params['data'];
+        }
+
+        $this->requestParams = $params;
+    }
+
     /**
      * 获取请求参数
      * @param null $key
@@ -186,12 +201,7 @@ class Controller extends EsController
      */
     protected function params($key = null)
     {
-        $params = $this->request()->getRequestParam();
-        if (isset($params['data'])) {
-            $params = is_string($params['data']) ? json_decode($params['data'], true) : $params['data'];
-        }
-
-        return isset($key) ? ($params[$key] ?? null) : $params;
+        return isset($key) ? ($this->requestParams[$key] ?? null) : $this->requestParams;
     }
 
     /**
@@ -211,5 +221,13 @@ class Controller extends EsController
 
         $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data ?? [], 'retry' => $retry];
         return true;
+    }
+
+    /**
+     * 重写 validate 方法：验证处理后的数据（因为请求端可能是把请求数据放在 data 里面）
+     */
+    protected function validate(Validate $validate)
+    {
+        return $validate->validate($this->params());
     }
 }
