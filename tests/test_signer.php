@@ -11,12 +11,13 @@ $params = [
     'sex' => 'male',
     'flag' => 0,
     'app_id' => '1234',
+    'back_url' => 'http://wx.weicheche.cn'
 ];
 $secret = "123456789";
 
-$signer = new WecarSigner();
+$signer = new WecarSigner($secret);
 
-$token = $signer->signature($params, $secret);
-$mtext = $signer->verify($params, $token, $secret);
+$token = $signer->signature($params);
+$mtext = $signer->verify($params, $token);
 
 echo "token:$token,suc:$mtext\n";

@@ -32,10 +32,6 @@ class WecarSigner
      */
     public function verify(array $params, string $token): bool
     {
-        if (!isset($params['app_id'])) {
-            return false;
-        }
-
         if (isset($params['token'])) {
             unset($params['token']);
         }
