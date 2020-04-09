@@ -12,9 +12,12 @@ return [
         'RUN_MODEL' => SWOOLE_PROCESS,
         'SETTING' => [
             'worker_num' => 2,
+            'task_worker_num' => 4,
             'reload_async' => true,
             'max_wait_time' => 5,
             'max_request' => 10000,
+            'task_enable_coroutine' => true,
+            'task_max_request' => 5000,
             'dispatch_mode' => 1,
             'enable_reuse_port' => 1,
             'pid_file' => File::join(STORAGE_ROOT, 'temp/master.pid')
