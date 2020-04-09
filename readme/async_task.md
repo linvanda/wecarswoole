@@ -1,5 +1,7 @@
 ### 异步任务
 
+**注意：** EasySwoole 3.3.0 以后版本弃用了 swoole 原生 task，因而如果安装的是相应版本，请参考 EasySwoole 官网最新文档：[EasySwoole 文档](https://www.easyswoole.com/Cn/Components/task.html)
+
 一些耗时的操作可以用异步任务后台处理。
 
 -  定义：在 app/Tasks/ 下定义：
