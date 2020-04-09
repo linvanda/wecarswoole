@@ -72,7 +72,8 @@
 >    1. 查看现在用的源：`composer config -lg`；
 >    2. 修改源：`composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/`
 
-
+> 由于 EasySwoole 3.3.0 以上版本弃用了 swoole 原生 task，因而如果要使用 task特性，需要使用 composer 安装其扩展。
+  [参见](https://www.easyswoole.com/Cn/Components/task.html)
 
 ### 在现有项目上开发
 
