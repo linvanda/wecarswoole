@@ -3,13 +3,13 @@
 /.vscode
 
 /template/storage/apollo/*
-!/template/storage/apollo/.gitkeep
+!/template/storage/apollo/gitkeep
 
 /template/storage/app/*
-!/template/storage/app/.gitkeep
+!/template/storage/app/gitkeep
 
 /template/storage/temp/*
-!/template/storage/temp/.gitkeep
+!/template/storage/temp/gitkeep
 
 /template/storage/logs/*
-!/template/storage/logs/.gitkeep
+!/template/storage/logs/gitkeep

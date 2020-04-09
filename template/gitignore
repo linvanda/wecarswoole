@@ -1,16 +1,16 @@
 /.vscode
 /.idea/
 /vendor/
-!/storage/.gitkeep
+!/storage/gitkeep
 
 /storage/apollo/*
-!/storage/apollo/.gitkeep
+!/storage/apollo/gitkeep
 
 /storage/app/*
-!/storage/app/.gitkeep
+!/storage/app/gitkeep
 
 /storage/temp/*
-!/storage/temp/.gitkeep
+!/storage/temp/gitkeep
 
 /storage/logs/*
-!/storage/logs/.gitkeep
+!/storage/logs/gitkeep
