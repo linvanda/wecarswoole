@@ -4,10 +4,14 @@ use WecarSwoole\CronTabUtil;
 
 include_once './base.php';
 
-go(function () {
-    $conf = [
-        'ip' => '172.16.0.31'
-    ];
+class A
+{
+    protected $name;
+    private $age;
 
-    echo CronTabUtil::willRunCrontab($conf);
-});
+    public function __construct()
+    {
+        $this->name = "san";
+        $this->age = 43;
+    }
+}
