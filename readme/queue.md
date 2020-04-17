@@ -1,0 +1,1 @@
+可使用 easyswoole 的[队列组件](https://www.easyswoole.com/Cn/Components/Queue/install.html)，也可以用其他消息队列组件。

@@ -57,6 +57,7 @@ WecarSwoole 是基于 EasySwoole 开发的适用于喂车业务系统的 Web 开
 
     - [MySQL](./readme/mysql.md)
 - [事务](./readme/trans.md)
+- [消息队列](./readme/queue.md)
 - [DTO](./readme/dto.md)
 - [依赖注入](./readme/di.md)
 - [Util 工具](./readme/util.md)
