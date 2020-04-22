@@ -55,7 +55,7 @@ trait ObjectToArray
         }
 
         foreach ($values as $propName => &$propValue) {
-            if (in_array($propValue, $exFields)) {
+            if (in_array($propName, $exFields)) {
                 unset($values[$propName]);
                 continue;
             }
