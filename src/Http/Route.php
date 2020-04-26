@@ -6,6 +6,8 @@ use WecarSwoole\Middleware\MiddlewareHelper;
 use FastRoute\RouteCollector;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
+use Psr\Log\LoggerInterface;
+use WecarSwoole\Container;
 
 /**
  * 路由基类
@@ -53,12 +55,23 @@ abstract class Route
                 try {
                     $this->execMiddlewares('handle', $request, $response);
                 } catch (\Exception $e) {
+                    $this->logError($request, $e);
                     $response->write(json_encode(['info' => $e->getMessage(), 'status' => $e->getCode() ?: 500]));
                     return false;
                 }
 
                 return $handler;
             }
+        );
+    }
+
+    private function logError(Request $request, \Exception $e)
+    {
+        $url = $request->getUri()->getPath() . '?' . $request->getUri()->getQuery();
+        Container::get(LoggerInterface::class)->error(
+            "请求异常。url:{$url},params:"
+            . json_encode($request->getRequestParam())
+            . "，错误：" . $e->getMessage(), "，code:" . $e->getCode()
         );
     }
 
