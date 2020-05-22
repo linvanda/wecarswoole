@@ -71,7 +71,7 @@ abstract class Route
         Container::get(LoggerInterface::class)->error(
             "请求异常。url:{$url},params:"
             . json_encode($request->getRequestParam())
-            . "，错误：" . $e->getMessage(), "，code:" . $e->getCode()
+            . "，错误：" . $e->getMessage() . "，code:" . $e->getCode()
         );
     }
 
