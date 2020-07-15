@@ -36,9 +36,9 @@ class LogRequestMiddleware implements IRequestMiddleware
     public function after(Next $next, HttpConfig $config, RequestInterface $request, ResponseInterface $response)
     {
         if (Config::getInstance()->getConf("api_invoke_log") == 'off') {
-            return;
+            return $next($config, $request, $response);
         }
-        
+
         $this->logger->log(
             $this->logLevel($response),
             'API 调用信息',
