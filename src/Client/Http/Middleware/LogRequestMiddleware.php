@@ -2,6 +2,7 @@
 
 namespace WecarSwoole\Client\Http\Middleware;
 
+use EasySwoole\EasySwoole\Config;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
@@ -34,6 +35,10 @@ class LogRequestMiddleware implements IRequestMiddleware
 
     public function after(Next $next, HttpConfig $config, RequestInterface $request, ResponseInterface $response)
     {
+        if (Config::getInstance()->getConf("api_invoke_log") == 'off') {
+            return;
+        }
+        
         $this->logger->log(
             $this->logLevel($response),
             'API 调用信息',
