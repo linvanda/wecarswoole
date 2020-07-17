@@ -118,7 +118,7 @@ class Controller extends EsController
             return false;
         }
 
-        return true;
+        return parent::onRequest($action);
     }
 
     /**
@@ -136,12 +136,16 @@ class Controller extends EsController
         }
 
         $this->execMiddlewares('after', $this->request(), $this->response());
+
+        parent::afterAction($action);
     }
 
     protected function gc()
     {
         $this->execMiddlewares('gc');
         $this->responseData = null;
+
+        parent::gc();
     }
 
     /**
