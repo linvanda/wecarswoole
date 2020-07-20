@@ -51,26 +51,31 @@ class RequestTimeMiddleware implements IControllerMiddleware
             return $next($request, $response);
         }
 
-        $stats = $this->redis->get($this->requestId);
+        try {
+            $stats = $this->redis->get($this->requestId);
 
-        if (!$stats) {
-            $stats = $this->initStatsInfo();
-        } else {
-            // 如果超过5分钟，则清零，并检查是否需要发送告警日志
-            $stats = json_decode($stats, true);
-            if ($stats['time'] < time() - 60 * 5) {
-                $this->log($stats, $request);
+            if (!$stats) {
                 $stats = $this->initStatsInfo();
+            } else {
+                // 如果超过5分钟，则清零，并检查是否需要发送告警日志
+                $stats = json_decode($stats, true);
+                if ($stats['time'] < time() - 60 * 5) {
+                    $this->log($stats, $request);
+                    $stats = $this->initStatsInfo();
+                }
             }
+    
+            $duration = time() - $this->startTime;
+            if ($duration >= $this->threshold) {
+                $stats['cnt']++;
+            }
+            $stats['total']++;
+    
+            $this->redis->set($this->requestId, json_encode($stats), 60 * 10);
+        } catch (\Exception $e) {
+            // 不向上抛异常
+            $this->logger->error($e->getMessage(), ['code' => $e->getCode()]);
         }
-
-        $duration = time() - $this->startTime;
-        if ($duration >= $this->threshold) {
-            $stats['cnt']++;
-        }
-        $stats['total']++;
-
-        $this->redis->set($this->requestId, json_encode($stats), 60 * 10);
 
         return $next($request, $response);
     }
