@@ -3,9 +3,6 @@
     "description": "wecheche foundational web framework",
     "type": "library",
     "require": {
-        "php": "*",
-        "ext-swoole": "*",
-        "ext-redis": "*",
         "easyswoole/easyswoole": "3.2.*",
         "php-di/php-di": "~6.0.0",
         "ramsey/uuid": "~3.8.0",
