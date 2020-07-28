@@ -21,12 +21,14 @@ class Router extends AbstractRouter
     {
         $this->setMethodNotAllowCallBack(function (Request $request, Response $response) {
             $response->withStatus(404);
+            $response->withHeader('Content-type','text/html;charset=UTF-8');
             $response->write('未找到处理方法');
             return false;
         });
 
         $this->setRouterNotFoundCallBack(function (Request $request, Response $response) {
             $response->withStatus(404);
+            $response->withHeader('Content-type','text/html;charset=UTF-8');
             $response->write('未找到路由匹配');
             return false;
         });

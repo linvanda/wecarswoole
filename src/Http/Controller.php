@@ -113,6 +113,7 @@ class Controller extends EsController
     protected function onRequest(?string $action): ?bool
     {
         $this->formatParams();
+        $this->response()->withHeader('Content-type','text/html;charset=UTF-8');
 
         if (!$this->execMiddlewares('before', $this->request(), $this->response())) {
             return false;
