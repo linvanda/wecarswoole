@@ -31,6 +31,11 @@ class ApiAuthMiddleware implements IRouteMiddleware
      */
     public function handle(Next $next, Request $request, Response $response)
     {
+        // 开发环境不做校验
+        if (ENVIRON === 'dev') {
+            return $next($request, $response);
+        }
+
         $appId = $request->getRequestParam('app_id');
         $token = $request->getRequestParam('token');
 
