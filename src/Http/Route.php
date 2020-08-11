@@ -57,7 +57,7 @@ abstract class Route
                 } catch (\Exception $e) {
                     $this->logError($request, $e);
                     $response->withHeader('Content-type','application/json;charset=UTF-8');
-                    $response->write(json_encode(['info' => $e->getMessage(), 'status' => $e->getCode() ?: 500]));
+                    $response->write(json_encode(['msg' => $e->getMessage(), 'status' => $e->getCode() ?: 500]));
                     return false;
                 }
 
