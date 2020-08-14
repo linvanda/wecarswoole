@@ -3,6 +3,7 @@
 namespace WecarSwoole\Http\Middlewares;
 
 use App\ErrCode;
+use EasySwoole\EasySwoole\Config;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
 use WecarSwoole\Exceptions\AuthException;
@@ -31,8 +32,8 @@ class ApiAuthMiddleware implements IRouteMiddleware
      */
     public function handle(Next $next, Request $request, Response $response)
     {
-        // 开发环境不做校验
-        if (ENVIRON === 'dev') {
+        // 可通过配置跳过校验（一般用来做临时测试用）
+        if (Config::getInstance()->getConf("auth_request") === 0) {
             return $next($request, $response);
         }
 
