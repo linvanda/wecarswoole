@@ -81,7 +81,7 @@
   }
   ```
 
-- 框架提供了一个 `\WecarSwoole\Http\ApiRoute`基类，继承该类的路由都需走 api 鉴权。
+- 框架提供了一个 `\WecarSwoole\Http\ApiRoute`基类，继承该类的路由都需走 api 鉴权（喂车内部的 token 鉴权机制）。为了开发人员临时调试问题（如调试接口是否可用），框架提供了越权能力，在 config.php 文件中配置 auth_request = 0 可以临时禁用 ApiRoute 中的 token 鉴权，一般将该配置放在配置中心，这样不用改代码就可以临时禁用生产环境的 token 鉴权（安全起见，请务必在调试完成后将鉴权加回去）。
 
 ### 路由定义
 
