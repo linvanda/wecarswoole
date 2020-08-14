@@ -6,7 +6,6 @@ use App\ErrCode;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
-use PharIo\Manifest\Author;
 use WecarSwoole\Exceptions\AuthException;
 use WecarSwoole\Middleware\Next;
 use WecarSwoole\Signer\WecarSigner;
