@@ -6,6 +6,7 @@ use App\ErrCode;
 use EasySwoole\EasySwoole\Config;
 use EasySwoole\Http\Request;
 use EasySwoole\Http\Response;
+use PharIo\Manifest\Author;
 use WecarSwoole\Exceptions\AuthException;
 use WecarSwoole\Middleware\Next;
 use WecarSwoole\Signer\WecarSigner;
@@ -33,7 +34,8 @@ class ApiAuthMiddleware implements IRouteMiddleware
     public function handle(Next $next, Request $request, Response $response)
     {
         // 可通过配置跳过校验（一般用来做临时测试用）
-        if (Config::getInstance()->getConf("auth_request") === 0) {
+        $auth = Config::getInstance()->getConf("auth_request");
+        if ($auth === 0 || !$auth === '0') {
             return $next($request, $response);
         }
 
