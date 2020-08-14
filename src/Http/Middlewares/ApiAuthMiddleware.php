@@ -35,7 +35,7 @@ class ApiAuthMiddleware implements IRouteMiddleware
     {
         // 可通过配置跳过校验（一般用来做临时测试用）
         $auth = Config::getInstance()->getConf("auth_request");
-        if ($auth === 0 || !$auth === '0') {
+        if ($auth === 0 || $auth === '0') {
             return $next($request, $response);
         }
 
