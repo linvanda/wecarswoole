@@ -224,7 +224,7 @@ class Controller extends EsController
             return false;
         }
 
-        $this->responseData = ['status' => $status, 'msg' => $msg, 'data' => $data ?? [], 'retry' => $retry];
+        $this->responseData = ['status' => $status, 'msg' => $msg, 'info' => $msg, 'data' => $data ?? [], 'retry' => $retry];
         return true;
     }
 
