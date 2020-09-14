@@ -36,7 +36,7 @@ class SendSms extends AbstractAsyncTask
             $taskData['options'] ?? []
         );
 
-        return API::invoke('weiche:sms.send', $data);
+        return API::invoke('weicheche:sms.send', $data);
     }
 
     protected function finish($result, $task_id)

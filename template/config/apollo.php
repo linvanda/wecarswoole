@@ -4,7 +4,7 @@
  *  Client 配置中心
  */
 return [
-    'app_id' => 1000090,
+    'app_id' => 0,// 实际项目需重写
     'server' => [
         'dev' => 'http://develop.configserver.zhyz.cn:8080',
         'test' => 'http://test.configserver.zhyz.cn:8080',

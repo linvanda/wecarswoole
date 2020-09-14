@@ -58,7 +58,7 @@ return [
         ],
     ],
     // 组
-    'weiche' => include_once __DIR__ . 'weicheche.php',
+    'weicheche' => include_once __DIR__ . 'weicheche.php',
 ];
 ```
 
