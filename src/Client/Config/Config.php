@@ -99,6 +99,14 @@ class Config
         $config = array_merge(['api_name' => $api], $globalConf, $groupConf, $protocolConf, $apiConf);
         $config['app_id'] = EsConfig::getInstance()->getConf('app_id');
 
+        // 处理重试次数
+        if (isset($config['retry_num'])) {
+            $config['retry_num'] = intval($config['retry_num']);
+            if ($config['retry_num'] > 5) {
+                $config['retry_num'] = isset($config['default_retry_num']) ? min(intval($config['default_retry_num']), 5) : 5;
+            }
+        }
+
         $confCache[$apiCacheKey] = $config;
 
         return $config;

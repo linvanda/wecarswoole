@@ -65,8 +65,8 @@ class HttpClient implements IClient
 
         // 重试机制
         if ($this->config->retryNum > 1 && is_callable($this->config->retryFunc)) {
-            $saberConf['retry_time'] = min($this->config->retryNum, 5);
-            $saberConf['before_retry'] = function (Request $request, SaberResponse $response) {
+            $saberConf['retry_time'] = $this->config->retryNum;
+            $saberConf['retry'] = function (Request $request, SaberResponse $response) {
                 $retriedTime = $request->getRetriedTime();
                 $sleepSec = call_user_func($this->config->retryFunc, $retriedTime);
                 if ($sleepSec) {

@@ -36,6 +36,8 @@ return [
                 'ssl_allow_self_signed' => true
             ]
         ],
+        // 当启动重试机制时，默认重试次数
+        'default_retry_num' => 2,
     ],
     // 组
     'weicheche' => include_once __DIR__ . '/weicheche.php'

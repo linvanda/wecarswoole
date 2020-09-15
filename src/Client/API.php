@@ -42,7 +42,8 @@ class API
     public static function retryInvoke(string $api, array $params = [], array $config = []): Response
     {
         if (!isset($config['retry_num'])) {
-            $config['retry_num'] = 3;
+            // 这里取一个很大的数，内部将改成使用默认的重试次数
+            $config['retry_num'] = 1000;
         }
 
         return self::invoke($api, $params, $config);
