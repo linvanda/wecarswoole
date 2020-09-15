@@ -23,7 +23,7 @@ class API
     {
         if (
             isset($config['retry_num'])
-            && intval($config['retry_num']) > 1 
+            && intval($config['retry_num']) >= 1 
             && (!isset($config['retry_func']) || !is_callable(isset($config['retry_func'])))
         ) {
             $config['retry_func'] = function ($currentNum) {
@@ -84,7 +84,8 @@ class API
     public static function retrySimpleInvoke(string $url, string $method = 'GET', array $params = [], string $group = '_', array $config = []): Response
     {
         if (!isset($config['retry_num'])) {
-            $config['retry_num'] = 3;
+            // 这里取一个很大的数，内部将改成使用默认的重试次数
+            $config['retry_num'] = 1000;
         }
 
         return self::simpleInvoke($url, $method, $params, $group, $config);

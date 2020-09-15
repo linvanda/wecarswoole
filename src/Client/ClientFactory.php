@@ -25,6 +25,14 @@ class ClientFactory
     {
         $config = array_merge(Config::load($api), $config);
 
+        // 处理重试次数
+        if (isset($config['retry_num'])) {
+            $config['retry_num'] = intval($config['retry_num']);
+            if ($config['retry_num'] > 5) {
+                $config['retry_num'] = isset($config['default_retry_num']) ? min(intval($config['default_retry_num']), 5) : 5;
+            }
+        }
+
         switch (strtolower($config['protocol'])) {
             case 'http':
             case 'https':
