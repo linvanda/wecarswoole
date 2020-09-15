@@ -3,6 +3,7 @@
 namespace WecarSwoole\Client\Http;
 
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Swlib\Http\Cookies;
 use Swlib\Http\Exception\HttpExceptionMask;
 use WecarSwoole\Client\Config\HttpConfig;
@@ -16,7 +17,11 @@ use WecarSwoole\Middleware\MiddlewareHelper;
 use WecarSwoole\Util\Url;
 use Swlib\Http\Uri;
 use Swlib\Saber;
+use Swlib\Saber\Request;
+use Swlib\Saber\Response as SaberResponse;
 use Swlib\Http\BufferStream;
+use Swoole\Coroutine;
+use WecarSwoole\Container;
 
 /**
  * Http 客户端
@@ -57,6 +62,23 @@ class HttpClient implements IClient
             'use_pool' => true,
             'timeout' => $this->config->timeout ?? 3,
         ];
+
+        // 重试机制
+        if ($this->config->retryNum > 1 && is_callable($this->config->retryFunc)) {
+            $saberConf['retry_time'] = min($this->config->retryNum, 5);
+            $saberConf['before_retry'] = function (Request $request, SaberResponse $response) {
+                $retriedTime = $request->getRetriedTime();
+                $sleepSec = call_user_func($this->config->retryFunc, $retriedTime);
+                if ($sleepSec) {
+                    Coroutine::sleep($sleepSec);
+                }
+
+                // 记录日志
+                Container::get(LoggerInterface::class)->info("第{$retriedTime}次重试：" . $request->getUri()->__toString());
+
+                return true;
+            };
+        }
 
         // ssl
         if (strpos($saberConf['base_uri'], 'https') === 0) {

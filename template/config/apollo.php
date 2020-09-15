@@ -4,7 +4,9 @@
  *  Client 配置中心
  */
 return [
-    'app_id' => 0,// 实际项目需重写
+    // 实际项目需重写 app_id（由运维创建 apollo 项目并提供 app_id）
+    'app_id' => 0,
+    // server 部分一般不要动
     'server' => [
         'dev' => 'http://develop.configserver.zhyz.cn:8080',
         'test' => 'http://test.configserver.zhyz.cn:8080',
