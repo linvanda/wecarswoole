@@ -28,7 +28,7 @@ class API
         ) {
             $config['retry_func'] = function ($currentNum) {
                 // $currentNum：尝试次数
-                return pow($currentNum, 3) * 5;
+                return pow($currentNum, 2) * 3;
             };
         }
 
