@@ -144,26 +144,26 @@ var_export($result->getBody());
 
 默认情况下，每次重试前会 sleep（协程版）一定的时间，sleep 的时长跟重试次数相关，可以通过 `retry_func`替换默认规则。
 
-```
+```php
 API::invoke('wc:users.add', $reqData, ["retry_num" => 2]);// 注意：retry_num 表示重试次数，实际请求次数为 retry_num+1
 ```
 
 自定义 sleep 机制：
 
-```
+```php
 API::invoke('wc:users.add', $reqData, [
 	"retry_num" => 2,
 	"retry_func" => function ($retriedNum) {
-			return $retriedNum * 5;// 随着重试次数增加，sleep 时间增加。return 0 将不休眠，立即重试
+		return $retriedNum * 5;// 随着重试次数增加，sleep 时间增加。return 0 将不休眠，立即重试
 	}
 ]);
 ```
 
 系统默认 sleep 机制：
 
-```
+```php
 $config['retry_func'] = function ($retriedNum) {
-		return pow($retriedNum, 2) * 3;
+	return pow($retriedNum, 2) * 3;
 };
 ```
 
@@ -171,7 +171,7 @@ $config['retry_func'] = function ($retriedNum) {
 
 API 类提供了`retryInvoke`和`retrySimpleInvoke`供便捷方法，这些方法内置重试机制，其中`retry_num`取 api.php 中的配置项`default_retry_num`，`retry_func`取系统默认方法。
 
-```
+```php
 API::retryInvoke('wc:users.add', $reqData);
 ```
 
@@ -179,7 +179,7 @@ API::retryInvoke('wc:users.add', $reqData);
 
 api.php 的配置：
 
-```
+```php
 return [
     'config' => [
         'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
