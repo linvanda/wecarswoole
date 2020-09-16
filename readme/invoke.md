@@ -126,6 +126,7 @@ API 目前仅支持 http 协议，但是可扩展的（比如支持 RPC 协议�
 `API::invoke()`要求先在配置文件中配好 API 信息，一般情况下我们推荐这样做（为了可维护性），但有时我们要调用的 url 是动态的（如数据库配置的），此时无法
 做成静态配置。
 框架提供了另一种调用方式：`API::simpleInvoke()`，该接口支持传绝对 url 而无需事先配置。用法：
+
 ```php
 use WecarSwoole\Client\API;
 
@@ -134,6 +135,64 @@ $result = API::simpleInvoke("https://www.baidu.com");
 var_export($result->getBody());
 ```
 该接口和 `API::invoke()` 是兼容的，内部也是通过 `API::invoke()` 实现的。
+
+### 失败重试：
+
+`invoke` 和`simpleInvoke` 默认只会请求一次远程接口，调用超时会返回相应的错误。
+
+可以在 $config 配置选项中指定 `retry_num` 参数要求进行失败重试（设定为 [0, 5] 之间的整数值），该值最大为 5。
+
+默认情况下，每次重试前会 sleep（协程版）一定的时间，sleep 的时长跟重试次数相关，可以通过 `retry_func`替换默认规则。
+
+```
+API::invoke('wc:users.add', $reqData, ["retry_num" => 2]);// 注意：retry_num 表示重试次数，实际请求次数为 retry_num+1
+```
+
+自定义 sleep 机制：
+
+```
+API::invoke('wc:users.add', $reqData, [
+	"retry_num" => 2,
+	"retry_func" => function ($retriedNum) {
+			return $retriedNum * 5;// 随着重试次数增加，sleep 时间增加。return 0 将不休眠，立即重试
+	}
+]);
+```
+
+系统默认 sleep 机制：
+
+```
+$config['retry_func'] = function ($retriedNum) {
+		return pow($retriedNum, 2) * 3;
+};
+```
+
+**便捷调用：**
+
+API 类提供了`retryInvoke`和`retrySimpleInvoke`供便捷方法，这些方法内置重试机制，其中`retry_num`取 api.php 中的配置项`default_retry_num`，`retry_func`取系统默认方法。
+
+```
+API::retryInvoke('wc:users.add', $reqData);
+```
+
+注：`retryInvoke`和`retrySimpleInvoke`的参数分别和`invoke`和`simpleInvoke`相同。
+
+api.php 的配置：
+
+```
+return [
+    'config' => [
+        'protocol' => 'http', // 支持的协议：http、rpc（尚未实现）
+        'http' => [
+        	...
+        ],
+        // 当启动重试机制时，默认重试次数
+        'default_retry_num' => 2,
+    ],
+    // 组
+    'weicheche' => include_once __DIR__ . '/weicheche.php'
+];
+```
 
 ### 默认实现：
 
@@ -178,7 +237,7 @@ var_export($result->getBody());
 ### 中间件：
 
    实现 `WecarSwoole\Client\Http\Middleware\IRequestMiddleware` 接口，然后在配置文件中使用。
-   
+
    注意：在中间件中操作了请求的 BufferStream （如read、getContents）需要将内容重新设置回去，否则后面就拿不到里面的东西了（对 Buffer 的读取会清空 Buffer）。
 
 ### Mock:
