@@ -105,7 +105,7 @@ class HttpClient implements IClient
             )
         );
 
-        if ($headers = self::headers($requestBean->headers() ?? [])) {
+        if ($headers = $this->headers($requestBean->headers() ?? [])) {
             $saber->withHeaders($headers);
         }
 
