@@ -21,17 +21,6 @@ class API
      */
     public static function invoke(string $api, array $params = [], array $config = []): Response
     {
-        if (
-            isset($config['retry_num'])
-            && intval($config['retry_num']) >= 1 
-            && (!isset($config['retry_func']) || !is_callable(isset($config['retry_func'])))
-        ) {
-            $config['retry_func'] = function ($currentNum) {
-                // $currentNum：尝试次数
-                return pow($currentNum, 2) * 3;
-            };
-        }
-
         return ClientFactory::build($api, $config)->call($params);
     }
 

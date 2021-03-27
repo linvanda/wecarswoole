@@ -31,6 +31,16 @@ class ClientFactory
             if ($config['retry_num'] > 5) {
                 $config['retry_num'] = isset($config['default_retry_num']) ? min(intval($config['default_retry_num']), 5) : 5;
             }
+
+            if (
+                intval($config['retry_num']) > 0
+                && (!isset($config['retry_func']) || !is_callable($config['retry_func']))
+            ) {
+                $config['retry_func'] = function ($currentNum) {
+                    // $currentNum：尝试次数
+                    return pow($currentNum, 2) * 3;
+                };
+            }
         }
 
         switch (strtolower($config['protocol'])) {
