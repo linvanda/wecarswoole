@@ -7,10 +7,11 @@ use Swoole\Coroutine as Co;
 include_once './base.php';
 
 go(function () {
-    $a = $b = $c = 5;
     echo "start:" . time()."\n";
-    $r = Concurrent::simpleExec(
-        function() use ($a, $b, $c) {
+    $r = Concurrent::instance()
+    ->addParams([1, 3, 5], [], ['a', 'b', 'c'])
+    ->addTasks(
+        function($a, $b, $c) {
             Co::sleep(1);
             return "$a - $b - $c";
         },
@@ -18,12 +19,11 @@ go(function () {
             Co::sleep(2);
             return "------";
         },
-        function () {
+        function ($a, $b, $c) {
             Co::sleep(1);
             throw new \Exception("我错了", 300);
-            // return "h == i == j";
         }
-    );
+    )->exec();
     echo "end:" . time() . "\n";
     Co::sleep(4);
 
