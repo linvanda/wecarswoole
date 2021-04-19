@@ -6,7 +6,7 @@
         "easyswoole/easyswoole": "3.2.*",
         "php-di/php-di": "~6.0.0",
         "ramsey/uuid": "~3.8.0",
-        "swlib/saber": "~1.0.6",
+        "swlib/saber": "~1.0.9",
         "doctrine/annotations": "~1.6.0",
         "monolog/monolog": "~1.24.0",
         "swiftmailer/swiftmailer": "~6.2.0",
