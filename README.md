@@ -2,8 +2,7 @@ WecarSwoole
 ----
 
 ### 简介
-WecarSwoole 是基于 Swoole 开发的适用于喂车业务系统的 Web 开发框架。
-[EasySwoole 使用说明](http://www.easyswoole.com)
+WecarSwoole 是基于 Swoole 开发的 Web 开发框架。
 
 **开发前请务必先看完本文档，特别是[注意点](./readme/attention.md)，以及启动、部署相关。**
 
